@@ -1,0 +1,179 @@
+body{
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 0.6em;
+	margin: 0px;
+}
+
+
+@sprite .header{
+	gwt-image: 'topBackground';
+	background-repeat: repeat-x;
+	padding-left: 3em;
+}
+
+
+.footer{
+	border-top: dotted 1px gray;
+	padding-top: 0.5em;
+	text-align: center;
+}
+
+.leftMenu{
+	border: none;
+	background-color: #f2f2f2;
+}
+
+.facets{
+	padding: 3em 1em 2em 1em;
+}
+
+
+.facet{
+	border: 1px solid gray;
+	\-moz-border-radius: 8px;
+	\-webkit-border-radius: 8px;
+	background-color: #fff;
+	margin: 1em;
+}
+
+@sprite .facetHeader{
+	gwt-image: 'facetBackground';
+	height: 22px;
+	padding: 0.5em;
+	text-align: center;
+	font-weight: bold;
+	color: #0D0D0D;
+	border-bottom: 1px solid #f1f1f1;
+	\-moz-border-radius-topleft: 8px;
+	\-moz-border-radius-topright: 8px;
+	\-webkit-border-top-left-radius: 8px;
+	\-webkit-border-top-right-radius: 8px;
+}
+
+.facetSelectionOption{
+	display: block;
+}
+
+
+.loadingWidgetStyle{
+	vertical-align: middle;
+	font-size: 2em;
+	opacity: 0.75;
+	text-align: center;
+	width: 160px;
+	height: 32px;
+}
+
+.loadingWidgetLabelStyle { 
+	display:inline;
+}
+
+.loadingWidgetIconStyle { 
+	display:inline;
+}
+
+.toolbar{
+	padding: 0.5em;
+}
+
+.toggleButton{
+	padding: 5px 5px 5px 5px;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+	\-moz-border-radius-topleft: 8px;
+	\-moz-border-radius-topright: 8px;
+	\-webkit-border-top-left-radius: 8px;
+	\-webkit-border-top-right-radius: 8px;
+	\-moz-border-radius-bottomleft: 8px;
+	\-moz-border-radius-bottomright: 8px;
+	\-webkit-border-bottom-left-radius: 8px;
+	\-webkit-border-bottom-right-radius: 8px;
+}
+
+.toggleButtonPressed{
+	background-color: #808080;
+	color: #ffffff;
+}
+
+.toggleButtonReleased{
+	background-color: transparent;
+}
+
+.toggleButtonMouseDown{
+	background-color: #000000;
+	color: #ffffff;
+}
+
+.timeline{
+	background: #fff;
+	opacity: 0.75;
+	border: 1px solid #cccccc;
+	\-moz-border-radius-topleft: 8px;
+	\-moz-border-radius-topright: 8px;
+	\-webkit-border-top-left-radius: 8px;
+	\-webkit-border-top-right-radius: 8px;
+	\-moz-border-radius-bottomleft: 8px;
+	\-moz-border-radius-bottomright: 8px;
+	\-webkit-border-bottom-left-radius: 8px;
+	\-webkit-border-bottom-right-radius: 8px;
+}
+
+.summaryLabelStyle{
+	font-weight: bold;
+}
+
+.treeRoot{
+	font-weight: bold;
+	font-size: 1.4em;
+	background: none;
+}
+
+.summaryPropertyName {
+	font-weight: bold;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 6pt;
+}
+
+
+.summaryPropertyValue{
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 7pt;
+}
+
+.popup {
+	background: white;
+	border: 1px solid #424242;
+	padding: 2px;
+	font-size: 8pt;
+}
+
+.mainPopup {
+	background: #f2f2f2;
+	border: 4px solid #424242;
+	padding: 6px;
+}
+.textButtonStyle {	
+    font-size: 8pt;
+    vertical-align: middle;
+	text-align: center;
+}
+.searchPanel{
+	border: 1px solid gray;
+}
+.searchBox{
+	width: 140px;
+	height: 20px;
+}
+.geoprocessingLabel{
+	text-align: center;
+	font-size: 9pt;
+	font-weight: bold;
+}
+.distanceBox{
+	width: 80px;
+	height: 20px;
+}
+.routesResourceBox{
+	background-color: #FFFFFF;
+	border: 1px solid gray;
+}
