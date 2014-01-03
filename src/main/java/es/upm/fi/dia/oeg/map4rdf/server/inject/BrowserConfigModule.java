@@ -57,7 +57,7 @@ public class BrowserConfigModule extends AbstractModule {
 		bindConstant().annotatedWith(Names.named(ParameterNames.GEOMETRY_MODEL)).to(
 				Constants.GeometryModel.valueOf(config.getConfigurationParamValue(ParameterNames.GEOMETRY_MODEL)));
 
-		if (config.containsConfigurationParam(ParameterNames.FACETS_AUTO)) {
+		if (config.getConfigurationParamValue(ParameterNames.FACETS_AUTO)!=null) {
 			bindConstant().annotatedWith(Names.named(ParameterNames.FACETS_AUTO)).to(
 					Boolean.parseBoolean(config.getConfigurationParamValue(ParameterNames.FACETS_AUTO)));
 		} else {
