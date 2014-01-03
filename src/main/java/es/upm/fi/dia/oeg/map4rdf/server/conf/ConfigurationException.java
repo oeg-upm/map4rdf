@@ -28,6 +28,7 @@ package es.upm.fi.dia.oeg.map4rdf.server.conf;
  * @author Alexander De Leon
  */
 public class ConfigurationException extends Exception {
+	private static final long serialVersionUID = 3217058222428605043L;
 
 	public ConfigurationException(String message, Throwable cause) {
 		super(message, cause);

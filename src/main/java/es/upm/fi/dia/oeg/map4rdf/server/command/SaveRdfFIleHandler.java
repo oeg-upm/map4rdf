@@ -29,34 +29,23 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.http.HttpServletRequest;
+
+import com.google.inject.Inject;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
-import com.google.gwt.core.client.GWT;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
-import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.server.bootstrap.Bootstrapper;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
-import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
@@ -74,9 +63,9 @@ public class SaveRdfFIleHandler implements
 	}
 	
 	@Inject
-	public SaveRdfFIleHandler(Provider<ServletContext> provider) {
+	public SaveRdfFIleHandler(GetServletContext getServletContext) {
 		super();
-		servletContext = provider.get();
+		servletContext = getServletContext.getServletContext();
 		InputStream propIn = servletContext.getResourceAsStream(Constants.CONFIGURATION_FILE);
         try {
             config = new Configuration(propIn);
@@ -116,6 +105,6 @@ public class SaveRdfFIleHandler implements
 	public void rollback(SaveRdfFile action,
 			SingletonResult<String> result,
 			ExecutionContext context) throws ActionException {
-		// TODO Auto-generated method stub
+		
 	}
 }

@@ -39,10 +39,32 @@ public class ParameterNames {
 
 	public static final String LOGO_IMG_SRC = "ui.logo_src";
 
-	public static final String FACETS_AUTO = "facets.automactic";
+	public static final String FACETS_AUTO = "facets.automatic";
 	
 	public static final String EDIT_DEPTH = "edit_depth";
 	
 	public static final String RDF_STORE_PATH = "rdf_store_path";
+	
+	public static final String ROUTES_SERVICE_TIMEOUT_MILISECONDS = "route_service_timeout_ms";
+	
+	public static final String DEFAULT_PROJECTION = "default_projection";
+	
+	public static final String MAP_DEFAULT_CENTER= "map_default_center";
+	
+	public static final String MAP_ZOOM_LEVEL = "map_zoom_level";
+	
+	public static final String SPHERICAL_MERCATOR = "spherical_mercator";
+	
+	public static final String WIKIPEDIA_PARSE_URL = "wikipedia_parse_url";
+	
+	public static final String SUMMARY_WIDGETS = "summary_widgets";
+	
+	public static final String TWITTER_STATUS_URL = "twitter_status_url";
+	
+	public static final String STATISTICS_SERVICE_URL = "statistics_service_url";
+	
+	public static final String ADDITIONAL_INFO = "additional_info";
+	
+	
 
 }

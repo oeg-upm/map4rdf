@@ -44,11 +44,13 @@ import com.google.inject.Singleton;
  * @author Alexander De Leon
  */
 @Singleton
-public class DispatchServiceServlet extends net.customware.gwt.dispatch.server.service.DispatchServiceServlet {
-
+public class DispatchServiceServlet extends net.customware.gwt.dispatch.server.standard.AbstractStandardDispatchServlet {
+	private static final long serialVersionUID = 8593467048102477648L;
+	Dispatch dispatch;
 	@Inject
 	public DispatchServiceServlet(Dispatch dispatch) {
-		super(dispatch);
+		super();
+		this.dispatch=dispatch;
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class DispatchServiceServlet extends net.customware.gwt.dispatch.server.s
 	static SerializationPolicy loadSerializationPolicy(HttpServlet servlet, HttpServletRequest request,
 			String moduleBaseURL, String strongName) {
 		// The serialization policy path depends only by contraxt path
-		String contextPath = request.getContextPath();
+		//String contextPath = request.getContextPath();
 
 		SerializationPolicy serializationPolicy = null;
 
@@ -99,6 +101,11 @@ public class DispatchServiceServlet extends net.customware.gwt.dispatch.server.s
 		}
 
 		return serializationPolicy;
+	}
+
+	@Override
+	protected Dispatch getDispatch() {
+		return dispatch;
 	}
 
 }

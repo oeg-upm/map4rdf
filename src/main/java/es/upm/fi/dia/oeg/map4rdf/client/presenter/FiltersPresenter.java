@@ -25,21 +25,13 @@
 package es.upm.fi.dia.oeg.map4rdf.client.presenter;
 
 
-import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ToggleButton;
 
-import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
-import net.customware.gwt.presenter.client.place.Place;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 import com.google.inject.Inject;
@@ -47,14 +39,8 @@ import com.google.inject.Singleton;
 
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterModeChangeEvent;
-import es.upm.fi.dia.oeg.map4rdf.client.navigation.Places;
-import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
-import java.util.ArrayList;
-import java.util.List;
 
 import name.alexdeleon.lib.gwtblocks.client.ControlPresenter;
-import name.alexdeleon.lib.gwtblocks.client.PagePresenter;
-import net.customware.gwt.presenter.client.place.PlaceChangedEvent;
 
 /**
  * @author Filip
@@ -67,13 +53,10 @@ public class FiltersPresenter extends  ControlPresenter<FiltersPresenter.Display
         public ToggleButton getDrawButton();
         public PushButton getClearButton();
 	}
-    
-	private final DispatchAsync dispatchAsync;
 	
 	@Inject
-	public FiltersPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync) {
+	public FiltersPresenter(Display display, EventBus eventBus) {
 		super(display, eventBus);
-		this.dispatchAsync = dispatchAsync;
 		onBind();
 	}
 
@@ -106,20 +89,13 @@ public class FiltersPresenter extends  ControlPresenter<FiltersPresenter.Display
 	
 	@Override
 	protected void onUnbind() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	@Override
-	public void refreshDisplay() {
-		// TODO Auto-generated method stub
 		
+
 	}
 
 	@Override
-	public void revealDisplay() {
-		// TODO Auto-generated method stub
+	protected void onRevealDisplay() {
+		
 		
 	}
 

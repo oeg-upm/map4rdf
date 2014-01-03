@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class PolyLineBean extends PolygonBean implements PolyLine {
 
+	private static final long serialVersionUID = 1493946792206580089L;
+
 	PolyLineBean() {
 		super();
 	}

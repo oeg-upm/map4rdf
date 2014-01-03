@@ -74,6 +74,6 @@ public class GetSubjectDescriptionsHandler implements
 	public void rollback(GetSubjectDescriptions action,
 			ListResult<SubjectDescription> result,
 			ExecutionContext context) throws ActionException {
-		// TODO Auto-generated method stub
+		
 	}
 }

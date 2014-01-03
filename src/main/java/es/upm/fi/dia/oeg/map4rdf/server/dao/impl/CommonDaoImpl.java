@@ -77,7 +77,8 @@ public class CommonDaoImpl {
 		return query.toString();
 	}
 	
-	protected StringBuilder addBoundingBoxFilter(StringBuilder query, BoundingBox boundingBox) {
+	protected StringBuilder addBoundingBoxFilter(StringBuilder originalQuery, BoundingBox boundingBox) {
+		StringBuilder query= new StringBuilder(originalQuery.toString());
 		query.append(" FILTER(");
 	    query.append("(");
 		
@@ -105,13 +106,13 @@ public class CommonDaoImpl {
 		
 		query.append(") || (");
 				
-		//d1 = px*(ay-by) + py*(bx-ax) + (ax*by-ay*bx);        
+		//d1 = px*(ay-by) + py*(bx-ax) + (ax*by-ay*bx); 
 		query.append("(");
 		query.append("xsd:double(?lng) * " + "((" + boundingBox.getBottom().getY() + ")" + "-" + "(" + boundingBox.getLeft().getY() + "))"+ "+");
 		query.append("xsd:double(?lat) * " + "((" + boundingBox.getLeft().getX() + ")" + "-" + "(" + boundingBox.getBottom().getX() + "))"+ "+");
 		query.append("((" + boundingBox.getBottom().getX() + ")*(" + boundingBox.getLeft().getY() + ") - (" + boundingBox.getBottom().getY() + ")*(" + boundingBox.getLeft().getX() + "))");
 		query.append(") >= 0");
-		
+
 		query.append("&&");
 		//d2 = px*(by-cy) + py*(cx-bx) + (bx*cy-by*cx);
 		query.append("(");

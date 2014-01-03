@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
@@ -51,9 +52,10 @@ public class EditResourceWidget extends Composite{
 	private String subjectLabel;
 	private DispatchAsync dispatchAsync;
 	private BrowserMessages messages;
-	private FlowPanel panel;	
+	//private FlowPanel panel;	
 	private Display display;
 	private EventBus eventBus;
+	private SafeHtml emptyHtml;
 	
 	public EditResourceWidget(String resuorceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus) {
 		this.resourceUrl=resuorceUrl;
@@ -70,7 +72,15 @@ public class EditResourceWidget extends Composite{
 	private Widget createUi() {
 	 	mainPanel = new FlowPanel();    	
     	tree = new Tree();
-    	root = new TreeItem("");
+    	emptyHtml=new SafeHtml() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public String asString() {
+				
+				return "";
+			}
+		};
+    	root = new TreeItem(emptyHtml);
     	backButton = new PushButton(new Image(resources.backButton()));
     	saveButton = new PushButton(new Image(resources.saveButton()));
     	backButton.setSize("25px", "25px");
@@ -85,7 +95,7 @@ public class EditResourceWidget extends Composite{
     	toolbar.add(backButton);
     	tree.addItem(root);
      	root.setStyleName("treeRoot");
-     	root.addItem(new TreeItem(""));
+     	root.addItem(emptyHtml);
      	mainPanel.add(container);
     	container.add(toolbar);
     	container.add(tree);
@@ -201,7 +211,7 @@ public class EditResourceWidget extends Composite{
 			}
 			TreeItem leaf = new TreeItem(editableDescription.getWidget());
 			if (editableDescription.getSubjectDescriptions().getObject().isResource() && editableDescription.getDepth() < maxDepth) {
-				leaf.addItem("");
+				leaf.addItem(emptyHtml);
 			}
 			target.addItem(leaf);
 		}

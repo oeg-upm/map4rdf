@@ -27,7 +27,6 @@ package es.upm.fi.dia.oeg.map4rdf.client;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.StyleInjector;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -56,7 +55,7 @@ public class BrowserUi extends ResizeComposite implements AppController.Display 
 	private Widget createUi(BrowserResources resources) {
 		DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
 		panel.addNorth(new Header(resources), 88);
-		// panel.addSouth(new Footer(resources), 25);
+		//panel.addSouth(new Footer(resources), 25);
 		panel.add(appView);
 
 		return panel;
@@ -73,18 +72,6 @@ public class BrowserUi extends ResizeComposite implements AppController.Display 
 	@Override
 	public Widget asWidget() {
 		return this;
-	}
-
-	@Override
-	public void startProcessing() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void stopProcessing() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

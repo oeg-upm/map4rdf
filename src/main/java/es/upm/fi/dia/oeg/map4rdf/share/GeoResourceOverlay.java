@@ -29,6 +29,8 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  */
 public class GeoResourceOverlay extends Resource {
 
+	private static final long serialVersionUID = -2953312428136324673L;
+
 	private GeoResource entity;
 
 	private double value;

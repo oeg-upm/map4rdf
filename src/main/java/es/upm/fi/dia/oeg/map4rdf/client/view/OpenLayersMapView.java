@@ -20,31 +20,31 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 
-import org.gwtopenmaps.openlayers.client.layer.Vector;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import es.upm.fi.dia.oeg.map4rdf.client.event.EditResourceEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
+import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapLayer;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummary;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.MapShapeStyleFactory;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
+import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygon;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
@@ -53,32 +53,35 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
  * @author Alexander De Leon
  */
 public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.OpenLayersMapView implements
-		MapPresenter.Display {
+		MapPresenter.Display{
 
 	private final Image kmlButton;
 	private final GeoResourceSummary summary;
 	private final MapLayer.PopupWindow window;
-	private final EventBus eventBus;
+	//private final EventBus eventBus;
+	private Map<String,List<Point>> points;
 	
 	@Inject
-	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,BrowserResources browserResources, EventBus eventBus) {
-		super(widgetFactory, dispatchAsync,browserResources);
-		this.eventBus = eventBus;
+	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources) {
+		super(widgetFactory, dispatchAsync,eventBus,browserResources);
+		//this.eventBus = eventBus;
 		kmlButton = createKMLButton();
 		summary = widgetFactory.createGeoResourceSummary();
 		window = getDefaultLayer().createPopupWindow();
 		window.add(summary);
+		points=new HashMap<String, List<Point>>();	
 	}
 
 	@Override
-	public void drawGeoResouces(List<GeoResource> resources) {
+	public void drawGeoResouces(List<GeoResource> resources,DrawPointStyle pointStyle) {
 		for (GeoResource resource : resources) {
-			drawGeoResource(resource);
+			drawGeoResource(resource,pointStyle);
 		}
 	}
 
 	@Override
 	public void clear() {
+		points.clear();
 		getDefaultLayer().clear();
 		window.close();
 	}
@@ -90,49 +93,78 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 
 	/* --------------- helper methods -- */
 
-	private void drawGeoResource(final GeoResource resource) {
-		final OpenLayersMapView display = this;
+	private void drawGeoResource(final GeoResource resource, DrawPointStyle drawStyle) {
 		for (Geometry geometry : resource.getGeometries()) {
 			switch (geometry.getType()) {
 			case POINT:
 				final Point point = (Point) geometry;
-				getDefaultLayer().draw(point).addClickHandler(new ClickHandler() {
+				if(points.get(resource.getUri())==null){
+					points.put(resource.getUri(), new ArrayList<Point>());
+				}
+				points.get(resource.getUri()).add(point);
+				getDefaultLayer().draw(point,drawStyle).addClickHandler(new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						
-						summary.setGeoResource(resource, point, display);
-						setEditLink(resource);
+						window.close();
+						summary.setGeoResource(resource, point);
+						removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+						drawGeoResource(resource, new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+						//setEditLink(resource);
 						window.open(point);
 					}
 				});
 				break;
 			case POLYLINE:
 				final PolyLine line = (PolyLine) geometry;
-				getDefaultLayer().drawPolyline(MapShapeStyleFactory.createStyle(line)).addClickHandler(
+				getDefaultLayer().drawPolyline(MapShapeStyleFactory.createStyle(line,drawStyle),drawStyle).addClickHandler(
 						new ClickHandler() {
 
 							@Override
 							public void onClick(ClickEvent event) {
-								summary.setGeoResource(resource, line, display);
-								setEditLink(resource);
+								window.close();
+								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+								summary.setGeoResource(resource, line);
+								//setEditLink(resource);
 								window.open(line.getPoints().get(0));
 							}
 						});
 				break;
 			case POLYGON:
 				final Polygon polygon = (Polygon) geometry;
-				getDefaultLayer().drawPolygon(MapShapeStyleFactory.createStyle(polygon)).addClickHandler(
+				getDefaultLayer().drawPolygon(MapShapeStyleFactory.createStyle(polygon,drawStyle),drawStyle).addClickHandler(
 						new ClickHandler() {
 
 							@Override
 							public void onClick(ClickEvent event) {
-								summary.setGeoResource(resource, polygon, display);
-								setEditLink(resource);
+								window.close();
+								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+								summary.setGeoResource(resource, polygon);
+								//setEditLink(resource);
 								window.open(polygon.getPoints().get(0));
-
 							}
 						});
+				break;
+			case CIRCLE:
+				break;
+			case MULTIPOLYGON:
+				MultiPolygon multiPolygon = (MultiPolygon) geometry;
+				for(final Polygon poly: multiPolygon.getPolygons()){
+					getDefaultLayer().drawPolygon(MapShapeStyleFactory.createStyle(poly,drawStyle),drawStyle).addClickHandler(
+							new ClickHandler() {
+
+								@Override
+								public void onClick(ClickEvent event) {
+									window.close();
+									removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+									summary.setGeoResource(resource, poly);
+									//setEditLink(resource);
+									window.open(poly.getPoints().get(0));
+								}
+							});
+				}
+				break;
+			default:
 				break;
 			}
 
@@ -147,18 +179,34 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 	
 	@Override
 	public void closeWindow() {
+		removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
 		window.close();
+		summary.closeSummary();
 	}
 	
 	
-	private void setEditLink(final GeoResource resource){
-		summary.getEditLink().addClickListener(new ClickListener() {
+	/*private void setEditLink(final GeoResource resource){
+		summary.getEditLink().addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onClick(Widget sender) {
-				EditResourceEvent event = new EditResourceEvent(resource.getUri());
-				eventBus.fireEvent(event);
+			public void onClick(ClickEvent event) {
+				
+				EditResourceEvent editEvent = new EditResourceEvent(resource.getUri());
+				eventBus.fireEvent(editEvent);
 			}
 		});
+	}*/
+	@Override
+	public void removePolylines() {
+		
+		getDefaultLayer().removePolylines();
 	}
+
+	@Override
+	public void removePointsStyle(DrawPointStyle pointStyle) {
+		
+		getDefaultLayer().removePointsStyle(pointStyle);
+	}
+
+
 }

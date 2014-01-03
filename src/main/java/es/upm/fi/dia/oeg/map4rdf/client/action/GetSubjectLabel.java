@@ -26,13 +26,13 @@ package es.upm.fi.dia.oeg.map4rdf.client.action;
 
 import java.io.Serializable;
 import net.customware.gwt.dispatch.shared.Action;
-import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 
 /**
  * @author Filip
  */
 public class GetSubjectLabel implements Serializable, Action<SingletonResult<String>> {
 
+	private static final long serialVersionUID = 1522086591680070708L;
 	private String label;
 
 	public GetSubjectLabel() {

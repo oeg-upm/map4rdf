@@ -24,13 +24,14 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.action;
 
-import java.io.Serializable;
 import net.customware.gwt.dispatch.shared.Action;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 /**
  * @author Alexander De Leon
  */
 public class GetGeoResourcesAsKmlUrl extends GetGeoResourcesBase implements Action<SingletonResult<String>> {
+
+	private static final long serialVersionUID = -2487905598341429230L;
 
 	GetGeoResourcesAsKmlUrl() {
 		// for serialization

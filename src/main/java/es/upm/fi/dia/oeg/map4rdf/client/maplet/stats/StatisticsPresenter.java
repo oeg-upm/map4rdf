@@ -83,32 +83,24 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 		
 		void refreshTimeline();
 
+		void stopProcessing();
+
+		void startProcessing();
+
 	}
 
 	private final DispatchAsync dispatchAsync;
 	private StatisticDefinition currentStatistic;
 	private final MapLayer mapLayer;
-	private final MapPresenter mapPresenter;
+	//private final MapPresenter mapPresenter;
 	@Inject
 	public StatisticsPresenter(Display view, EventBus eventBus, MapPresenter mapPresenter, DispatchAsync dispatchAsync) {
 		super(view, eventBus);
 		this.dispatchAsync = dispatchAsync;
-		this.mapPresenter =  mapPresenter;
+		//this.mapPresenter =  mapPresenter;
 		mapLayer = mapPresenter.getDisplay().createLayer("statistics");
 		view.setMapLayer(mapLayer);
 		eventBus.addHandler(AreaFilterChangedEvent.getType() ,this);
-	}
-
-	@Override
-	public void refreshDisplay() {
-		// nothing
-
-	}
-
-	@Override
-	public void revealDisplay() {
-		// nothing
-
 	}
 
 	@Override
@@ -169,7 +161,7 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 		dispatchAsync.execute(action, new AsyncCallback<ListResult<Year>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				getDisplay().stopProcessing();
 			}
 
@@ -189,7 +181,7 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 		dispatchAsync.execute(action, new AsyncCallback<ListResult<GeoResourceOverlay>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				getDisplay().stopProcessing();
 			}
 
@@ -240,5 +232,12 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 			AreaFilterChangedEvent areaFilterChangedEvent) {
 		getDisplay().clear();
 		drawStatistics();
+	}
+
+
+	@Override
+	protected void onRevealDisplay() {
+		
+		
 	}
 }

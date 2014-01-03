@@ -21,6 +21,7 @@
 package es.upm.fi.dia.oeg.map4rdf.client.widget;
 
 import es.upm.fi.dia.oeg.map4rdf.client.style.StyleMapShape;
+import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.MapShape;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
@@ -33,6 +34,13 @@ public class MapShapeStyleFactory {
 
 	public static StyleMapShape<PolyLine> createStyle(PolyLine polyLine) {
 		StyleMapShapeImpl<PolyLine> style = new StyleMapShapeImpl<PolyLine>(polyLine);
+		style.setStrokeWidth(4);
+		return style;
+	}
+	public static StyleMapShape<PolyLine> createStyle(PolyLine polyLine, DrawPointStyle drawStyle) {
+		StyleMapShapeImpl<PolyLine> style = new StyleMapShapeImpl<PolyLine>(polyLine);
+		style.setStrokeWidth(4);
+		style.setStrokeColor(drawStyle.getFacetHexColour());
 		return style;
 	}
 
@@ -42,19 +50,35 @@ public class MapShapeStyleFactory {
 		style.setFillColor(null);
 		return style;
 	}
-
-	public static StyleMapShape<Circle> createStyle(Circle circle) {
-		StyleMapShapeImpl style = new StyleMapShapeImpl(circle);
-		style.setStrokeColor("green");
-		style.setFillColor("green");
-		style.setFillOpacity(0.4);
+	public static StyleMapShape<Polygon> createStyle(Polygon polygon,DrawPointStyle drawStyle) {
+		StyleMapShapeImpl<Polygon> style = new StyleMapShapeImpl<Polygon>(polygon);
+		style.setStrokeWidth(4);
+		style.setFillColor(null);
+		style.setStrokeColor(drawStyle.getFacetHexColour());
 		return style;
 	}
 
+	public static StyleMapShape<Circle> createStyle(Circle circle) {
+		StyleMapShapeImpl<Circle> style = new StyleMapShapeImpl<Circle>(circle);
+		style.setStrokeColor("green");
+		style.setFillColor("green");
+		style.setFillOpacity(0.4);
+		style.setStrokeOpacity(1.0);
+		return style;
+	}
+	public static StyleMapShape<Circle> createStyle(Circle circle,DrawPointStyle drawStyle) {
+		StyleMapShapeImpl<Circle> style = new StyleMapShapeImpl<Circle>(circle);
+		style.setStrokeColor(drawStyle.getFacetHexColour());
+		style.setFillColor(drawStyle.getFacetHexColour());
+		style.setFillOpacity(0.4);
+		style.setStrokeOpacity(1.0);
+		return style;
+	}
+	
 	private static class StyleMapShapeImpl<E extends MapShape> implements StyleMapShape<E> {
 
 		private final E mapShape;
-		private String strokeColor = "0000FF";
+		private String strokeColor = "#0000FF";
 		private int strokeWidth = 1;
 		private String fillColor = null;
 		private double strokeOpacity = 1;

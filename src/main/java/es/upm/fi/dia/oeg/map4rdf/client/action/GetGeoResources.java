@@ -32,6 +32,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
  * @author Alexander De Leon
  */
 public class GetGeoResources extends GetGeoResourcesBase implements Action<ListResult<GeoResource>> {
+	
+	private static final long serialVersionUID = 3283308574724600274L;
 
 	GetGeoResources() {
 		// for serialization

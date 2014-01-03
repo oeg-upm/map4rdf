@@ -25,13 +25,34 @@
 package es.upm.fi.dia.oeg.map4rdf.server.inject;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetAddInfoConfig;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResources;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitions;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResource;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourceOverlays;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResources;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePoints;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticDatasets;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticYears;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
+import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetFacetDefinitionsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceOverlaysHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetBufferGeoResourcesHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetAddInfoConfigHandler;
 //import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesAsKmlUrlHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetConfigurationParameterHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesAsKmlUrlHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetMapsConfigurationHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetMultipleConfigurationParametersHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetRoutePointsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticDatasetsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticYearsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectDescriptionsHandler;
@@ -44,16 +65,21 @@ public class BrowserActionHandlerModule extends ActionHandlerModule {
 
 	@Override
 	protected void configureHandlers() {
-		bindHandler(GetGeoResourcesHandler.class);
-		bindHandler(GetFacetDefinitionsHandler.class);
-        bindHandler(GetGeoResourceOverlaysHandler.class);
-		bindHandler(GetStatisticYearsHandler.class);
-		bindHandler(GetStatisticDatasetsHandler.class);
-		bindHandler(GetGeoResourceHandler.class);
-		bindHandler(GetSubjectDescriptionsHandler.class);
-		bindHandler(GetSubjectLabelHandler.class);
-		bindHandler(GetGeoResourcesAsKmlUrlHandler.class);
-		bindHandler(SaveRdfFIleHandler.class);
-		bindHandler(GetConfigurationParameterHandler.class);
+		super.bindHandler(GetGeoResources.class,GetGeoResourcesHandler.class);
+		super.bindHandler(GetFacetDefinitions.class,GetFacetDefinitionsHandler.class);
+        super.bindHandler(GetGeoResourceOverlays.class,GetGeoResourceOverlaysHandler.class);
+		super.bindHandler(GetStatisticYears.class,GetStatisticYearsHandler.class);
+		super.bindHandler(GetStatisticDatasets.class,GetStatisticDatasetsHandler.class);
+		super.bindHandler(GetGeoResource.class, GetGeoResourceHandler.class);
+		super.bindHandler(GetSubjectDescriptions.class, GetSubjectDescriptionsHandler.class);
+		super.bindHandler(GetSubjectLabel.class,GetSubjectLabelHandler.class);
+		super.bindHandler(GetGeoResourcesAsKmlUrl.class,GetGeoResourcesAsKmlUrlHandler.class);
+		super.bindHandler(SaveRdfFile.class,SaveRdfFIleHandler.class);
+		super.bindHandler(GetConfigurationParameter.class,GetConfigurationParameterHandler.class);
+		super.bindHandler(GetRoutePoints.class,GetRoutePointsHandler.class);
+		super.bindHandler(GetBufferGeoResources.class,GetBufferGeoResourcesHandler.class);
+		super.bindHandler(GetAddInfoConfig.class, GetAddInfoConfigHandler.class);
+		super.bindHandler(GetMultipleConfigurationParameters.class, GetMultipleConfigurationParametersHandler.class);
+		super.bindHandler(GetMapsConfiguration.class, GetMapsConfigurationHandler.class);
 	}
 }

@@ -30,14 +30,20 @@ import java.io.Serializable;
  * @author Alexander De Leon
  */
 public class FacetConstraint implements Serializable {
-
+	private static final long serialVersionUID = 1128884213367657016L;
 	String facetId;
 	String facetValueId;
+	String hexColour;
 
 	FacetConstraint() {
 		// for serialization
 	}
 
+	public FacetConstraint(String facetId, String hexColour,String facetValueId) {
+		this.facetId = facetId;
+		this.hexColour=hexColour;
+		this.facetValueId = facetValueId;
+	}
 	public FacetConstraint(String facetId, String facetValueId) {
 		this.facetId = facetId;
 		this.facetValueId = facetValueId;
@@ -49,6 +55,9 @@ public class FacetConstraint implements Serializable {
 
 	public String getFacetValueId() {
 		return facetValueId;
+	}
+	public String getHexColour(){
+		return hexColour;
 	}
 
 	@Override

@@ -15,10 +15,8 @@
         <filter-name>guiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
    <!-- Bootstrapping -->
     <listener>
         <listener-class>es.upm.fi.dia.oeg.map4rdf.server.bootstrap.Bootstrapper</listener-class>
     </listener>
-
-    </web-app>
+</web-app>

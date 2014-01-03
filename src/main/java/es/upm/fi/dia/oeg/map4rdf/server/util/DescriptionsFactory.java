@@ -1,9 +1,7 @@
 package es.upm.fi.dia.oeg.map4rdf.server.util;
 
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
-import es.upm.fi.dia.oeg.map4rdf.share.BasicRDFInformation;
 import es.upm.fi.dia.oeg.map4rdf.share.RDFLiteral;
 import es.upm.fi.dia.oeg.map4rdf.share.RDFResource;
 import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;

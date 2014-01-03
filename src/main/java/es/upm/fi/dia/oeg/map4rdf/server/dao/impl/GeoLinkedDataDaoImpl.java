@@ -70,7 +70,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
 public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private static final Logger LOG = Logger.getLogger(GeoLinkedDataDaoImpl.class);
-
+	
 	@Inject
 	public GeoLinkedDataDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
 		super(endpointUri);
@@ -95,14 +95,11 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
-		// TODO: use location to restrict the query to the specifies geographic
-		// area.
-
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
 
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
-
+		//String lastFacetType=null;
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
@@ -122,17 +119,32 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 						Literal labelLiteral = solution.getLiteral("label");
 						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
 					}
+					if(solution.contains("seeAlso")){
+						String seeAlso = solution.getResource("seeAlso").getURI();
+						//System.out.println("seeAlso: "+seeAlso);
+						//System.out.println("contains(wikipedia): "+seeAlso.contains("wikipedia"));
+						if(seeAlso.toString().toLowerCase().contains("wikipedia")){
+							resource.addWikipediaURL(seeAlso);
+						}
+					}
+					if(solution.contains("facetType")){
+						resource.addFacetType(solution.getResource("facetType").getURI());
+						//lastFacetType=solution.getResource("facetType").getURI();
+					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
+			//result.put("null", new GeoResource("Un punto del EPSG:23030", new PointBean("Centrada", 423099.45795635181,4456995.0407910971, "EPSG:23030")));
 			return new ArrayList<GeoResource>(result.values());
 		} catch (Exception e) {
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
 		}
-	};
+	}
 
 	@Override
 	public GeoResource getGeoResource(String uri) throws DaoException {
@@ -198,13 +210,12 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	@Override
 	public List<Facet> getFacets(String predicateUri, BoundingBox boundingBox) throws DaoException {
 		Map<String, Facet> result = new HashMap<String, Facet>();
-
 		StringBuilder queryBuffer = new StringBuilder();
 		queryBuffer.append("select distinct ?class ?label where { ");
 		queryBuffer.append("?x <" + Geo.geometry + "> ?g. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }}");
-
+		//System.out.println(queryBuffer.toString());
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
 
 		try {
@@ -226,6 +237,7 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -284,14 +296,31 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			while (queryResult.hasNext()) {
 				QuerySolution solution = queryResult.next();
 				try {
-					double lat = solution.getLiteral("lat").getDouble();
-					double lng = solution.getLiteral("lng").getDouble();
-					return new PointBean(uri, lng, lat);
+					if(solution.contains("lat") 
+							&& !solution.getLiteral("lat").getString().equals("") 
+							&& solution.contains("lng") 
+							&& !solution.getLiteral("lng").getString().equals("")){
+						double lat = solution.getLiteral("lat").getDouble();
+						double lng = solution.getLiteral("lng").getDouble();
+						return new PointBean(uri, lng, lat);
+					}
+					if(solution.contains("coordX")
+							&& !solution.getLiteral("coordX").getString().equals("")
+							&& solution.contains("coordY")
+							&& !solution.getLiteral("coordY").getString().equals("")
+							&& solution.contains("crs")
+							&& !solution.getLiteral("crs").getString().equals("")){
+						double lat = solution.getLiteral("coordY").getDouble();
+						double lng = solution.getLiteral("coordX").getDouble();
+						String crs = solution.getLiteral("crs").getString();
+						return new PointBean(uri, lng, lat,crs);
+					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -351,7 +380,62 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			execution.close();
 		}
 	}
+	@Override
+	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max) throws DaoException {
+		
+		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
 
+		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetNextPointsQuery(boundingBox, max));
+
+		try {
+			ResultSet queryResult = execution.execSelect();
+			while (queryResult.hasNext()) {
+				QuerySolution solution = queryResult.next();
+				try {
+					String uri = solution.getResource("r").getURI();
+					String geoUri = solution.getResource("geo").getURI();
+					String geoTypeUri = solution.getResource("geoType").getURI();
+					GeoResource resource = result.get(uri);
+					if (resource == null) {
+						resource = new GeoResource(uri, getGeometry(geoUri, geoTypeUri));
+						result.put(uri, resource);
+					} else if (!resource.hasGeometry(geoUri)) {
+						resource.addGeometry(getGeometry(geoUri, geoTypeUri));
+					}
+					if (solution.contains("label")) {
+						Literal labelLiteral = solution.getLiteral("label");
+						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
+					}
+				} catch (NumberFormatException e) {
+					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
+				}
+			}
+			return new ArrayList<GeoResource>(result.values());
+		} catch (Exception e) {
+			throw new DaoException("Unable to execute SPARQL query", e);
+		} finally {
+			execution.close();
+		}
+	}
+	private String createGetNextPointsQuery(BoundingBox boundingBox, int max){
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?geo ?geoType ?lat ?lng ");
+		query.append("WHERE { ");
+		query.append("?r <" + Geo.geometry + ">  ?geo. ");
+		query.append("?geo <" + RDF.type + "> ?geoType . ");
+		query.append("?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".");
+		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
+		//filters
+		if (boundingBox!=null) {
+			query = super.addBoundingBoxFilter(query, boundingBox);
+		}
+		query.append("}");
+		if (max >0) {
+			query.append(" LIMIT " + max);
+		}
+		//System.out.println("Query buffer:"+query.toString());
+		return query.toString();
+	}
 
 	private String createGetStatisticDatasetsQuery() {
 		StringBuilder query = new StringBuilder("SELECT DISTINCT ?uri ?label WHERE { ");
@@ -381,40 +465,47 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	}
 
 	private String createGetPointQuery(String uri) {
-		StringBuilder query = new StringBuilder("SELECT ?lat ?lng WHERE { ");
-		query.append("<" + uri + "> <" + Geo.lat + ">  ?lat ; ");
-		query.append("<" + Geo.lng + "> ?lng . ");
+		StringBuilder query = new StringBuilder("PREFIX geo-oeg: <http://www.oeg-upm.net/ontologies/geo#> ");
+		query.append("SELECT ?lat ?lng ?coordX ?coordY ?crs WHERE { ");
+		query.append("{<" + uri + "> <" + Geo.lat + ">  ?lat ; ");
+		query.append("<" + Geo.lng + "> ?lng . }");
+		query.append(" UNION ");
+		query.append("{<" + uri + "> " +"geo-oeg:coordX ?coordX; geo-oeg:coordY ?coordY; geo-oeg:crs ?crs }");
 		query.append("}");
 		return query.toString();
 	}
-
+	
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
-		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?geo ?geoType ?lat ?lng ");
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
+		query.append("SELECT distinct ?r ?label ?geo ?geoType ?lat ?lng ?seeAlso ?facetType ");
 		query.append("WHERE { ");
 		query.append("?r <" + Geo.geometry + ">  ?geo. ");
 		query.append("?geo <" + RDF.type + "> ?geoType . ");
-		query.append("?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".");
-		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
+		query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
+		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
+		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
 		if (constraints != null) {
 			for (FacetConstraint constraint : constraints) {
 				query.append("{ ?r <" + constraint.getFacetId() + "> <" + constraint.getFacetValueId() + ">. } UNION");
 			}
 			query.delete(query.length() - 5, query.length());
+			for (FacetConstraint constraint : constraints) {
+				query.append(" OPTIONAL{ ?r <" + constraint.getFacetId() + "> ?facetType. }.");
+			}
 		}
-		
 		//filters
 		if (boundingBox!=null) {
-			query = addBoundingBoxFilter(query, boundingBox);
+			query = super.addBoundingBoxFilter(query, boundingBox);
 		}
-		
 		query.append("}");
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
 		}
+		
 		return query.toString();
 	}
 
-	private String createGetResourcesFallbackQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints,
+	/*private String createGetResourcesFallbackQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints,
 			Integer limit) {
 		StringBuilder query = new StringBuilder("SELECT distinct ?r ?label ");
 		query.append("WHERE { ");
@@ -433,7 +524,7 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			query.append(" LIMIT " + limit);
 		}
 		return query.toString();
-	}
+	}*/
 
 	private String createGetStatisticsQuery(BoundingBox boundingBox, StatisticDefinition statisticDefinition) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?stat ?statValue ?geo ?lat ?lng ");
@@ -467,4 +558,5 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		return query.toString();
 	}
 
+	
 }

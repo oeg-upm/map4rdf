@@ -64,9 +64,13 @@ body{
 	height: 32px;
 }
 
-.loadingWidgetLabelStyle { }
+.loadingWidgetLabelStyle { 
+	display:inline;
+}
 
-.loadingWidgetIconStyle { }
+.loadingWidgetIconStyle { 
+	display:inline;
+}
 
 .toolbar{
 	padding: 0.5em;
@@ -91,7 +95,7 @@ body{
 	color: #ffffff;
 }
 
-.toggleButtonReleased{white
+.toggleButtonReleased{
 	background-color: transparent;
 }
 
@@ -127,23 +131,49 @@ body{
 .summaryPropertyName {
 	font-weight: bold;
 	font-family: Verdana, Arial, sans-serif;
-	font-size: 0.6em;
+	font-size: 6pt;
 }
 
 
 .summaryPropertyValue{
 	font-family: Verdana, Arial, sans-serif;
-	font-size: 0.6em;
+	font-size: 7pt;
 }
 
 .popup {
 	background: white;
 	border: 1px solid #424242;
 	padding: 2px;
+	font-size: 8pt;
 }
 
 .mainPopup {
 	background: #f2f2f2;
 	border: 4px solid #424242;
 	padding: 6px;
+}
+.textButtonStyle {	
+    font-size: 8pt;
+    vertical-align: middle;
+	text-align: center;
+}
+.searchPanel{
+	border: 1px solid gray;
+}
+.searchBox{
+	width: 140px;
+	height: 20px;
+}
+.geoprocessingLabel{
+	text-align: center;
+	font-size: 9pt;
+	font-weight: bold;
+}
+.distanceBox{
+	width: 80px;
+	height: 20px;
+}
+.routesResourceBox{
+	background-color: #FFFFFF;
+	border: 1px solid gray;
 }

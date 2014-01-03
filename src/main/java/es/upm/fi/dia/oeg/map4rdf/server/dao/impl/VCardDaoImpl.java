@@ -90,9 +90,6 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
-		// TODO: use location to restrict the query to the specifies geographic
-		// area.
-
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
 
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
@@ -363,6 +360,12 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("OPTIONAL { <" + uri + "> <" + RDFS.label + "> ?label } .");
 		query.append("}");
 		return query.toString();
+	}
+
+	@Override
+	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max) throws DaoException {
+		
+		return new ArrayList<GeoResource>();
 	}
 
 }

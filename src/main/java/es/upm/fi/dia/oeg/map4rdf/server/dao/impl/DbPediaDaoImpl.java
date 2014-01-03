@@ -134,11 +134,11 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		queryBuffer.append("?x <" + Geo.lng + "> _:lng. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }}");
-
+		//System.out.println(queryBuffer.toString());
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
-
 		try {
 			ResultSet queryResult = execution.execSelect();
+			//System.out.println("Se recogen los resultados:");
 			while (queryResult.hasNext()) {
 				QuerySolution solution = queryResult.next();
 				String uri = solution.getResource("class").getURI();
@@ -153,9 +153,11 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					Literal label = solution.getLiteral("label");
 					value.addLabel(label.getLanguage(), label.getString());
 				}
+				//System.out.println("++Facet=> URI: "+value.getUri()+" Default label: "+value.getDefaultLabel());
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -176,15 +178,13 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	/* --------------------- helper methods --- */
 
-	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
+	@Override
+	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max)
 			throws DaoException {
-		// TODO: use location to restrict the query to the specifies geographic
-		// area.
-
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
 
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
-				createGetResourcesQuery(boundingBox, constraints, max));
+				createGetNextPointsQuery(boundingBox, max));
 
 		try {
 			ResultSet queryResult = execution.execSelect();
@@ -217,6 +217,49 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		}
 	}
 
+	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
+			throws DaoException {
+		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
+
+		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetResourcesQuery(boundingBox, constraints, max));
+
+		try {
+			ResultSet queryResult = execution.execSelect();
+			while (queryResult.hasNext()) {
+				QuerySolution solution = queryResult.next();
+				try {
+					String uri = solution.getResource("r").getURI();
+					double lat = solution.getLiteral("lat").getDouble();
+					double lng = solution.getLiteral("lng").getDouble();
+
+					GeoResource resource = result.get(uri);
+					if (resource == null) {
+						resource = new GeoResource(uri, new PointBean(uri, lng, lat));
+						result.put(uri, resource);
+					}
+					if (solution.contains("label")) {
+						Literal labelLiteral = solution.getLiteral("label");
+						if(!resource.getLangs().contains(labelLiteral.getLanguage())){
+							resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
+						}
+					}
+					if(solution.contains("facetType")){
+						resource.addFacetType(solution.getResource("facetType").getURI());
+					}
+				} catch (NumberFormatException e) {
+					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
+				}
+			}
+
+			return new ArrayList<GeoResource>(result.values());
+		} catch (Exception e) {
+			throw new DaoException("Unable to execute SPARQL query", e);
+		} finally {
+			execution.close();
+		}
+	}
+
 	/**
 	 * @param boundingBox
 	 * @param constraints
@@ -225,7 +268,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	 */
 	
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
-		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?lat ?lng ");
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?lat ?lng ?facetType ");
 		query.append("WHERE { ");
 		query.append("?r <" + Geo.lat + "> ?lat. ");
 		query.append("?r <" + Geo.lng + "> ?lng . ");
@@ -235,8 +278,10 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				query.append("{ ?r <" + constraint.getFacetId() + "> <" + constraint.getFacetValueId() + ">. } UNION");
 			}
 			query.delete(query.length() - 5, query.length());
+			for (FacetConstraint constraint : constraints) {
+				query.append(" OPTIONAL{ ?r <" + constraint.getFacetId() + "> ?facetType. }.");
+			}
 		}
-		
 		//filters
 		if (boundingBox!=null) {
 			query = addBoundingBoxFilter(query, boundingBox);
@@ -246,6 +291,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
 		}
+		//System.out.println(query.toString());
 		return query.toString();
 	}
 	
@@ -259,4 +305,22 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("}");
 		return query.toString();
 	}
+	private String createGetNextPointsQuery(BoundingBox boundingBox, int max){
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?lat ?lng ");
+		query.append("WHERE { ");
+		query.append("?r <" + Geo.lat + "> ?lat. ");
+		query.append("?r <" + Geo.lng + "> ?lng . ");
+		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
+		//filters
+		if (boundingBox!=null) {
+			query = addBoundingBoxFilter(query, boundingBox);
+		}
+		
+		query.append("}");
+		if (max > 0) {
+			query.append(" LIMIT " + max);
+		}
+		return query.toString();
+	}
+
 }

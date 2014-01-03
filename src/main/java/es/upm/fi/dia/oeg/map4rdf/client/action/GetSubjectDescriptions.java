@@ -33,6 +33,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
  */
 public class GetSubjectDescriptions implements Serializable, Action<ListResult<SubjectDescription>> {
 
+	private static final long serialVersionUID = -4185001264506959562L;
 	private String subject;
 
 	public GetSubjectDescriptions() {

@@ -39,9 +39,10 @@ public class FacetValueSelectionChangedEvent extends GwtEvent<FacetValueSelectio
 
 	private final String selectionOptionId;
 	private final boolean selectionValue;
-
-	public FacetValueSelectionChangedEvent(String selectionOptionId, boolean selectionValue) {
+	private final String hexColour;
+	public FacetValueSelectionChangedEvent(String hexColour,String selectionOptionId, boolean selectionValue) {
 		super();
+		this.hexColour=hexColour;
 		this.selectionOptionId = selectionOptionId;
 		this.selectionValue = selectionValue;
 	}
@@ -52,6 +53,9 @@ public class FacetValueSelectionChangedEvent extends GwtEvent<FacetValueSelectio
 
 	public boolean getSelectionValue() {
 		return selectionValue;
+	}
+	public String getHexColour(){
+		return hexColour;
 	}
 
 	@Override

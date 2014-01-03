@@ -29,6 +29,7 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  */
 public class Year extends Resource {
 
+	private static final long serialVersionUID = 2223119515519954945L;
 	private Integer value;
 
 	Year() {

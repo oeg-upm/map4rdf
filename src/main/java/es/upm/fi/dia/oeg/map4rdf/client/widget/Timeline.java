@@ -30,16 +30,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.gen2.picker.client.SliderBar;
-import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.google.gwt.user.client.ui.SimplePanel;
 
 import es.upm.fi.dia.oeg.map4rdf.share.Year;
@@ -52,11 +47,7 @@ public class Timeline extends SimplePanel implements HasValueChangeHandlers<Year
 	public interface Stylesheet {
 		String timeline();
 	}
-
-	private final FlowPanel panel = new FlowPanel();
 	private List<Year> sortedYears;
-	private double prevVal = -1;
-	private boolean mouseDown;
 	private SliderBar slider;
 
 	public Timeline(Stylesheet stylesheet) {
@@ -88,15 +79,11 @@ public class Timeline extends SimplePanel implements HasValueChangeHandlers<Year
 
 	public void setCurrentValue(int index, boolean fireEvent) {
 		slider.setCurrentValue(index, fireEvent);
-		if (!fireEvent) {
-			prevVal = index;
-		}
 	}
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		SliderBar.injectDefaultCss();
 	}
 
 	private SliderBar createSlider(int years) {
@@ -118,36 +105,12 @@ public class Timeline extends SimplePanel implements HasValueChangeHandlers<Year
 	}
 
 	private void bindEvents(SliderBar slider) {
-		slider.addMouseDownHandler(new MouseDownHandler() {
-
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				mouseDown = true;
-			}
-		});
-		slider.addMouseUpHandler(new MouseUpHandler() {
-
-			@Override
-			public void onMouseUp(MouseUpEvent event) {
-				mouseDown = false;
-
-			}
-		});
 		slider.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (mouseDown) {
-					return;
-				}
 				double val = event.getValue();
-				if (val == prevVal) {
-					return;
-				}
 				double intVal = Math.floor(val);
-				if (val - intVal == 0) {
-					prevVal = val;
-					ValueChangeEvent.fire(Timeline.this, sortedYears.get((int) intVal));
-				}
+				ValueChangeEvent.fire(Timeline.this, sortedYears.get((int) intVal));
 			}
 		});
 

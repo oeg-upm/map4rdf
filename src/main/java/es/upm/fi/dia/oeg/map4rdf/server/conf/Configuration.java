@@ -24,7 +24,6 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.conf;
 
-import com.google.inject.Guice;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;

@@ -24,7 +24,7 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.command;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
@@ -41,7 +41,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.conf.FacetedBrowserConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
-import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
+//import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.Facet;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetGroup;
 
@@ -73,7 +73,6 @@ public class GetFacetDefinitionsHandler implements ActionHandler<GetFacetDefinit
 		} catch (ConfigurationException e) {
 			throw new ActionException(e);
 		}
-
 		if (automaticFacets) {
 			for (FacetGroup group : groups) {
 				try {
@@ -101,7 +100,7 @@ public class GetFacetDefinitionsHandler implements ActionHandler<GetFacetDefinit
 	}
 
 	/* ----------------------- helper methods -- */
-	private List<FacetGroup> populateFacetGroupsAutomatic(List<FacetGroup> facets, BoundingBox boundingBox)
+	/*private List<FacetGroup> populateFacetGroupsAutomatic(List<FacetGroup> facets, BoundingBox boundingBox)
 			throws DaoException {
 		List<FacetGroup> groups = new ArrayList<FacetGroup>();
 
@@ -113,5 +112,5 @@ public class GetFacetDefinitionsHandler implements ActionHandler<GetFacetDefinit
 			groups.add(facetGroup);
 		}
 		return groups;
-	}
+	}*/
 }

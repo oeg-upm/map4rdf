@@ -28,6 +28,7 @@ package es.upm.fi.dia.oeg.map4rdf.server.dao;
  * @author Alexander De Leon
  */
 public class DaoException extends Exception {
+	private static final long serialVersionUID = -7081953968914670642L;
 
 	public DaoException(String message, Throwable cause) {
 		super(message, cause);

@@ -24,8 +24,14 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client;
 
+import java.util.HashMap;
+
 import net.customware.gwt.presenter.client.place.PlaceChangedEvent;
 import net.customware.gwt.presenter.client.place.PlaceManager;
+import net.customware.gwt.presenter.client.place.DefaultPlaceManager;
+import net.customware.gwt.presenter.client.place.PlaceRequest;
+import net.customware.gwt.presenter.client.place.TokenFormatException;
+import net.customware.gwt.presenter.client.place.TokenFormatter;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -51,17 +57,53 @@ public class Browser implements EntryPoint {
 		injector = GWT.create(Injector.class);
 		} catch (Exception e) {
 			injector = null;
+			e.printStackTrace();
+			//System.err.println(e);
 		}
-		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus(),
-                injector.getDashboard());
+		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus());
+		controller.addPresenter(injector.getDashboard(),Places.DASHBOARD);
             
 		controller.bind();
 		
 		RootLayoutPanel.get().add(controller.getDisplay().asWidget());
-		PlaceManager placeManager = new PlaceManager(injector.getEventBus());
+		TokenFormatter tokenFormatter = new TokenFormatter() {
+			private HashMap<String, PlaceRequest> tokenPlaces=new HashMap<String,PlaceRequest>();
+			private HashMap<PlaceRequest, String> placeTokens=new HashMap<PlaceRequest,String>();
+			@Override
+			public PlaceRequest toPlaceRequest(String token)
+					throws TokenFormatException {
+				
+				PlaceRequest toReturn;
+				if(tokenPlaces.containsKey(token)){
+					toReturn=tokenPlaces.get(token);
+				}else{
+					toReturn = new PlaceRequest(token);
+					tokenPlaces.put(token, toReturn);
+					placeTokens.put(toReturn, token);
+				}
+				return toReturn;
+			}
+			
+			@Override
+			public String toHistoryToken(PlaceRequest placeRequest)
+					throws TokenFormatException {
+				String token;
+				if(placeTokens.containsKey(placeRequest)){
+					token=placeTokens.get(placeRequest);
+				}else{
+					token=placeRequest.getName();
+					tokenPlaces.put(token, placeRequest);
+					placeTokens.put(placeRequest, token);
+				}
+				
+				return token;
+			}
+		};
+		PlaceManager placeManager = new DefaultPlaceManager(injector.getEventBus(), tokenFormatter) {
+		};
 		if (History.getToken() == null || History.getToken().length() == 0) {
 			// Go to the default place
-			injector.getEventBus().fireEvent(new PlaceChangedEvent(Places.DEFAULT.request()));
+			injector.getEventBus().fireEvent(new PlaceChangedEvent(Places.DEFAULT));
 		}
 		// Trigger history tokens.
 		

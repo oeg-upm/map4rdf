@@ -24,21 +24,16 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.command;
 
-import java.util.List;
-
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
 
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
-import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
-import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 
 /**
  * @author Filip
@@ -76,6 +71,6 @@ public class GetSubjectLabelHandler implements
 	public void rollback(GetSubjectLabel action,
 			SingletonResult<String> result,
 			ExecutionContext context) throws ActionException {
-		// TODO Auto-generated method stub
+		
 	}
 }

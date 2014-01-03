@@ -4,8 +4,6 @@ import org.gwtopenmaps.openlayers.client.Map;
 import org.gwtopenmaps.openlayers.client.control.DrawFeature;
 import org.gwtopenmaps.openlayers.client.control.DrawFeatureOptions;
 import org.gwtopenmaps.openlayers.client.event.VectorBeforeFeatureAddedListener;
-import org.gwtopenmaps.openlayers.client.event.VectorBeforeFeatureAddedListener.BeforeFeatureAddedEvent;
-import org.gwtopenmaps.openlayers.client.feature.VectorFeature;
 import org.gwtopenmaps.openlayers.client.handler.RegularPolygonHandler;
 import org.gwtopenmaps.openlayers.client.layer.Vector;
 

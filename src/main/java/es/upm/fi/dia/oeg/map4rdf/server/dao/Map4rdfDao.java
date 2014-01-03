@@ -67,4 +67,7 @@ public interface Map4rdfDao {
 	List<SubjectDescription> getSubjectDescription(String subject) throws DaoException;
 	
 	String getLabel(String uri) throws DaoException;
+	
+	List<GeoResource> getNextPoints(BoundingBox boundingBox, int max) throws DaoException;
+
 }

@@ -31,8 +31,8 @@ import net.customware.gwt.dispatch.shared.Result;
 /**
  * @author Alexander De Leon
  */
-public class SingletonResult<E extends Serializable> implements Result {
-
+public class SingletonResult<E extends Serializable> implements Result,Serializable {
+	private static final long serialVersionUID = 8463009159067529666L;
 	private E value;
 
 	SingletonResult() {
@@ -69,7 +69,7 @@ public class SingletonResult<E extends Serializable> implements Result {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		SingletonResult other = (SingletonResult) obj;
+		SingletonResult<?> other = (SingletonResult<?>) obj;
 		if (value == null) {
 			if (other.value != null) {
 				return false;

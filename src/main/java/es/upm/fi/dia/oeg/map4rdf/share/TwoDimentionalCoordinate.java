@@ -28,9 +28,11 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  * @author Alexander De Leon
  */
 public interface TwoDimentionalCoordinate extends MapShape {
-
+	
 	double getX();
 
 	double getY();
+	
+	String getProjection();
 
 }

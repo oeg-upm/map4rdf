@@ -26,14 +26,17 @@ package es.upm.fi.dia.oeg.map4rdf.share;
 
 import java.io.Serializable;
 
+
 /**
  * @author Alexander De Leon
  */
 public class TwoDimentionalCoordinateBean implements TwoDimentionalCoordinate, Serializable {
 
+	private static final long serialVersionUID = 3381260503500449198L;
 	private double x;
 	private double y;
-
+	private String projection;
+	private static String defaultProjection;
 	TwoDimentionalCoordinateBean() {
 		// for serialization
 	}
@@ -46,8 +49,19 @@ public class TwoDimentionalCoordinateBean implements TwoDimentionalCoordinate, S
 	public TwoDimentionalCoordinateBean(double x, double y) {
 		this.x = x;
 		this.y = y;
+		projection=defaultProjection;
 	}
-
+	public TwoDimentionalCoordinateBean(double x, double y, String projection) {
+		this.x = x;
+		this.y = y;
+		this.projection=projection;
+	}
+	public static void setDefaultProjection(String projection){
+		defaultProjection=projection;
+	}
+	public static String getDefaultProjection(){
+		return defaultProjection;
+	}
 	@Override
 	public double getX() {
 		return x;
@@ -56,6 +70,12 @@ public class TwoDimentionalCoordinateBean implements TwoDimentionalCoordinate, S
 	@Override
 	public double getY() {
 		return y;
+	}
+
+	@Override
+	public String getProjection() {
+		
+		return projection;
 	}
 
 	@Override

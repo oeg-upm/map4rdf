@@ -26,13 +26,13 @@ package es.upm.fi.dia.oeg.map4rdf.client.action;
 
 import java.io.Serializable;
 import net.customware.gwt.dispatch.shared.Action;
-import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 
 /**
  * @author Filip
  */
 public class SaveRdfFile implements Serializable, Action<SingletonResult<String>> {
 
+	private static final long serialVersionUID = 7947658047319654699L;
 	private String name;
 	private String content;
 

@@ -84,7 +84,7 @@ public class StatisticsSelectionDialog extends PrettyPopup implements HasSelecti
 
 	protected void initDatasetList(List<Resource> datasets) {
 		for (Resource dataset : datasets) {
-			datasetList.addItem(dataset.getLabel(LocaleUtil.getClientLanguage()), dataset.getUri());
+			datasetList.addItem(LocaleUtil.getBestLabel(dataset), dataset.getUri());
 		}
 	}
 

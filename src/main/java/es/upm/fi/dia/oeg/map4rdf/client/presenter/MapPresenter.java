@@ -24,7 +24,7 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.presenter;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -52,24 +52,29 @@ import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterModeChangeEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterModeChangeHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.event.CloseMapMainPopupEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.CloseMapMainPopupHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapView;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
-import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
+//import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 /**
  * @author Alexander De Leon
  */
 @Singleton
-public class MapPresenter extends ControlPresenter<MapPresenter.Display> implements FacetConstraintsChangedHandler, AreaFilterModeChangeHandler, AreaFilterClearHandler {
+public class MapPresenter extends ControlPresenter<MapPresenter.Display> implements FacetConstraintsChangedHandler, AreaFilterModeChangeHandler, AreaFilterClearHandler, CloseMapMainPopupHandler, FacetReloadHandler {
 
 	private Set<FacetConstraint> facetConstraints;
 	private final DispatchAsync dispatchAsync;
-	private StatisticDefinition statisticDefinition;
+	//private StatisticDefinition statisticDefinition;
 	
 	public interface Display extends WidgetDisplay, MapView {
 
@@ -78,9 +83,13 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		BoundingBox getVisibleBox();
 
 		void setVisibleBox(BoundingBox boundingBox);
-
-		void drawGeoResouces(List<GeoResource> resources);
-
+		
+		void removePointsStyle(DrawPointStyle pointStyle);
+		
+		void removePolylines();
+		
+		void drawGeoResouces(List<GeoResource> resources,DrawPointStyle pointStyle);
+		
 		void clear();
 		
 		void setAreaFilterDrawing(Boolean value);
@@ -90,15 +99,19 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		Vector getFilterVector();
 		
 		HasClickHandlers getKmlButton();
+
+		
 	}
 
 	@Inject
 	public MapPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync) {
 		super(display, eventBus);
 		this.dispatchAsync = dispatchAsync;
+		eventBus.addHandler(FacetReloadEvent.getType(), this);
 		eventBus.addHandler(FacetConstraintsChangedEvent.getType(), this);
 		eventBus.addHandler(AreaFilterModeChangeEvent.getType(), this);
 		eventBus.addHandler(AreaFilterClearEvent.getType(), this);
+		eventBus.addHandler(CloseMapMainPopupEvent.getType(), this);
 	}
 
 	public TwoDimentionalCoordinate getCurrentCenter() {
@@ -112,14 +125,24 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 	public void setVisibleBox(BoundingBox boundingBox) {
 		getDisplay().setVisibleBox(boundingBox);
 	}
-
+	
+	public void drawGeoResouces(List<GeoResource> resources, DrawPointStyle pointStyle) {
+		getDisplay().drawGeoResouces(resources, pointStyle);
+	}
+	
 	public void drawGeoResouces(List<GeoResource> resources) {
-		getDisplay().drawGeoResouces(resources);
+		getDisplay().drawGeoResouces(resources, new DrawPointStyle());
+	}
+	
+	public void removePointsStyle(DrawPointStyle pointStyle){
+		getDisplay().removePointsStyle(pointStyle);
 	}
 
 	public void clear() {
-		getDisplay().clear();
-		facetConstraints = null;
+		//getDisplay().clear();
+		//For remove only default(facets) points
+		//This dont remove polylines of routes and other special points.
+		getDisplay().removePointsStyle(null);
 	}
 	
 	public void clearDrawing(){
@@ -129,6 +152,15 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 	@Override
 	public void onFacetConstraintsChanged(FacetConstraintsChangedEvent event) {
 		facetConstraints = event.getConstraints();
+	}
+
+	@Override
+	public void onFacetReload() {
+		if(facetConstraints!=null){
+			eventBus.fireEvent(new FacetConstraintsChangedEvent(facetConstraints));
+		}else{
+			eventBus.fireEvent(new FacetConstraintsChangedEvent(new HashSet<FacetConstraint>()));
+		}
 	}
 
 	/* ----------- presenter callbacks -- */
@@ -165,19 +197,8 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 
 	@Override
 	protected void onUnbind() {
-		// TODO Auto-generated method stub
+		
 
-	}
-
-	@Override
-	public void refreshDisplay() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void revealDisplay() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -191,6 +212,18 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 			getDisplay().getFilterVector().destroyFeatures();
 			eventBus.fireEvent(new AreaFilterChangedEvent());		
 		}
+	}
+
+	@Override
+	public void closeMapMainPopup() {
+		
+		getDisplay().getDefaultLayer().getMapView().closeWindow();
+	}
+
+	@Override
+	protected void onRevealDisplay() {
+		
+		
 	}
 
 }

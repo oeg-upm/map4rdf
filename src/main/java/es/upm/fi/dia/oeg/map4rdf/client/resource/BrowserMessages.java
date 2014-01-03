@@ -26,7 +26,9 @@ import com.google.gwt.i18n.client.Messages;
  * @author Miguel Angel Garcia Delgado
  */
 public interface BrowserMessages extends Messages {
-
+	
+	String facets();
+	
 	String statistics();
 
 	String results();
@@ -44,6 +46,8 @@ public interface BrowserMessages extends Messages {
 	String latitude();
 
 	String longitude();
+	
+	String crs();
 
 	String information();
 	
@@ -56,4 +60,133 @@ public interface BrowserMessages extends Messages {
 	String draw();
 	
 	String canNotLoaddescription();
+	
+	String geoprocessing();
+	
+	String routes();
+	
+	String buttonTraceRoute();
+	
+	String error2OrMorePoints();
+	
+	String errorCommunication();
+	
+	String errorNotRouteTo();
+	
+	String searchAResource();
+	
+	String search();
+	
+	String buttonSearchAResourceTooltip();
+	
+	String close();
+	
+	String errorNotGeoResource();
+	
+	String error0Search();
+	
+	String errorNotSearchText();
+	
+	String specialsChars();
+	
+	String specialsCharsSubstitution();
+	
+	String messageAddRoutePoint();
+	
+	String buffer();
+	
+	String addToRoutes();
+	
+	String setToBuffer();
+	
+	String errorConvertDistance();
+	
+	String errorDistanceNegative();
+	
+	String errorDistanceUnit();
+	
+	String bufferIntro();
+	
+	String currentCenter();
+	
+	String searchCenter();
+	
+	String distance();
+	
+	String unit();
+	
+	String drawPoints();
+	
+	String infoResource();
+	
+	String twitterTitle();
+	
+	String wikipediaTitle();
+	
+	String rdfTitle();
+	
+	String wikipediaNotFound();
+	
+	String gotoWikipedia();
+	
+	String wikipedia();
+	
+	String URLSpecialChars();
+	
+	String URLSpecialCharsSubstitution();
+	
+	String warning();
+	
+	String estimatedTime();
+	
+	String copyrights();
+	
+	String routeAlternatives();
+	
+	String avoidHighways();
+	
+	String avoidTolls();
+	
+	String optimizeWaypoints();
+	
+	String yes();
+	
+	String no();
+	
+	String travelMode();
+	
+	String bicycling();
+	
+	String driving();
+	
+	String walking();
+	
+	String zeroResults();
+	
+	String maxWaypointsExceeded();
+	
+	String overQueryLimit();
+	
+	String unknownError();
+	
+	String requestDenied();
+	
+	String nameRoute();
+	
+	String moreOptions();
+	
+	String statisticsEmpty();
+	
+	String errorNotDimensions();
+	
+	String statisticsChoose();
+	
+	String statisticsDimensionXChoose();
+	
+	String statisticsDimensionYChoose();
+	
+	String statisticsAggrChoose();
+	
+	String statisticsErrorNotAggr();
+
 }

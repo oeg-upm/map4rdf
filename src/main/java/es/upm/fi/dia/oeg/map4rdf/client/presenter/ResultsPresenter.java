@@ -30,9 +30,14 @@ import name.alexdeleon.lib.gwtblocks.client.ControlPresenter;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetAddEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetChangeHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetDoSelectedEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetRemoveEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 
@@ -40,19 +45,27 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
  * @author Alexander De Leon
  */
 @Singleton
-public class ResultsPresenter extends ControlPresenter<ResultsPresenter.Display> {
+public class ResultsPresenter extends ControlPresenter<ResultsPresenter.Display> implements ResultWidgetChangeHandler{
 
 	public interface Display extends WidgetDisplay {
 
 		void clear();
 
 		void addResourceLink(String name, String uri);
-
+		
+		void addWidget(Widget widget,String header);
+		
+		void removeWidget(Widget widget);
+		
+		void doSelectedWidget(Widget widget);
 	}
 
 	@Inject
 	public ResultsPresenter(Display display, EventBus eventBus) {
 		super(display, eventBus);
+		eventBus.addHandler(ResultWidgetAddEvent.getType(), this);
+		eventBus.addHandler(ResultWidgetDoSelectedEvent.getType(), this);
+		eventBus.addHandler(ResultWidgetRemoveEvent.getType(), this);
 	}
 
 	public void clear() {
@@ -74,29 +87,32 @@ public class ResultsPresenter extends ControlPresenter<ResultsPresenter.Display>
 			getDisplay().addResourceLink(label == null ? resource.getUri() : label, resource.getUri());
 		}
 	}
+	public void addWidget(Widget widget,String header){
+		getDisplay().addWidget(widget, header);
+	}
+	public void removeWidget(Widget widget){
+		getDisplay().removeWidget(widget);
+	}
+	public void doSelectedWidget(Widget widget){
+		getDisplay().doSelectedWidget(widget);
+	}
 
 	@Override
 	protected void onBind() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	protected void onUnbind() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
-	public void refreshDisplay() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void revealDisplay() {
-		// TODO Auto-generated method stub
-
+	protected void onRevealDisplay() {
+		
+		
 	}
 
 }

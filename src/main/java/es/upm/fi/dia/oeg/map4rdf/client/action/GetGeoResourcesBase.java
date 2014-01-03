@@ -35,6 +35,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
  */
 public class GetGeoResourcesBase implements Serializable {
 
+	private static final long serialVersionUID = 1996952130908817348L;
 	private BoundingBox boundingBox;
 	private Set<FacetConstraint> facetConstraints;
 

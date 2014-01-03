@@ -24,7 +24,7 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.inject;
 
-import net.customware.gwt.dispatch.client.gin.ClientDispatchModule;
+import net.customware.gwt.dispatch.client.gin.StandardDispatchModule;
 import net.customware.gwt.presenter.client.EventBus;
 
 import com.google.gwt.inject.client.GinModules;
@@ -36,9 +36,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
 /**
  * @author Alexander De Leon
  */
-@GinModules( { InjectorModule.class, ClientDispatchModule.class })
+@GinModules( { InjectorModule.class, StandardDispatchModule.class })
 public interface Injector extends Ginjector {
-
 	DashboardPresenter getDashboard();
     EventBus getEventBus();
 	BrowserUi getBrowserUi();

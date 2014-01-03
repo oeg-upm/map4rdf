@@ -24,13 +24,17 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.ResultsPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 
 /**
  * @author Alexander De Leon
@@ -38,14 +42,18 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.ResultsPresenter;
 public class ResultsView extends Composite implements ResultsPresenter.Display {
 
 	private final FlowPanel table;
-
-	public ResultsView() {
+	private TabLayoutPanel tabs;
+	@Inject
+	public ResultsView(BrowserMessages browserMessages) {
 		table = new FlowPanel();
-		initWidget(createUi());
+		initWidget(createUi(browserMessages.facets()));
 	}
 
-	private Widget createUi() {
-		return new ScrollPanel(table);
+	private Widget createUi(String mainHeader) {
+		ScrollPanel scrollPanel = new ScrollPanel(table);
+		tabs= new TabLayoutPanel(22, Unit.PX);
+		tabs.add(scrollPanel, mainHeader);
+		return tabs;
 	}
 
 	@Override
@@ -69,15 +77,25 @@ public class ResultsView extends Composite implements ResultsPresenter.Display {
 	}
 
 	@Override
-	public void startProcessing() {
-		// TODO Auto-generated method stub
-
+	public void addWidget(Widget widget, String name) {
+		
+		tabs.add(widget, name);
 	}
 
 	@Override
-	public void stopProcessing() {
-		// TODO Auto-generated method stub
+	public void removeWidget(Widget widget) {
+		
+		if(tabs.getWidgetIndex(widget)!=-1){
+			tabs.remove(widget);
+		}
+	}
 
+	@Override
+	public void doSelectedWidget(Widget widget) {
+		
+		if(tabs.getWidgetIndex(widget)!=-1){
+			tabs.selectTab(widget);
+		}
 	}
 
 }

@@ -24,14 +24,15 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.share;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Alexander De Leon
  */
-public class FacetGroup extends Resource {
-
+public class FacetGroup extends Resource implements Serializable {
+	private static final long serialVersionUID = -1299745573860498740L;
 	private int order;
 	private ArrayList<Facet> facets;
 

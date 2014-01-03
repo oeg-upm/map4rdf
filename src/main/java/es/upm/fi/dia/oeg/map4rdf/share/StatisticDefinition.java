@@ -33,6 +33,7 @@ import java.util.List;
  */
 public class StatisticDefinition implements Serializable {
 
+	private static final long serialVersionUID = -4231060651913401552L;
 	private String dataset;
 	private ArrayList<String> dimensions = new ArrayList<String>();
 

@@ -5,6 +5,7 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  */
 public class RDFResource implements BasicRDFInformation {
 
+	private static final long serialVersionUID = -2504984834219187065L;
 	private String localName;
 	private String namespace;
 	private URLSafety URI;

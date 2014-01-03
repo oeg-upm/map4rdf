@@ -20,10 +20,13 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.view.v2;
 
+
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 import es.upm.fi.dia.oeg.map4rdf.client.style.StyleMapShape;
+import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
@@ -34,16 +37,20 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
  */
 public interface MapLayer {
     
-	HasClickHandlers draw(Point point);
+	HasClickHandlers draw(Point point, DrawPointStyle pointStyle);
 
-	HasClickHandlers drawPolygon(StyleMapShape<Polygon> polygon);
+	HasClickHandlers drawPolygon(StyleMapShape<Polygon> polygon, DrawPointStyle pointStyle);
 
-	HasClickHandlers drawPolyline(StyleMapShape<PolyLine> polyline);
+	HasClickHandlers drawPolyline(StyleMapShape<PolyLine> polyline, DrawPointStyle pointStyle);
 
 	HasClickHandlers drawCircle(StyleMapShape<Circle> circle);
 
 	HasClickHandlers drawCircle(StyleMapShape<Circle> circle, String text);
-
+	
+	void removePolylines();
+	
+	void removePointsStyle(DrawPointStyle pointStyle);
+	
 	PopupWindow createPopupWindow();
 
 	void clear();
@@ -55,6 +62,5 @@ public interface MapLayer {
 		void open(Point location);
 
 		void close();
-
 	}
 }

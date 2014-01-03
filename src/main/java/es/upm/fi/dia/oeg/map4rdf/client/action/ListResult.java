@@ -34,8 +34,9 @@ import net.customware.gwt.dispatch.shared.Result;
 /**
  * @author Alexander De Leon
  */
-public class ListResult<E extends Serializable> implements Result, Iterable<E> {
+public class ListResult<E extends Serializable> implements Result, Iterable<E>, Serializable {
 
+	private static final long serialVersionUID = 3221848099776219068L;
 	ArrayList<E> results = new ArrayList<E>();
 
 	public ListResult() {
@@ -82,7 +83,7 @@ public class ListResult<E extends Serializable> implements Result, Iterable<E> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		ListResult other = (ListResult) obj;
+		ListResult<?> other = (ListResult<?>) obj;
 		if (results == null) {
 			if (other.results != null) {
 				return false;

@@ -8,7 +8,8 @@ import com.google.gwt.http.client.URL;
  * @author Filip
  */
 public class URLSafety implements Serializable{
-	
+
+	private static final long serialVersionUID = -6925392770266991624L;
 	private String url;
 	
 	

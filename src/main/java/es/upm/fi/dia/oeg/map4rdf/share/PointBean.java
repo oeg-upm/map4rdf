@@ -32,6 +32,7 @@ import java.util.Collection;
  */
 public class PointBean extends TwoDimentionalCoordinateBean implements Point {
 
+	private static final long serialVersionUID = 1964531761711579070L;
 	private String uri;
 
 	PointBean() {
@@ -40,6 +41,10 @@ public class PointBean extends TwoDimentionalCoordinateBean implements Point {
 
 	public PointBean(String uri, double x, double y) {
 		super(x, y);
+		this.uri = uri;
+	}
+	public PointBean(String uri, double x, double y, String projection) {
+		super(x, y, projection);
 		this.uri = uri;
 	}
 

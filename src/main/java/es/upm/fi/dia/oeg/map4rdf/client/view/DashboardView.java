@@ -26,10 +26,8 @@ package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -50,9 +48,10 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 	private final StackLayoutPanel leftPanel;
 	private final LayoutPanel mapPanel;
 	private final ScrollPanel mainPopupPanel;
-		
+	//private BrowserResources resources;
 	@Inject
 	public DashboardView(BrowserResources resources) {
+		//this.resources=resources;
 		mapPanel = new LayoutPanel();
 		splitPanel = new SplitLayoutPanel();
 		leftPanel = new StackLayoutPanel(Unit.EM);
@@ -68,7 +67,7 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 	}
 
 	@Override
-	public HasWidgets getMapPanel() {
+	public Panel getMapPanel() {
 		return mapPanel;
 	}
 
@@ -79,18 +78,77 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 	}
 
 	@Override
-	public void startProcessing() {
-		// empty
-
-	}
-
-	@Override
-	public void stopProcessing() {
-		// empty
-	}
-	@Override
 	public void clear() {
 		leftPanel.showWidget(0);
+	}
+	
+	@Override
+	public void closeMainPopup() {
+		mainPopupPanel.clear();
+		mainPopupPanel.setVisible(false);
+	}
+
+	@Override
+	public void doSelectedWestWidget(Widget widget) {
+		
+		//if(widget isChildrenOf leftPanel)
+		if(leftPanel.getWidgetIndex(widget)!=-1){
+			leftPanel.showWidget(widget);
+		}
+	}
+
+	@Override
+	public void setMainPopup(Integer width, Integer height, Widget widget, String style) {
+		width-=50;
+		height-=50;
+		mainPopupPanel.clear();
+		mainPopupPanel.setVisible(true);
+		mainPopupPanel.setWidget(widget);
+		if(width==null || width<0){
+			width=200;
+			mainPopupPanel.setWidth("auto");
+		}else{
+			mainPopupPanel.setWidth(width+"px");
+		}
+		if(height==null || height<0){
+			height=200;
+			mainPopupPanel.setHeight("auto");
+		}else{
+			mainPopupPanel.setHeight(height+"px");
+		}
+		if(style==null || style.equals("")){
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "15px");		
+		}else if(style.equals("Geoprocessing")){
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "");
+			DOM.removeElementAttribute(mainPopupPanel.getElement(),"top");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "bottom", "15px");
+			DOM.setStyleAttribute(widget.getElement(), "left", (int)(width*0.06)+"px");
+		} else if(style.equals("Big")){
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "15px");
+			widget.setSize(width-3+"px", height-3+"px");
+			/*DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "");
+			DOM.removeElementAttribute(mainPopupPanel.getElement(),"top");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "");
+			DOM.removeElementAttribute(mainPopupPanel.getElement(),"left");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "right", "");
+			DOM.removeElementAttribute(mainPopupPanel.getElement(),"right");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "bottom", "");
+			DOM.removeElementAttribute(mainPopupPanel.getElement(),"bottom");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "50%");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "50%");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "marginTop", (-(height/2)-2)+"px");
+			DOM.setStyleAttribute(mainPopupPanel.getElement(), "marginLeft",(-(width/2)-2)+"px");
+			DOM.setElementAttribute(mainPopupPanel.getElement(), "align", "center");*/
+			/*DOM.setStyleAttribute(widget.getParent().getElement(), "width", "99%");
+			DOM.setStyleAttribute(widget.getParent().getElement(), "height", "99%");*/
+		}
 	}
 	
 	/* ------------------- Helper methods -- */
@@ -99,32 +157,18 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 
 		centerPanel.setWidgetTopHeight(mapPanel, 0, Unit.EM, 100, Unit.PCT);
 		centerPanel.setWidgetLeftWidth(mapPanel, 0, Unit.EM, 100, Unit.PCT);
-
-		splitPanel.addWest(leftPanel, 200);
+		
+		splitPanel.addWest(leftPanel, 275);
 		splitPanel.add(centerPanel);
+		
 		leftPanel.addStyleName(resources.css().leftMenu());
+		
 		mapPanel.add(mainPopupPanel);
 		mainPopupPanel.setVisible(false);
 		mainPopupPanel.setStyleName(resources.css().mainPopup());
 		return splitPanel;
 	}
 
-	@Override
-	public void setMainPopup(Integer width, Integer height, Widget widget) {
-		width-=50;
-		height-=50;
-		mainPopupPanel.clear();
-		mainPopupPanel.setVisible(true);
-		mainPopupPanel.add(widget);
-		mainPopupPanel.setSize(width+"px", height+"px");
-		DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
-		DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
-		DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "15px");
-	}
 
-	@Override
-	public void closeMainPopup() {
-		mainPopupPanel.clear();
-		mainPopupPanel.setVisible(false);
-	}
+	
 }

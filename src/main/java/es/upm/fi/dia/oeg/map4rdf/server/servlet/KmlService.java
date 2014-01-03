@@ -45,11 +45,14 @@ import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.LineString;
 import de.micromata.opengis.kml.v_2_2_0.MultiGeometry;
 import de.micromata.opengis.kml.v_2_2_0.Placemark;
+import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
+import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygon;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
@@ -59,7 +62,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
  */
 @Singleton
 public class KmlService extends HttpServlet {
-
+	private static final long serialVersionUID = 4451922424233735357L;
 	private final Map4rdfDao dao;
 
 	@Inject
@@ -83,8 +86,7 @@ public class KmlService extends HttpServlet {
 		Kml kml = new Kml();
 		Document doc = kml.createAndSetDocument();
 		for (GeoResource resource : resources) {
-			// TODO: how to know client language
-			Placemark placemark = doc.createAndAddPlacemark().withName(resource.getLabel("es"));
+			Placemark placemark = doc.createAndAddPlacemark().withName(LocaleUtil.getBestLabel(resource));
 			if (resource.isMultiGeometry()) {
 				MultiGeometry multiGeometry = new MultiGeometry();
 				for (Geometry geometry : resource.getGeometries()) {
@@ -126,13 +128,36 @@ public class KmlService extends HttpServlet {
 				kmlPolygon.addToCoordinates(polygonPoint.getX(), polygonPoint.getY());
 			}
 			return kmlPolygon;
+		case CIRCLE:
+			Circle circle = (Circle) geometry;
+			de.micromata.opengis.kml.v_2_2_0.LinearRing kmlCircle= new de.micromata.opengis.kml.v_2_2_0.LinearRing();
+			double distanceStep=0.001;
+			double deegreeStep=360/((2*Math.PI*circle.getRadius())/distanceStep);
+			for(double degree=0;degree<360;degree+=deegreeStep){
+				double plusX = Math.sin(Math.toRadians(degree))*circle.getRadius();
+				double plusY = Math.cos(Math.toRadians(degree))*circle.getRadius();
+				kmlCircle.addToCoordinates(circle.getCenter().getX()+plusX, circle.getCenter().getY()+plusY);
+			}
+			return kmlCircle;
+		case MULTIPOLYGON:
+			MultiPolygon multiPolygon = (MultiPolygon) geometry;
+			de.micromata.opengis.kml.v_2_2_0.MultiGeometry kmlMultiPolygon = new MultiGeometry();
+			for(Polygon polygonM:multiPolygon.getPolygons()){
+				de.micromata.opengis.kml.v_2_2_0.LinearRing kmlPolygonM = new de.micromata.opengis.kml.v_2_2_0.LinearRing();
+				for (Point polygonPoint : polygonM.getPoints()) {
+					kmlPolygonM.addToCoordinates(polygonPoint.getX(), polygonPoint.getY());
+				}
+				kmlMultiPolygon.addToGeometry(kmlPolygonM);
+			}
+			return kmlMultiPolygon;
 		}
 		return null; // make compiler happy
 	}
 
+	@SuppressWarnings("unchecked")
 	private Set<FacetConstraint> getFacetConstraints(HttpServletRequest req) {
 		Set<FacetConstraint> constraints = new HashSet<FacetConstraint>();
-		Enumeration<String> paramNames = req.getParameterNames();
+		Enumeration<String> paramNames = (Enumeration<String>)req.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			String facetId = paramNames.nextElement();
 			String[] valueIds = req.getParameterValues(facetId);

@@ -1,11 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <module>
 	<inherits name="com.google.gwt.user.User" />
     <inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name="com.google.gwt.i18n.CldrLocales"/>
     <inherits name='name.alexdeleon.lib.gwtblocks.gwt-blocks' />
-	<inherits name='com.google.gwt.maps.GoogleMaps' />
-	<inherits name="com.google.gwt.gen2.picker.Picker"/>
 	<inherits name="org.gwtopenmaps.openlayers.OpenLayers"/>
+	<inherits name='com.google.gwt.maps.Maps' />
 	<inherits name="com.google.gwt.http.HTTP"/>
 	<inherits name="com.google.gwt.user.theme.chrome.Chrome"/>
 

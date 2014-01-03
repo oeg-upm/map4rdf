@@ -28,6 +28,7 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  * @author Alexander De Leon
  */
 public class Facet extends Resource {
+	private static final long serialVersionUID = 4973745087884482032L;
 
 	public Facet(String uri) {
 		super(uri);

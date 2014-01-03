@@ -24,7 +24,8 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.navigation;
 
-import net.customware.gwt.presenter.client.place.Place;
+import es.upm.fi.dia.oeg.map4rdf.client.place.Place;
+
 
 /**
  * @author Alexander De Leon
@@ -32,7 +33,7 @@ import net.customware.gwt.presenter.client.place.Place;
 public class Places {
 
 	public static final Place DASHBOARD = new Place("dashboard");
-	public static final Place LOGIN = new Place("login");
-	public static final Place EDIT_RESOURCE = new Place("edit_resource");
+	//public static final Place LOGIN = new Place("login");
+	//public static final Place EDIT_RESOURCE = new Place("edit_resource");
     public static final Place DEFAULT = DASHBOARD;
 }

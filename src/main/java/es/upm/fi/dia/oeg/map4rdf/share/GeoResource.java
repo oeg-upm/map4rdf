@@ -27,14 +27,18 @@ package es.upm.fi.dia.oeg.map4rdf.share;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Alexander De Leon
  */
 public class GeoResource extends Resource implements Serializable {
 
+	private static final long serialVersionUID = 7546375948600287701L;
 	private HashMap<String, Geometry> geometries;
-
+	private Set<String> wikipediaPages;
+	private Set<String> facetTypes;
 	GeoResource() {
 		// for serialization
 	}
@@ -42,6 +46,8 @@ public class GeoResource extends Resource implements Serializable {
 	public GeoResource(String uri, Geometry geometry) {
 		super(uri);
 		geometries = new HashMap<String, Geometry>();
+		wikipediaPages=new HashSet<String>();
+		facetTypes=new HashSet<String>();
 		addGeometry(geometry);
 	}
 
@@ -74,5 +80,18 @@ public class GeoResource extends Resource implements Serializable {
 		} else {
 			return true;
 		}
+	}
+	
+	public Set<String> getWikipediaURL(){
+		return wikipediaPages;
+	}
+	public void addWikipediaURL(String URL){
+		wikipediaPages.add(URL);
+	}
+	public Set<String> getFacetTypes(){
+		return facetTypes;
+	}
+	public void addFacetType(String uri){
+		if(!facetTypes.contains(uri)){facetTypes.add(uri);}
 	}
 }

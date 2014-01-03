@@ -20,6 +20,7 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.share;
 
+
 /**
  * @author Alexander De Leon
  */
@@ -31,7 +32,6 @@ public class CircleBean implements Circle {
 	CircleBean() {
 		// for serialization
 	}
-
 	public CircleBean(TwoDimentionalCoordinate center, double radius) {
 		this.center = center;
 		this.radius = radius;

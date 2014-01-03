@@ -20,13 +20,12 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.controllers;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 import net.customware.gwt.presenter.client.EventBus;
-import net.customware.gwt.presenter.client.place.Place;
+import net.customware.gwt.presenter.client.place.PlaceChangedEvent;
+import net.customware.gwt.presenter.client.place.PlaceChangedHandler;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.place.PlaceRequestEvent;
 import net.customware.gwt.presenter.client.place.PlaceRequestHandler;
@@ -36,73 +35,70 @@ import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 import com.google.gwt.user.client.ui.Widget;
 
 import es.upm.fi.dia.oeg.map4rdf.client.event.UrlParametersChangeEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.navigation.Places;
+import es.upm.fi.dia.oeg.map4rdf.client.place.Place;
 
 /**
  * @author Filip
  */
-public class AppController extends WidgetPresenter<AppController.Display> implements PlaceRequestHandler {
+public class AppController extends WidgetPresenter<AppController.Display> implements PlaceRequestHandler,PlaceChangedHandler {
 
 	public interface Display extends WidgetDisplay {
 		void setContent(Widget widget);
 	}
 
-	private final Set<WidgetPresenter<?>> presenters;
-
+	//private final Set<WidgetPresenter<?>> presenters;
+	private Map<String,WidgetPresenter<?>> presenters;
+	private EventBus eventBus;
 	public AppController(Display display, EventBus eventBus) {
 		super(display, eventBus);
-		presenters = new HashSet<WidgetPresenter<?>>();
+		presenters = new HashMap<String,WidgetPresenter<?>>();
+		this.eventBus=eventBus;
 		eventBus.addHandler(PlaceRequestEvent.getType(), this);
-	}
-
-	public AppController(Display display, EventBus eventBus, WidgetPresenter<?>... presenters) {
-		this(display, eventBus);
-		Collections.addAll(this.presenters, presenters);
+		eventBus.addHandler(PlaceChangedEvent.getType(), this);
 	}
     
 
-	public void addPresenter(WidgetPresenter<?> presenter) {
-		presenters.add(presenter);
+	public void addPresenter(WidgetPresenter<?> presenter,Place place) {
+		presenters.put(place.getName(), presenter);
 	}
 
 	public void removePresenter(WidgetPresenter<?> presenter) {
 		presenters.remove(presenter);
 	}
-
-    @Override
+	@Override
 	public void onPlaceRequest(PlaceRequestEvent event) {
     	Place place = getPlaceFromQueryString(event);
     	HashMap<String, String> myMap = getParamtersMap(event);
 		if (place == null) {
 			return;
 		}
-        for (WidgetPresenter<?> presenter : presenters) {
-			if (place.equals(presenter.getPlace())) {
+        for (String namePlace: presenters.keySet()) {
+			if (place.getName()!=null && !place.getName().isEmpty() && place.getName().equals(namePlace)) {
 				if (myMap != null) {
 					UrlParametersChangeEvent parametersChangeEvent = new UrlParametersChangeEvent(myMap);
 					eventBus.fireEvent(parametersChangeEvent);
 				}
-                getDisplay().setContent(presenter.getDisplay().asWidget());
+                getDisplay().setContent(presenters.get(namePlace).getDisplay().asWidget());
 				break;
 			}
 		}
 	}
 
 	/* ----- Presenter API -- */
-	@Override
 	public Place getPlace() {
 		// This is the default place
-		return null;
+		return Places.DEFAULT;
 	}
 
 	@Override
 	protected void onBind() {
 		// bind children
-		for (WidgetPresenter<?> presenter : presenters) {
+		for (WidgetPresenter<?> presenter : presenters.values()) {
 			presenter.bind();
 		}
 	}
 
-	@Override
 	protected void onPlaceRequest(PlaceRequest request) {
 		// empty
 	}
@@ -110,17 +106,9 @@ public class AppController extends WidgetPresenter<AppController.Display> implem
 	@Override
 	protected void onUnbind() {
 		// unbind children
-		for (WidgetPresenter<?> presenter : presenters) {
+		for (WidgetPresenter<?> presenter : presenters.values()) {
 			presenter.unbind();
 		}
-	}
-
-	public void refreshDisplay() {
-		// empty
-	}
-
-	public void revealDisplay() {
-		// empty
 	}
 	private Place getPlaceFromQueryString(PlaceRequestEvent event){
 		PlaceRequest placeRequest = event.getRequest();
@@ -132,7 +120,7 @@ public class AppController extends WidgetPresenter<AppController.Display> implem
 			return new Place(address);
 		}
 		
-		return placeRequest.getPlace();
+		return new Place(placeRequest.getName());
 	}
 	private HashMap<String, String> getParamtersMap(PlaceRequestEvent event){
 		PlaceRequest placeRequest = event.getRequest();
@@ -152,4 +140,23 @@ public class AppController extends WidgetPresenter<AppController.Display> implem
 		}
 		return null;
 	}
+
+
+	@Override
+	protected void onRevealDisplay() {
+		
+	}
+
+
+	@Override
+	public void onPlaceChanged(PlaceChangedEvent event) {
+    	Place place = new Place(event.getPlace().getName());
+        for (String namePlace: presenters.keySet()) {
+			if (place.getName()!=null && !place.getName().isEmpty() && place.getName().equals(namePlace)) {
+                getDisplay().setContent(presenters.get(namePlace).getDisplay().asWidget());
+				break;
+			}
+		}
+	}
+
 }

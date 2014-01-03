@@ -35,13 +35,13 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.server.bootstrap.Bootstrapper;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
 
 /**
  * @author Filip
@@ -58,9 +58,9 @@ public class GetConfigurationParameterHandler implements
 	}
 	
 	@Inject
-	public GetConfigurationParameterHandler(Provider<ServletContext> provider) {
+	public GetConfigurationParameterHandler(GetServletContext getServletContext) {
 		super();
-		servletContext = provider.get();
+		servletContext = getServletContext.getServletContext();
 		InputStream propIn = servletContext.getResourceAsStream(Constants.CONFIGURATION_FILE);
         try {
             config = new Configuration(propIn);
@@ -82,6 +82,6 @@ public class GetConfigurationParameterHandler implements
 	public void rollback(GetConfigurationParameter action,
 			SingletonResult<String> result,
 			ExecutionContext context) throws ActionException {
-		// TODO Auto-generated method stub
+		
 	}
 }

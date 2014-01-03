@@ -20,13 +20,14 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.view.v2;
 
-import org.gwtopenmaps.openlayers.client.layer.Vector;
+import java.util.List;
 
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
+import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 /**
@@ -47,5 +48,11 @@ public interface MapView extends WidgetDisplay {
 	AbsolutePanel getContainer();
 
 	void closeWindow();
+	
+	void changeZoom(List<Point> points);
+	
+	void startProcessing();
+
+	void stopProcessing();
 
 }

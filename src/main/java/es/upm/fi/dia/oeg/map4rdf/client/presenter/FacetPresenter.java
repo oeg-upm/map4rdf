@@ -56,7 +56,7 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
         public Boolean isEmpty();
         
 		interface FacetSelectionHandler {
-			void onFacetSelectionChanged(String facetId, String facetValueId, boolean selected);
+			void onFacetSelectionChanged(String facetId,String hexColour, String facetValueId, boolean selected);
 		}
                 
 		// TODO this should be decoupled from the model
@@ -82,36 +82,21 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 	protected void onBind() {
 		getDisplay().setFacetSelectionChangedHandler(new FacetSelectionHandler() {
 			@Override
-			public void onFacetSelectionChanged(String facetId, String facetValueId, boolean selected) {
+			public void onFacetSelectionChanged(String facetId,String hexColour, String facetValueId, boolean selected) {
 				if (selected) {
-					constraints.add(new FacetConstraint(facetId, facetValueId));
+					constraints.add(new FacetConstraint(facetId,hexColour, facetValueId));
 				} else {
-					constraints.remove(new FacetConstraint(facetId, facetValueId));
+					constraints.remove(new FacetConstraint(facetId,hexColour, facetValueId));
 				}
 				fireFacetConstrainsChanged();
 			}
 		});
+		onRevealDisplay();
 	}
-
 	@Override
 	protected void onUnbind() {
-		// TODO Auto-generated method stub
+		
 
-	}
-
-	@Override
-	public void refreshDisplay() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void revealDisplay() {
-		if (getDisplay().isEmpty()) {
-			loadFacets();
-		} //else {
-		//	eventBus.fireEvent(new FacetConstraintsChangedEvent(constraints));
-		//}
 	}
 
 	void loadFacets() {
@@ -119,8 +104,8 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				//Window.alert(caught.toString());
+				
+				Window.alert(caught.toString());
 			}
 
 			@Override
@@ -138,4 +123,16 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
     	constraints.clear();
     	getDisplay().clear();
 	}
+
+	@Override
+	protected void onRevealDisplay() {
+		
+		if (getDisplay().isEmpty()) {
+			loadFacets();
+		}
+		 //else {
+			//	eventBus.fireEvent(new FacetConstraintsChangedEvent(constraints));
+			//}
+	}
+	
 }

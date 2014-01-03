@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class PolygonBean implements Polygon, Serializable {
 
+	private static final long serialVersionUID = 3563826545061442578L;
 	private ArrayList<Point> points;
 	private String uri;
 

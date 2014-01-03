@@ -32,7 +32,7 @@ import org.gwtopenmaps.openlayers.client.LonLat;
  * @author Alexander De Leon
  */
 public class BoundingBoxBean implements BoundingBox, Serializable {
-
+	private static final long serialVersionUID = -8605951685507731932L;
 	private TwoDimentionalCoordinate bottomLeft;
 	private TwoDimentionalCoordinate topRight;
 	private TwoDimentionalCoordinate centre;
@@ -51,9 +51,11 @@ public class BoundingBoxBean implements BoundingBox, Serializable {
 		this.topRight = topRight;
 		
 		this.top = topRight;
-		this.bottomLeft = bottomLeft;
-		this.left = bottomLeft;
-		this.right = topRight;
+		this.bottom = bottomLeft;
+		/*this.left = bottomLeft;
+		this.right = topRight;*/
+		this.left=new TwoDimentionalCoordinateBean(bottomLeft.getX(),topRight.getY());
+		this.right=new TwoDimentionalCoordinateBean(topRight.getX(),bottomLeft.getY());
 	}
 
 	public BoundingBoxBean(TwoDimentionalCoordinate dim1, TwoDimentionalCoordinate dim2, 

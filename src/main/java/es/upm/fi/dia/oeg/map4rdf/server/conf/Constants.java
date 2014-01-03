@@ -31,13 +31,21 @@ public class Constants {
 
 	public static final String CONFIGURATION_FILE = "/WEB-INF/configuration.properties";
 
+	public static final String ADDITIONAL_INFO_CONFIG_FOLDER = "/WEB-INF/additional_info/";
+	
 	public static final String FACET_CONFIGURATION_FILE = "/WEB-INF/facets.ttl";
+	
+	public static final String MAPS_CONFIGURATION_FILE = "/WEB-INF/maps/maps.properties";
+	
+	public static final String SPHERICAL_MAPS_FOLDER="/WEB-INF/maps/spherical_maps/";
+	
+	public static final String FLAT_MAPS_FOLDER="/WEB-INF/maps/flat_maps/";
         
 	public static enum GeometryModel {
 		/**
 		 * OEG models geometries explicitly. The resource and its geometries are
 		 * linked using the http://www.w3.org/2003/01/geo/wgs84_pos#geometry
-		 * perdicate.
+		 * predicate.
 		 */
 		OEG,
 		/**
@@ -53,7 +61,13 @@ public class Constants {
 		 * specified using vcard:latitude and vcard:longitude predicates.
 		 * http://www.w3.org/2006/vcard/ns-2006.html
 		 */
-		VCARD;
+		VCARD,
+		/**
+		 * The GeoSPARQL model used by OGC.
+		 * Documentation URL: 
+		 * */
+		GEOSPARQL;
+		
 	}
 
 }

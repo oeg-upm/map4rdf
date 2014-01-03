@@ -33,9 +33,11 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
 import com.google.gwt.resources.client.ImageResource.RepeatStyle;
 
+import es.upm.fi.dia.oeg.map4rdf.client.view.GeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DataToolBar;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.FacetWidget;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummary;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.Timeline;
 
 /**
@@ -44,7 +46,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.widget.Timeline;
 public interface BrowserResources extends ClientBundle {
 
 	interface BrowserCss extends LoadingWidget.Stylesheet, ToggleButton.Stylesheet, FacetWidget.Stylesheet,
-			DataToolBar.Stylesheet, Timeline.Stylesheet, GeoResourceSummary.Stylesheet, CssResource {
+			DataToolBar.Stylesheet, Timeline.Stylesheet, GeoResourceSummary.Stylesheet, PopupGeoprocessingView.Stylesheet,
+			GeoprocessingView.Stylesheet,CssResource{
 		String header();
 
 		String footer();
@@ -58,6 +61,7 @@ public interface BrowserResources extends ClientBundle {
 		String popup();
 		
 		String mainPopup();
+		
 
 	}
 
@@ -85,7 +89,10 @@ public interface BrowserResources extends ClientBundle {
 	ImageResource eraserIcon();
 	@Source("beta-trans.png")
 	ImageResource betaBadge();
-
+	
+	@Source("plus.png")
+	ImageResource plusIcon();
+	
 	@Source("stats.png")
 	ImageResource statsButton();
 
@@ -94,4 +101,55 @@ public interface BrowserResources extends ClientBundle {
 	
 	@Source("save.png")
 	ImageResource saveButton();
+	
+	@Source("close.png")
+	ImageResource closeButton();
+	
+	@Source("transparent_image.png")
+	ImageResource transparentImage();
+	
+	@Source("bg_summary.png")
+	ImageResource summaryBackGround();
+	
+	@Source("close_icon.png")
+	ImageResource closeIcon();
+	
+	@Source("info_icon.png")
+	ImageResource infoIcon();
+	
+	@Source("routes_icon.png")
+	ImageResource routesIcon();
+	
+	@Source("buffer_icon.png")
+	ImageResource bufferIcon();
+	
+	@Source("pruebas_icon.png")
+	ImageResource pruebasIcon();
+	
+	@Source("twitter_icon.png")
+	ImageResource twitterIcon();
+	
+	@Source("wikipedia_icon.png")
+	ImageResource wikipediaIcon();
+	
+	@Source("rdf_icon.png")
+	ImageResource rdfIcon();
+	
+	@Source("edit_icon.png")
+	ImageResource editIcon();
+	
+	@Source("statsSummary.png")
+	ImageResource statsSummaryIcon();
+	
+	@Source("chartPIE.png")
+	ImageResource chartPieIcon();
+	
+	@Source("chartLINE.png")
+	ImageResource chartLineIcon();
+	
+	@Source("chartBAR.png")
+	ImageResource chartBarIcon();
+	
+	@Source("refresh.png")
+	ImageResource refreshImage();
 }

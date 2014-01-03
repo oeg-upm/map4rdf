@@ -26,7 +26,6 @@ package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -61,19 +60,11 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	public void setFacets(List<FacetGroup> facets) {
 		for (final FacetGroup facetDefinition : facets) {
 			facet = new FacetWidget(resources.css());
-			facet.setHeight(new Integer(panel.getOffsetHeight()-25).toString()+"px");
-			
-			facet.setLabel(facetDefinition.getLabel(LocaleUtil.getClientLanguage()));
+			facet.setHeight(new Integer((100/facets.size())-3).toString()+"%");
+			facet.setLabel(LocaleUtil.getBestLabel(facetDefinition));
 			for (Facet facetValue : facetDefinition.getFacets()) {
-				String label = facetValue.getLabel(LocaleUtil.getClientLanguage());
-				if (label == null) {
-					label = facetValue.getDefaultLabel();
-				}
-				if (label == null) {
-					label = facetValue.getUri();
-				}
+				String label = LocaleUtil.getBestLabel(facetValue);
 				facet.addFacetSelectionOption(facetValue.getUri(), label);
-
 			}
 			facet.sort();
 
@@ -81,7 +72,7 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 				@Override
 				public void onSelectionChanged(FacetValueSelectionChangedEvent event) {
 					if (handler != null) {
-						handler.onFacetSelectionChanged(facetDefinition.getUri(), event.getSelectionOptionId(),
+						handler.onFacetSelectionChanged(facetDefinition.getUri(),event.getHexColour(), event.getSelectionOptionId(),
 								event.getSelectionValue());
 					}
 				}
@@ -91,7 +82,10 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 		}
 
 	}
+	@Override
+	protected void onLoad(){
 
+	}
 	@Override
 	public void setFacetSelectionChangedHandler(FacetSelectionHandler handler) {
 		this.handler = handler;
@@ -103,17 +97,6 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 		return this;
 	}
 
-	@Override
-	public void startProcessing() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void stopProcessing() {
-		// TODO Auto-generated method stub
-
-	}
 
 	/* ---------------- helper methods -- */
 	private Widget createUi() {
@@ -128,7 +111,7 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 
 	@Override
 	public Boolean isEmpty() {
-		// TODO Auto-generated method stub
+		
 		return facet==null;
 	}
 }

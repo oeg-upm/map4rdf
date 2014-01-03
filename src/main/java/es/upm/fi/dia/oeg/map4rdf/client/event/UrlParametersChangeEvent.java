@@ -26,8 +26,6 @@ package es.upm.fi.dia.oeg.map4rdf.client.event;
 
 import java.util.HashMap;
 
-import net.customware.gwt.presenter.client.EventBus;
-
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
@@ -58,7 +56,7 @@ public class UrlParametersChangeEvent extends GwtEvent<UrlParametersChangeEventH
 
 	@Override
 	protected void dispatch(UrlParametersChangeEventHandler handler) {
-		// TODO Auto-generated method stub
+		
 		handler.onParametersChange(this);
 	}
 

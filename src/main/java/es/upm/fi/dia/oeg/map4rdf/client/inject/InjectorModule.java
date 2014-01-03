@@ -31,18 +31,22 @@ import es.upm.fi.dia.oeg.map4rdf.client.maplet.Maplet;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.stats.StatisticsMaplet;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.stats.StatisticsPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.stats.StatisticsView;
+import es.upm.fi.dia.oeg.map4rdf.client.presenter.BufferPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FacetPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FiltersPresenter;
-import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapOverlaysPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.presenter.GeoprocessingPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.ResultsPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.presenter.RoutesPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.view.BufferView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.DashboardView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.FacetView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.FiltersView;
-import es.upm.fi.dia.oeg.map4rdf.client.view.MapOverlaysView;
+import es.upm.fi.dia.oeg.map4rdf.client.view.GeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.OpenLayersMapView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.ResultsView;
+import es.upm.fi.dia.oeg.map4rdf.client.view.RoutesView;
 
 /**
  * @author Alexander De Leon
@@ -61,9 +65,10 @@ public class InjectorModule extends AbstractPresenterModule {
         bindDisplay(FiltersPresenter.Display.class, FiltersView.class);
         bindDisplay(MapPresenter.Display.class, OpenLayersMapView.class);
 		bindDisplay(ResultsPresenter.Display.class, ResultsView.class);
-		bindDisplay(MapOverlaysPresenter.Display.class, MapOverlaysView.class);
 		bindDisplay(StatisticsPresenter.Display.class, StatisticsView.class);
-
+		bindDisplay(GeoprocessingPresenter.Display.class, GeoprocessingView.class);
+		bindDisplay(RoutesPresenter.Display.class, RoutesView.class);
+		bindDisplay(BufferPresenter.Display.class, BufferView.class);
 		// Maplets
 		bind(Maplet.class).to(StatisticsMaplet.class).asEagerSingleton();
 	}

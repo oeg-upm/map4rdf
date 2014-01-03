@@ -34,6 +34,8 @@ import java.util.Set;
  */
 public class Resource implements HasUri, Serializable {
 
+	private static final long serialVersionUID = -7762470621208434876L;
+
 	private static Set<String> EMPTY_SET = Collections.emptySet();
 
 	private String uri;

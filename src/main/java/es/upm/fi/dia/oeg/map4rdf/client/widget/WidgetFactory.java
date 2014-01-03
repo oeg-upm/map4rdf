@@ -20,6 +20,8 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.widget;
 
+import net.customware.gwt.dispatch.client.DispatchAsync;
+import net.customware.gwt.presenter.client.EventBus;
 import name.alexdeleon.lib.gwtblocks.client.widget.loading.LoadingWidget;
 
 import com.google.inject.Inject;
@@ -34,23 +36,26 @@ public class WidgetFactory {
 
 	private final BrowserMessages messages;
 	private final BrowserResources resources;
-
+	private final EventBus eventBus;
+	private final DispatchAsync dispatchAsync;
+	//private boolean wikipediaAvailable;
 	private static LoadingWidget loadingWidget;
 
 	@Inject
-	public WidgetFactory(BrowserMessages messages, BrowserResources resources) {
+	public WidgetFactory(EventBus eventBus,BrowserMessages messages, BrowserResources resources, DispatchAsync dispatchAsync) {
 		this.messages = messages;
 		this.resources = resources;
+		this.eventBus = eventBus;
+		this.dispatchAsync=dispatchAsync;
 	}
 
 	public GeoResourceSummary createGeoResourceSummary() {
-		return new GeoResourceSummary(messages, resources);
+		return new GeoResourceSummary(dispatchAsync,eventBus, messages, resources);
 	}
 
 	public Timeline createTimeline() {
 		return new Timeline(resources.css());
 	}
-
 	public LoadingWidget getLoadingWidget() {
 		if (loadingWidget == null) {
 			loadingWidget = new LoadingWidget(resources.loadingIcon(), messages.loading(), resources.css());

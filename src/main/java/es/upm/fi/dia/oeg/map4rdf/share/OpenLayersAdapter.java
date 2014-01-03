@@ -42,7 +42,7 @@ public class OpenLayersAdapter {
 
 	public static BoundingBox getBoundingBox(Bounds bounds) {
 		return new BoundingBoxBean(new TwoDimentionalCoordinateBean(bounds.getLowerLeftX(), bounds.getLowerLeftY()),
-				new TwoDimentionalCoordinateBean(bounds.getUpperRightX(), bounds.getLowerLeftY()));
+				new TwoDimentionalCoordinateBean(bounds.getUpperRightX(), bounds.getUpperRightY()));
 	}
 
 	public static Bounds getLatLngBounds(BoundingBox boundingBox) {
@@ -61,7 +61,7 @@ public class OpenLayersAdapter {
 	
 	public static BoundingBox getBoudingBox(Polygon p) {
 
-		int i = p.getComponents().length;
+		//int i = p.getComponents().length;
 		double[][] dimTable = p.getComponents()[0].getCoordinateArray();
 		if (dimTable.length != 5) {
 			return null;

@@ -33,6 +33,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.DbPediaDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoLinkedDataDaoImpl;
+import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoSparqlDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.VCardDaoImpl;
 
 /**
@@ -54,6 +55,8 @@ public class BrowserModule extends AbstractModule {
 			return new DbPediaDaoImpl(endpointUri);
 		case VCARD:
 			return new VCardDaoImpl(endpointUri);
+		case GEOSPARQL:
+			return new GeoSparqlDaoImpl(endpointUri);
 		}
 		// make compiler happy
 		return null;

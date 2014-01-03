@@ -5,6 +5,7 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  */
 public class RDFLiteral implements BasicRDFInformation{
 	
+	private static final long serialVersionUID = 7081274544935536676L;
 	private URLSafety dataTypeURI;
 	private String lexicalForm;
 	private String fullName;

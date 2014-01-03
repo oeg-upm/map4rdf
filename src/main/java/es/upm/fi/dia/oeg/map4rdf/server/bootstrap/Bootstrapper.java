@@ -14,6 +14,7 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.FacetedBrowserConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
 import es.upm.fi.dia.oeg.map4rdf.server.inject.BrowserActionHandlerModule;
 import es.upm.fi.dia.oeg.map4rdf.server.inject.BrowserConfigModule;
 import es.upm.fi.dia.oeg.map4rdf.server.inject.BrowserModule;
@@ -28,10 +29,10 @@ public class Bootstrapper extends GuiceServletContextListener {
 
 	private Configuration config;
 	private FacetedBrowserConfiguration facetedBrowserConfiguration;
-
+	private GetServletContext getServletContext;
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-              	
+        this.getServletContext= new GetServletContext(servletContextEvent.getServletContext());
 		InputStream propIn = servletContextEvent.getServletContext().getResourceAsStream(Constants.CONFIGURATION_FILE);
         try {
             config = new Configuration(propIn);
@@ -52,7 +53,6 @@ public class Bootstrapper extends GuiceServletContextListener {
 		}
 		super.contextInitialized(servletContextEvent);
 	}
-
 	@Override
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
 		servletContextEvent.getServletContext().removeAttribute(Configuration.class.getName());
@@ -61,7 +61,7 @@ public class Bootstrapper extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 
-		return Guice.createInjector(new BrowserModule(), new BrowserConfigModule(config, facetedBrowserConfiguration),
+		return Guice.createInjector(new BrowserModule(), new BrowserConfigModule(config, facetedBrowserConfiguration,getServletContext),
 				new BrowserServletModule(), new BrowserActionHandlerModule());
 	}
 
