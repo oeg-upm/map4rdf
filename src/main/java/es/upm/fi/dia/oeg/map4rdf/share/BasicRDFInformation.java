@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public interface BasicRDFInformation extends Serializable {
 	public String getText();
-	public void seText(String text);
+	public void setText(String text);
 	public Boolean isResource();
 	public Boolean isLiteral();
 }

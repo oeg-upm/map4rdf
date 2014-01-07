@@ -50,7 +50,7 @@ public class RDFResource implements BasicRDFInformation {
 	}
 
 	@Override
-	public void seText(String text) {
+	public void setText(String text) {
 		this.URI = new URLSafety(text);
 	}
 

@@ -73,6 +73,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DataToolBar;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.EditResourceWidget;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupStatisticsView;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
@@ -108,6 +109,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
     private final DataToolBar dataToolBar;
     private final BrowserMessages messages;
     private final BrowserResources resources;
+    private final WidgetFactory widgetFactory;
     private Widget resultWidget;
 	private List<GeoResource> listGeoResource;
 	private String statisticsURL="";
@@ -116,7 +118,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
     @Inject
     public DashboardPresenter(Display display, EventBus eventBus, FacetPresenter facetPresenter,
             MapPresenter mapPresenter, FiltersPresenter filtersPresenter, ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync,
-            DataToolBar dataToolBar, BrowserMessages messages, BrowserResources resources, GeoprocessingPresenter geoprocessingPresenter) {
+            DataToolBar dataToolBar,WidgetFactory widgetFactory, BrowserMessages messages, BrowserResources resources, GeoprocessingPresenter geoprocessingPresenter) {
         super(display, eventBus);
         this.messages = messages;
         this.resources = resources;
@@ -127,6 +129,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
         this.dispatchAsync = dispatchAsync;
         this.dataToolBar = dataToolBar;
         this.filtersPresenter = filtersPresenter;
+        this.widgetFactory = widgetFactory;
         
         //add references
         this.geoprocessingPresenter.getDisplay().setDashboardPresenter(this);
@@ -180,7 +183,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		int height = mapPresenter.getDisplay().asWidget().getOffsetHeight();
 		int width = mapPresenter.getDisplay().asWidget().getOffsetWidth();
 		es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter.Display d = mapPresenter.getDisplay();
-		getDisplay().setMainPopup(width, height, new EditResourceWidget(editResourceEvent.getUrl(),dispatchAsync,d,resources,messages,eventBus),"");
+		getDisplay().setMainPopup(width, height, new EditResourceWidget(editResourceEvent.getUrl(),dispatchAsync,d,resources,messages,eventBus,widgetFactory),"");
 	}
 
 	@Override

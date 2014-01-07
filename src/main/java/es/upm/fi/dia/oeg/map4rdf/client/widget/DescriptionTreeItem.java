@@ -1,5 +1,7 @@
 package es.upm.fi.dia.oeg.map4rdf.client.widget;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,11 +18,11 @@ public class DescriptionTreeItem {
 	private TextBox object; 
 	//@TODO restracture it
 	private DescriptionTreeItem parent = null; //the value means that the parent is a root  
-	private SubjectDescription subjectDescription;
+	private SubjectDescription subjectDescriptionThis;
 	private Integer depth = 1;
 	
 	public DescriptionTreeItem(SubjectDescription subjectDescription, DescriptionTreeItem parent) {
-		this.subjectDescription = subjectDescription;
+		this.subjectDescriptionThis = subjectDescription;
 		this.parent = parent;
 		grid = new Grid(1, 2);
 		this.predicate = new TextBox();
@@ -35,7 +37,18 @@ public class DescriptionTreeItem {
 		if ( parent!= null ) {
 			depth=parent.getDepth()+1;
 		}
-		
+		this.object.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				subjectDescriptionThis.getObject().setText(object.getText());
+			}
+		});
+		this.predicate.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				subjectDescriptionThis.getPredicate().setText(predicate.getText());
+			}
+		});
 	}
 	
 	public Widget getWidget(){
@@ -43,14 +56,14 @@ public class DescriptionTreeItem {
 	}
 	
 	public SubjectDescription getSubjectDescriptions(){
-		return this.subjectDescription;
+		return this.subjectDescriptionThis;
 	}
 	
 	public String getPredicateText(){
-		return subjectDescription.getPredicate().getText();
+		return subjectDescriptionThis.getPredicate().getText();
 	}
 	public String getObjectText(){
-		return subjectDescription.getObject().getText();
+		return subjectDescriptionThis.getObject().getText();
 	}
 
 	public DescriptionTreeItem getParent() {

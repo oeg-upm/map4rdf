@@ -83,7 +83,17 @@ public class SaveRdfFIleHandler implements
 		
 		File file = new File(path + action.getFileName());
     	if (file.exists()) {
-    		return new SingletonResult<String>("ERROR");
+    		return new SingletonResult<String>("The file exists");
+    	}else{
+    		try {
+    			File dirs= new File(path);
+    			dirs.mkdirs();
+				if(!file.createNewFile()){
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				return new SingletonResult<String>("Cant create the file");
+			}
     	}	
     	
     	BufferedWriter output;
@@ -95,7 +105,7 @@ public class SaveRdfFIleHandler implements
 	    	
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new SingletonResult<String>("ERROR");
+			return new SingletonResult<String>("Buffered ERROR");
 		}
 		
 		return new SingletonResult<String>("");

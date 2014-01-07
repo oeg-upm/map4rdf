@@ -152,4 +152,10 @@ public interface BrowserResources extends ClientBundle {
 	
 	@Source("refresh.png")
 	ImageResource refreshImage();
+	
+	@Source("doneDialog.png")
+	ImageResource doneImage();
+	
+	@Source("errorDialog.png")
+	ImageResource errorImage();
 }

@@ -11,7 +11,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -56,21 +55,26 @@ public class EditResourceWidget extends Composite{
 	private Display display;
 	private EventBus eventBus;
 	private SafeHtml emptyHtml;
+	private WidgetFactory widgetFactory;
+	private Map4RDFDialogBox dialogBox;
 	
-	public EditResourceWidget(String resuorceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus) {
-		this.resourceUrl=resuorceUrl;
+	public EditResourceWidget(String resourceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus, WidgetFactory widgetFactory) {
+		this.resourceUrl=resourceUrl;
 		this.dispatchAsync=dispatchAsync;
 		this.display = display;
 		this.resources=resources;
 		this.messages=messages;
 		this.eventBus=eventBus;
+		this.widgetFactory=widgetFactory;
 		initWidget(createUi());
 		this.setDepth();
 		this.setLabel();
 	}
 	
 	private Widget createUi() {
-	 	mainPanel = new FlowPanel();    	
+	 	mainPanel = new FlowPanel();
+	 	dialogBox= widgetFactory.getDialogBox();
+		dialogBox.hide();
     	tree = new Tree();
     	emptyHtml=new SafeHtml() {
 			private static final long serialVersionUID = 1L;
@@ -159,7 +163,7 @@ public class EditResourceWidget extends Composite{
         dispatchAsync.execute(action, new AsyncCallback<ListResult<SubjectDescription>>() {
 		@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(messages.canNotLoaddescription());
+				dialogBox.showError(messages.canNotLoaddescription());
 				display.stopProcessing();
 			}
 			@Override
@@ -187,7 +191,7 @@ public class EditResourceWidget extends Composite{
 			        
 			        	@Override
 						public void onFailure(Throwable caught) {
-							Window.alert(messages.canNotLoaddescription());
+							dialogBox.showError(messages.canNotLoaddescription());
 							display.stopProcessing();
 						}
 
@@ -251,17 +255,26 @@ public class EditResourceWidget extends Composite{
 			fileContent+="<"+d.getObjectText()+">" + " ";
 			fileContent+=".\n";
     	}
-    	
+    	display.startProcessing();
     	dispatchAsync.execute(new SaveRdfFile(fileName, fileContent), new AsyncCallback<SingletonResult<String>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("Unexcepted error occured");
+				display.stopProcessing();
+				dialogBox.showError(messages.saveRDFError());
+				//Window.alert("Unexcepted error occured");
 			}
 
 			@Override
 			public void onSuccess(SingletonResult<String> result) {
-				Window.alert("Your changes were saved");
+				display.stopProcessing();
+				if(result.getValue()!=null && result.getValue().isEmpty()){
+					dialogBox.showDone(messages.saveRDFDone());
+					//Window.alert("Your changes were saved");
+				}else{
+					dialogBox.showError(messages.saveRDFError());
+					//Window.alert("Unexcepted error occured");
+				}
 			}
 		});
     }

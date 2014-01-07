@@ -40,6 +40,7 @@ public class WidgetFactory {
 	private final DispatchAsync dispatchAsync;
 	//private boolean wikipediaAvailable;
 	private static LoadingWidget loadingWidget;
+	private static Map4RDFDialogBox dialogBox;
 
 	@Inject
 	public WidgetFactory(EventBus eventBus,BrowserMessages messages, BrowserResources resources, DispatchAsync dispatchAsync) {
@@ -61,5 +62,12 @@ public class WidgetFactory {
 			loadingWidget = new LoadingWidget(resources.loadingIcon(), messages.loading(), resources.css());
 		}
 		return loadingWidget;
+	}
+	
+	public Map4RDFDialogBox getDialogBox(){
+		if(dialogBox==null){
+			dialogBox=new Map4RDFDialogBox("Map4RDF", "",resources.doneImage(),resources.errorImage());
+		}
+		return dialogBox;
 	}
 }

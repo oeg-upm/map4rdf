@@ -188,5 +188,11 @@ public interface BrowserMessages extends Messages {
 	String statisticsAggrChoose();
 	
 	String statisticsErrorNotAggr();
+	
+	String saveRDFError();
+	
+	String saveRDFDone();
+	
+	
 
 }
