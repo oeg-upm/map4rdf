@@ -79,17 +79,24 @@ public class Map4RDFDialogBox extends DialogBox {
 		imagePanel.clear();
 		mainLabel.setText(text);
 		super.show();
+		modifyPosition();
 	}
 	public void showDone(String text){
 		imagePanel.clear();
 		imagePanel.add(new Image(doneImage));
 		mainLabel.setText(text);
 		super.show();
+		modifyPosition();
 	}
 	public void showError(String text){
 		imagePanel.clear();
 		imagePanel.add(new Image(errorImage));
 		mainLabel.setText(text);
 		super.show();
+		modifyPosition();
+		
+	}
+	private void modifyPosition(){
+		setPopupPosition(Window.getClientWidth()/2-this.getOffsetWidth()/2, Window.getClientHeight()/2-this.getOffsetHeight()/2);
 	}
 }
