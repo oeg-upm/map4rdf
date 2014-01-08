@@ -1,4 +1,4 @@
-Copyright (c) 2011 Ontology Engineering Group, 
+Copyright (c) 2014 Ontology Engineering Group, 
 Departamento de Inteligencia Artificial,
 Facultad de Inform�tica, Universidad 
 Polit�cnica de Madrid, Spain
