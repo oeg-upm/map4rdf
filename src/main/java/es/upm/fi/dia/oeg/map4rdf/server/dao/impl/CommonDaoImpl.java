@@ -62,7 +62,7 @@ public class CommonDaoImpl {
 		return result;
 	}
 	
-	public String createGetSubjectDescriptionString(String subject) {
+	private String createGetSubjectDescriptionString(String subject) {
 		StringBuilder query = new StringBuilder("SELECT ?p ?o WHERE {");
 		query.append("<" +subject+ ">");
 		query.append(" ?p ?o .");
@@ -70,7 +70,7 @@ public class CommonDaoImpl {
 		return query.toString();
 	}
 	
-	public String createGetLabelQuery(String uri) {
+	private String createGetLabelQuery(String uri) {
 		StringBuilder query = new StringBuilder("SELECT ?label WHERE {");
 		query.append(" <" + uri +"> <" + RDFS.label + "> ?label.");
 		query.append("}");
