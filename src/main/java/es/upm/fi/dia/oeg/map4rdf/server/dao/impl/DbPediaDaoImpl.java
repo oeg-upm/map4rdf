@@ -216,7 +216,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			execution.close();
 		}
 	}
-
+	//TODO implement Wikipedia link in DBPedia Dao(ALL METHODS)
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();

@@ -88,6 +88,7 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		return getGeoResources(boundingBox, constraints, null);
 	}
 
+	//TODO implement wikipedia links in VCARD dao
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
@@ -364,7 +365,7 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	@Override
 	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max) throws DaoException {
-		
+		//TODO implements NextPoints in VCARD dao
 		return new ArrayList<GeoResource>();
 	}
 

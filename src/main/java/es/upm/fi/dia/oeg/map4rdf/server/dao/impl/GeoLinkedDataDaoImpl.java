@@ -146,6 +146,7 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		}
 	}
 
+	//TODO implement Wikipedia link in GeoLinkeddata Dao(ALL METHODS)
 	@Override
 	public GeoResource getGeoResource(String uri) throws DaoException {
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, createGetResourceQuery(uri));
