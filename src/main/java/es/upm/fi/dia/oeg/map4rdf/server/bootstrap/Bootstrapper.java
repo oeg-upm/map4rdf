@@ -26,13 +26,12 @@ import es.upm.fi.dia.oeg.map4rdf.server.inject.BrowserServletModule;
 public class Bootstrapper extends GuiceServletContextListener {
 
 	private static final Logger LOG = Logger.getLogger(Bootstrapper.class.getName());
-
 	private Configuration config;
 	private FacetedBrowserConfiguration facetedBrowserConfiguration;
 	private GetServletContext getServletContext;
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-        this.getServletContext= new GetServletContext(servletContextEvent.getServletContext());
+		this.getServletContext= new GetServletContext(servletContextEvent.getServletContext());
 		InputStream propIn = servletContextEvent.getServletContext().getResourceAsStream(Constants.CONFIGURATION_FILE);
         try {
             config = new Configuration(propIn);
@@ -48,7 +47,7 @@ public class Bootstrapper extends GuiceServletContextListener {
 		try {
 			facetedBrowserConfiguration = new FacetedBrowserConfiguration(facetConfigIn);
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Unable to load faceted broser configuration file", e);
+			LOG.log(Level.SEVERE, "Unable to load faceted browser configuration file", e);
 			throw new RuntimeException(e);
 		}
 		super.contextInitialized(servletContextEvent);
@@ -64,5 +63,5 @@ public class Bootstrapper extends GuiceServletContextListener {
 		return Guice.createInjector(new BrowserModule(), new BrowserConfigModule(config, facetedBrowserConfiguration,getServletContext),
 				new BrowserServletModule(), new BrowserActionHandlerModule());
 	}
-
+	
 }
