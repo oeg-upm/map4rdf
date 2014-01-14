@@ -3,8 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
         <properties>
             <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-  			<downloadSources>true</downloadSources>
-  			<downloadJavadocs>true</downloadJavadocs>
         </properties>
 	<parent>
 		<artifactId>parent-pom-os</artifactId>
@@ -85,9 +83,9 @@
 			<version>3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-arq</artifactId>
-			<version>2.11.0</version>
+			<groupId>com.hp.hpl.jena</groupId>
+			<artifactId>arq</artifactId>
+			<version>2.8.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.xerial</groupId>
@@ -95,10 +93,10 @@
 			<version>3.7.15-M1</version>
 		</dependency>
 		<dependency>
-		  <groupId>map4rdf_maven</groupId>
-		  <artifactId>fake_compiler</artifactId>
-		  <version>0.1</version>
-		  <type>class</type>
+			<groupId>map4rdf_maven</groupId>
+			<artifactId>fake_compiler</artifactId>
+			<version>0.1</version>
+			<type>class</type>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -119,21 +117,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.5</version>
 		</dependency>
 		<dependency>
-			<groupId>com.smartgwt</groupId>
-			<artifactId>smartgwt</artifactId>
-			<version>2.5-patch</version>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.5</version>
+		</dependency>    
+		<dependency>
+			<groupId>com.smartgwt</groupId>
+			<artifactId>smartgwt</artifactId>
+			<version>2.5-patch</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gwtopenmaps.openlayers</groupId>
