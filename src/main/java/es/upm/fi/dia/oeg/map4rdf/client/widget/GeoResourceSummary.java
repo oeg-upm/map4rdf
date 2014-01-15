@@ -28,7 +28,6 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
@@ -36,10 +35,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -65,14 +62,12 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoExecuter;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoExecuter.InfoCallback;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoSummary;
-import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.util.ParametersSummaryMove;
 import es.upm.fi.dia.oeg.map4rdf.client.util.RoutesAddGeoResourceType;
 import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.MapShape;
-import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
@@ -81,33 +76,18 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
  */
 public class GeoResourceSummary extends Composite {
 
-	public interface Stylesheet {
-		String summaryLabelStyle();
-		String summaryPropertyName();
-		String summaryPropertyValue();
-		String textButtonStyle();
-	}
-	private FlowPanel panel;
-	private Stylesheet style;
+	
 	private BrowserMessages messages;
 	private BrowserResources resources;
-	private Label longitude;
-	private Label label;
-	private Label latitude;
-	private Label crs;
-	private Anchor link;
-	private Panel locationPanel;
-	private Anchor editLink;
 	private GeoResource lastGeoResource;
 	private Geometry lastGeometry;
 	private EventBus eventBus;
-	private Widget summary;
+	private GeoResourceSummaryInfo summary;
 	private boolean summaryVisible;
 	private final int intSizeImages=35;
 	private final String sizeImages=intSizeImages+"px";
 	private final String sizeAllTable=(intSizeImages*3)+"px";//sizeImages*3
 	private final int widgetDistance=3;//distance between widgets
-	private HandlerRegistration editLinkHandlerRegistration=null;
 	private Panel mainPanel;
 	private ArrayList<Widget> allWidgetInOrder;
 	private Map<String,Widget> allWidgetsWithName;
@@ -125,21 +105,17 @@ public class GeoResourceSummary extends Composite {
 	private String twitterURL;
 	private String wikipediaParseURL;
 	private Map<String,String> additionalsInfo;
-	private FlowPanel additionalInfoPanel;
 	private DispatchAsync dispatchAsync;
 	private Panel centerPanel;
 	/*If you modify this constant remember to modify GeoResourceSummary.getPointVisualization()
 	 * the widgets need to be in the same order that this constant and the same length*/
 	public final String SUMMARY_WIDGETS_NAMES = WidgetsNames.ALL_IN_ORDER;
 	private int moveType;
-	InlineLabel moreInfo;
-	InlineLabel editInfo;
 	
 	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources) {
 		this.messages = messages;
 		this.resources=appResources;
 		this.eventBus = eventBus;
-		style = appResources.css();
 		allWidgetsWithName=new HashMap<String, Widget>();
 		allWidgetInOrder=new ArrayList<Widget>();
 		this.dispatchAsync=dispatchAsync;
@@ -189,19 +165,19 @@ public class GeoResourceSummary extends Composite {
 		openOrCloseSummary(false);
 		lastGeoResource=resource;
 		lastGeometry=geometry;
-		label.setText(LocaleUtil.getBestLabel(resource, true));
+		
 		centerPanel.clear();
 		centerPanel.add(getCenterImage());
 		//panel.remove(editLink);
 		//editLink.setText(messages.here());
 		//editLink.add
 		//panel.add(editLink);
-		additionalInfoPanel.clear();
+		
 		AdditionalInfoExecuter.cancelAllCallbacks();
 		AdditionalInfoExecuter.getAdditionalInfo(dispatchAsync, resource, new InfoCallback() {
 			@Override
 			public void success(AdditionalInfoSummary additionalInfo) {
-				additionalInfoPanel.clear();
+				summary.clearAdditionalInfo();
 				additionalsInfo=additionalInfo.getAdditionalInfo();
 				if(additionalInfo.haveImage()){
 					centerPanel.clear();
@@ -220,6 +196,7 @@ public class GeoResourceSummary extends Composite {
 				openOrCloseSummary(false);
 			}
 		});
+		summary.setGeoResource(resource, geometry);
 		if(wikipediaResultWidget!=null){
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
@@ -227,20 +204,12 @@ public class GeoResourceSummary extends Composite {
 		if (geometry.getType() == MapShape.Type.POINT) {
 			routesWidget.setVisible(true);
 			bufferWidget.setVisible(true);
-			locationPanel.setVisible(true);
-			Point point = (Point) geometry;
-			latitude.setText(Double.toString(point.getY()));
-			longitude.setText(Double.toString(point.getX()));
-			crs.setText(point.getProjection());
 		} else {
-			locationPanel.setVisible(false);
 			routesWidget.setVisible(false);
 			bufferWidget.setVisible(false);
 		}
 		if (resource.getUri()!=null) {
 			infoWidget.setVisible(true);
-			showMoreInfo();
-			link.setHref(resource.getUri());
 			twitterAnchor.setVisible(true);
 			twitterAnchor.setHref(twitterURL+URL.encode(resource.getUri()));
 			rdfAnchor.setVisible(true);
@@ -249,7 +218,6 @@ public class GeoResourceSummary extends Composite {
 			statisticsWidget.setVisible(true);
 			wikipediaWidget.setVisible(true);
 		} else {
-			hideMoreInfo();
 			editWidget.setVisible(false);
 			twitterAnchor.setVisible(false);
 			rdfAnchor.setVisible(false);
@@ -283,26 +251,9 @@ public class GeoResourceSummary extends Composite {
 		DOM.setStyleAttribute(widget.getElement(), "left", left+"px");
 		DOM.setStyleAttribute(widget.getElement(), "top", top+"px");
 	}
-
-	private void hideMoreInfo() {
-		editInfo.setVisible(false);
-		editLink.setVisible(false);
-		link.setVisible(false);
-		moreInfo.setVisible(false);
-	}
-	private void showMoreInfo() {
-		editInfo.setVisible(true);
-		editLink.setVisible(true);
-		link.setVisible(true);
-		moreInfo.setVisible(true);
-	}
 	private Widget createUi() {
 		summary=getSummary();
-		DOM.setStyleAttribute(summary.getElement(), "position", "absolute");
-		//left style attribute in px is equal to: -(((summary.Width+summary.Padding+summary.Border)-mainGrid.Width)/2)
-		DOM.setStyleAttribute(summary.getElement(), "left", (-((200+2+1)-105)/2)+"px");
-		//top style attribute in px is equal to: -(summary.Height+summary.Padding+summary.Border+ChooseforSpacingpx+extraRadious)
-		DOM.setStyleAttribute(summary.getElement(), "top", (-(110+2+1+10+15))+"px");
+		
 		summaryVisible=false;
 		mainPanel= new FlowPanel();
 		mainPanel.setSize(sizeAllTable, sizeAllTable);
@@ -485,66 +436,8 @@ public class GeoResourceSummary extends Composite {
 		rdfAnchor.setTarget("_blank");
 		return rdfAnchor;
 	}
-	private Widget getSummary(){
-		panel = new FlowPanel();
-		DOM.setStyleAttribute(panel.getElement(), "textAlign", "left");
-		DOM.setStyleAttribute(panel.getElement(), "textSize", "8pt");
-		panel.setSize("200px", "130px");
-		DOM.setStyleAttribute(panel.getElement(), "border", "1px solid #424242");
-		//panel.setBorder("1px solid #424242");
-		panel.setStyleName(resources.css().popup());
-		label = new Label();
-		DOM.setStyleAttribute(label.getElement(), "wordWrap", "break-word");
-		label.addStyleName(style.summaryLabelStyle());
-		panel.add(label);
-		panel.add(new InlineHTML("<br />"));
-
-		locationPanel = new FlowPanel();
-
-		Grid grid = new Grid(3, 2);
-		Label latitudeLabel = new Label(messages.latitude() + ": ");
-		latitudeLabel.setStyleName(style.summaryPropertyName());
-		grid.setWidget(0, 0, latitudeLabel);
-		latitude = new Label();
-		latitude.setStyleName(style.summaryPropertyValue());
-		grid.setWidget(0, 1, latitude);
-		Label longitudLabel = new Label(messages.longitude() + ": ");
-		longitudLabel.setStyleName(style.summaryPropertyName());
-		grid.setWidget(1, 0, longitudLabel);
-		longitude = new Label();
-		longitude.setStyleName(style.summaryPropertyValue());
-		grid.setWidget(1, 1, longitude);
-		Label crsLabel = new Label(messages.crs() + ": ");
-		crsLabel.setStyleName(style.summaryPropertyName());
-		grid.setWidget(2, 0, crsLabel);
-		crs = new Label();
-		crs.setStyleName(style.summaryPropertyValue());
-		grid.setWidget(2, 1, crs);
-		locationPanel.add(grid);
-
-		panel.add(locationPanel);
-		panel.add(new InlineHTML("<br>"));
-		/* Deprecated*/
-		moreInfo = new InlineLabel(messages.information() + " ");
-		//Uncomment when statistics is added
-		//panel.add(moreInfo);
-
-		link = new Anchor(messages.here(), "", "_blank");
-		//Uncomment when statistics is added
-		//panel.add(link);
-		
-		editInfo = new InlineLabel(messages.edit() + " ");	
-		editLink = new Anchor(messages.here());
-		
-		//panel.add(new InlineHTML("<br />"));
-		/*End deprecated*/
-		
-		additionalInfoPanel= new FlowPanel();
-		panel.add(additionalInfoPanel);
-		//Uncomment when statistics is added
-		/*panel.add(editInfo);
-		panel.add(editLink);*/
-		return panel;
+	private GeoResourceSummaryInfo getSummary(){
+		return new GeoResourceSummaryInfoDefault(messages, resources);
 	}
 	private Widget getAddToRoutes(){
 		Image image=new Image(resources.routesIcon());
@@ -680,59 +573,16 @@ public class GeoResourceSummary extends Composite {
 	}
 	private void openProperSummary(){
 		if(!summaryVisible){
-			mainPanel.add(summary);
+			mainPanel.add(summary.getWidget());
 			summaryVisible=true;
-			additionalInfoPanel.clear();
-			if(additionalsInfo!=null && !additionalsInfo.isEmpty()){
-				summary.setSize(210+"px", 220+"px");
-				DOM.setStyleAttribute(summary.getElement(), "position", "absolute");
-				//left style attribute in px is equal to: -(((summary.Width+summary.Padding+summary.Border)-mainGrid.Width)/2)
-				DOM.setStyleAttribute(summary.getElement(), "left", (-((210+2+1)-105)/2)+"px");
-				int extraRadiousPX=parametersSummary.getRadiousPX()-intSizeImages;
-				if(extraRadiousPX<0){extraRadiousPX=0;}
-				//top style attribute in px is equal to: -(summary.Height+summary.Padding+summary.Border+ChooseforSpacingpx+extraRadious)
-				DOM.setStyleAttribute(summary.getElement(), "top", (-(220+2+1+5+extraRadiousPX))+"px");
-				Grid grid=new Grid(additionalsInfo.size(),2);
-				int i=0;
-				for(String key:additionalsInfo.keySet()){
-					Label label=new Label(key+"  ");
-					label.setStyleName(style.summaryPropertyName());
-					grid.setWidget(i, 0, label);
-					//additionalInfoPanel.add(label);
-					label=new Label(additionalsInfo.get(key));
-					label.setStyleName(style.summaryPropertyValue());
-					grid.setWidget(i++, 1, label);
-					//additionalInfoPanel.add(label);
-				}
-				additionalInfoPanel.add(grid);
-			}else{
-				summary.setSize("200px", "120px");
-				DOM.setStyleAttribute(summary.getElement(), "position", "absolute");
-				//left style attribute in px is equal to: -(((summary.Width+summary.Padding+summary.Border)-mainGrid.Width)/2)
-				DOM.setStyleAttribute(summary.getElement(), "left", (-((200+2+1)-105)/2)+"px");
-				int extraRadiousPX=parametersSummary.getRadiousPX()-intSizeImages;
-				if(extraRadiousPX<0){extraRadiousPX=0;}
-				//top style attribute in px is equal to: -(summary.Height+summary.Padding+summary.Border+ChooseforSpacingpx+extraRadious)
-				DOM.setStyleAttribute(summary.getElement(), "top", (-(120+2+1+5+extraRadiousPX))+"px");
-			}
-			if(editLinkHandlerRegistration!=null){
-				editLinkHandlerRegistration.removeHandler();
-			}
-			editLinkHandlerRegistration=editLink.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					
-					EditResourceEvent editEvent = new EditResourceEvent(lastGeoResource.getUri());
-					eventBus.fireEvent(editEvent);
-				}
-			});
+			int extraRadiousPX=parametersSummary.getRadiousPX()-intSizeImages;
+			summary.addAdditionalInfo(additionalsInfo, extraRadiousPX);
 		}
 	}
 	private void closeProperSummary(){
 		if(summaryVisible){
 			summaryMove.cancelMove();
-			mainPanel.remove(summary);
+			mainPanel.remove(summary.getWidget());
 			summaryVisible=false;
 		}
 	}

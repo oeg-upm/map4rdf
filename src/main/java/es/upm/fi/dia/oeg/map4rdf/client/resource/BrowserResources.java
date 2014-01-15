@@ -36,7 +36,7 @@ import com.google.gwt.resources.client.ImageResource.RepeatStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.view.GeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DataToolBar;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.FacetWidget;
-import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummary;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummaryInfoDefault;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.Timeline;
 
@@ -46,7 +46,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.widget.Timeline;
 public interface BrowserResources extends ClientBundle {
 
 	interface BrowserCss extends LoadingWidget.Stylesheet, ToggleButton.Stylesheet, FacetWidget.Stylesheet,
-			DataToolBar.Stylesheet, Timeline.Stylesheet, GeoResourceSummary.Stylesheet, PopupGeoprocessingView.Stylesheet,
+			DataToolBar.Stylesheet, Timeline.Stylesheet, GeoResourceSummaryInfoDefault.Stylesheet, PopupGeoprocessingView.Stylesheet,
 			GeoprocessingView.Stylesheet,CssResource{
 		String header();
 
