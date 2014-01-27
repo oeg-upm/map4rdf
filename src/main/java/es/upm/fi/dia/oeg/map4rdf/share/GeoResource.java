@@ -38,7 +38,7 @@ public class GeoResource extends Resource implements Serializable {
 	private static final long serialVersionUID = 7546375948600287701L;
 	private HashMap<String, Geometry> geometries;
 	private Set<String> wikipediaPages;
-	private Set<String> facetTypes;
+	private FacetConstraint facetConstraint;
 	GeoResource() {
 		// for serialization
 	}
@@ -47,7 +47,7 @@ public class GeoResource extends Resource implements Serializable {
 		super(uri);
 		geometries = new HashMap<String, Geometry>();
 		wikipediaPages=new HashSet<String>();
-		facetTypes=new HashSet<String>();
+		facetConstraint=null;
 		addGeometry(geometry);
 	}
 
@@ -88,10 +88,10 @@ public class GeoResource extends Resource implements Serializable {
 	public void addWikipediaURL(String URL){
 		wikipediaPages.add(URL);
 	}
-	public Set<String> getFacetTypes(){
-		return facetTypes;
+	public FacetConstraint getFacetConstraint(){
+		return facetConstraint;
 	}
-	public void addFacetType(String uri){
-		if(!facetTypes.contains(uri)){facetTypes.add(uri);}
+	public void setFacetConstraint(FacetConstraint facetConstraint){
+		this.facetConstraint=facetConstraint;
 	}
 }
