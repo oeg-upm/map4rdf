@@ -15,16 +15,12 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="gwt:property" content="locale=<%=request.getLocale()%>">
     <title>Map4RDF</title>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js" ></script>
+    <!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js" ></script-->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.js"></script>
     <script src="http://openlayers.org/api/2.13/OpenLayers.js"></script>
     <script src="OpenStreetMapsByFilip.js"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?gwt=1&amp;file=api&amp;v=3.6&amp;sensor=true&amp;key=<%=googleMapsKey%>" ></script>
     <script type="text/javascript" src="es.upm.fi.dia.oeg.map4rdf.map4rdf/es.upm.fi.dia.oeg.map4rdf.map4rdf.nocache.js"></script>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      // Load the Visualization API.
-      google.load('visualization', '1.0', {'packages':['corechart']});
-    </script>
   </head>
 
   <body>    
