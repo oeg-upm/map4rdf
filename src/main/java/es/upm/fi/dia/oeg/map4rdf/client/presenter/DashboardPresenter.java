@@ -74,6 +74,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DataToolBar;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.EditResourceWidget;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.Map4RDFMessageDialogBox;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupStatisticsView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
@@ -379,9 +380,14 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 
             @Override
             public void onSuccess(SingletonResult<GeoResource> result) {
-                mapPresenter.drawGeoResouces(Collections.singletonList(result.getValue()));
-                mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries()));
-                mapPresenter.getDisplay().stopProcessing();
+            	if(result.getValue()!=null){          		
+            		mapPresenter.drawGeoResouces(Collections.singletonList(result.getValue()));
+                	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries()));
+                	mapPresenter.getDisplay().stopProcessing();
+            	}else{
+            		Map4RDFMessageDialogBox message=widgetFactory.getDialogBox();
+            		message.showError(messages.errorToLoadResourceInUrlParam());
+            	}
             }
         });
     }
