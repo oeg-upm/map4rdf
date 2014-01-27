@@ -66,7 +66,13 @@ public class Constants {
 		 * The GeoSPARQL model used by OGC.
 		 * Documentation URL: 
 		 * */
-		GEOSPARQL;
+		GEOSPARQL,
+		/**
+		 * The AEMET subproject model.
+		 * 
+		 */
+		AEMET;
+		
 		
 	}
 
