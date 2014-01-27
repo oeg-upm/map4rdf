@@ -68,7 +68,15 @@ public class FacetConstraint implements Serializable {
 		result = prime * result + ((facetValueId == null) ? 0 : facetValueId.hashCode());
 		return result;
 	}
-
+	public boolean equals(FacetConstraint other){
+		if(other==null || other.getFacetId()==null || other.getFacetValueId()==null){
+			return false;
+		}
+		if(facetId==null || facetValueId==null){
+			return false;
+		}
+		return facetId.equals(other.getFacetId()) && facetValueId.equals(other.getFacetValueId());
+	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
