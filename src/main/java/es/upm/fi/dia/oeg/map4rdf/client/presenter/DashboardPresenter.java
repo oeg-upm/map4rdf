@@ -43,6 +43,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.googlecode.gwt.charts.client.ChartLoader;
+import com.googlecode.gwt.charts.client.ChartPackage;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResources;
@@ -149,6 +151,14 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
         
        // initialize variables
        listGeoResource= new ArrayList<GeoResource>();
+       
+       //init google charts
+       ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
+		chartLoader.loadApi(new Runnable() {
+			@Override
+			public void run() {
+			}
+		});
     }
 
     @Override
@@ -235,7 +245,8 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		    	
 		    	es.upm.fi.dia.oeg.map4rdf.share.Polygon polyGeometry= new PolygonBean("www.poligono1.com",new Point[]{punto,punto2,punto3});
 		    	es.upm.fi.dia.oeg.map4rdf.share.Polygon polyGeometry2= new PolygonBean("www.poligono1.com",new Point[]{punto3,punto4,punto5});
-		    	es.upm.fi.dia.oeg.map4rdf.share.Geometry multiPolyGeometry = new MultiPolygonBean("www.multipoligono.com", new Polygon[]{polyGeometry,polyGeometry2});*+/
+		    	es.upm.fi.dia.oeg.map4rdf.share.Geometry multiPolyGeometry = new MultiPolygonBean("www.multipoligono.com", new Polygon[]{polyGeometry,polyGeometry2});
+		    	*-/
 		    	resources.add(new GeoResource("http://datos.localidata.com/recurso/Provincia/Madrid/Municipio/madrid/LocalComercial/11109169L80",punto));
 		    	//resources.add(new GeoResource("www.multipoligono.com", multiPolyGeometry));
 		    	mapPresenter.drawGeoResouces(resources, new DrawPointStyle());
@@ -332,18 +343,18 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
            		Map<String,List<GeoResource>> toDraw=new HashMap<String,List<GeoResource>>();
            		for(GeoResource i:listGeoResource){
            			for(FacetConstraint j:constraints){
-           				if(i.getFacetTypes().contains(j.getFacetValueId())){
-           					if(!toDraw.containsKey(j.getFacetValueId())){
-           						toDraw.put(j.getFacetValueId(), new ArrayList<GeoResource>());
+           				if(j.equals(i.getFacetConstraint())){
+           					if(!toDraw.containsKey(j.getFacetId()+j.getFacetValueId())){
+           						toDraw.put(j.getFacetId()+j.getFacetValueId(), new ArrayList<GeoResource>());
            					}
-           					toDraw.get(j.getFacetValueId()).add(i);
+           					toDraw.get(j.getFacetId()+j.getFacetValueId()).add(i);
        						break;
            				}
            			}
            		}
            		for(FacetConstraint i:constraints){
-           			if(toDraw.containsKey(i.getFacetValueId())){
-           				mapPresenter.drawGeoResouces(toDraw.get(i.getFacetValueId()),new DrawPointStyle(i.getHexColour()));
+           			if(toDraw.containsKey(i.getFacetId()+i.getFacetValueId())){
+           				mapPresenter.drawGeoResouces(toDraw.get(i.getFacetId()+i.getFacetValueId()),new DrawPointStyle(i.getHexColour()));
            			}
            		}
                	resultsPresenter.setResults(result.asList());
