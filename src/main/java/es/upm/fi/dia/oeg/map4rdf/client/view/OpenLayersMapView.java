@@ -146,6 +146,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 						});
 				break;
 			case CIRCLE:
+				//TODO implement CIRCLE draw
 				break;
 			case MULTIPOLYGON:
 				MultiPolygon multiPolygon = (MultiPolygon) geometry;
@@ -165,6 +166,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 				}
 				break;
 			default:
+				//Dont enter because all case are in switch
 				break;
 			}
 
