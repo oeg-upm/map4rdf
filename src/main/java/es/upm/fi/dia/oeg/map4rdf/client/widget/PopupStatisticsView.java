@@ -11,7 +11,6 @@ import java.util.Set;
 import name.alexdeleon.lib.gwtblocks.client.widget.loading.LoadingWidget;
 import net.customware.gwt.presenter.client.EventBus;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,11 +33,19 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.gwt.charts.client.ColumnType;
+import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.corechart.BarChart;
+import com.googlecode.gwt.charts.client.corechart.BarChartOptions;
+import com.googlecode.gwt.charts.client.corechart.LineChart;
+import com.googlecode.gwt.charts.client.corechart.LineChartOptions;
+import com.googlecode.gwt.charts.client.corechart.PieChart;
+import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import com.googlecode.gwt.charts.client.options.CurveType;
 
 import es.upm.fi.dia.oeg.map4rdf.client.event.StatisticsSummaryEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
-import es.upm.fi.dia.oeg.map4rdf.client.util.JavaScriptArray;
 import es.upm.fi.dia.oeg.map4rdf.client.util.StatisticDataValue;
 import es.upm.fi.dia.oeg.map4rdf.client.util.StatisticDimension;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
@@ -70,8 +77,12 @@ public class PopupStatisticsView extends Composite{
 	private Panel mainPanel;
 	private Grid mainGrid;
 	private Grid chartGrid;
-	private String [] charts={"PIE","LINE","BAR"};
+	public enum ChartType {
+		PIE,LINE,BAR
+	}
+	private ChartType [] charts={ChartType.PIE,ChartType.LINE,ChartType.BAR};
 	private int selectedChart=0;
+	//TODO add aemet LoadingBox for statistics here and replace the old loadingWidget.
 	private LoadingWidget loadingWidget;
 		
 	public PopupStatisticsView(GeoResource resource,String statisticsServiceURL,int width,int height,EventBus eventBus,BrowserMessages browserMessages,BrowserResources browserResources){
@@ -343,6 +354,7 @@ public class PopupStatisticsView extends Composite{
 		errorLabel.setVisible(false);
 		drawStatistic();
 	}
+	//TODO fix problem that reload data when the user only change the drawType.
 	private void handlerChartChange(){
 		statisticsGrid.clear();
 		DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
@@ -390,26 +402,16 @@ public class PopupStatisticsView extends Composite{
 		scroll.add(panel);
 		scroll.setSize(((int)(0.7*width))+"px", ((int)(0.7*height))+"px");
 		String tableTitle=LocaleUtil.getBestLabel(selectedStatistic);
-		String divID="statisticsDIV";
+		//String divID="statisticsDIV";
 		int chartWidth=(int)(0.68*width);
 		int chartHeight=(int)(0.68*height);
 		String xTitle=LocaleUtil.getBestLabel(selectedDimensionX);
 		String yTitle=LocaleUtil.getBestLabel(selectedDimensionY);
 		//String[] xValues= new String[valores.size()];
 		//int[] yValues= new int[valores.size()];
-		panel.getElement().setId(divID);
+		//panel.getElement().setId(divID);
 		statisticsGrid.setWidget(0, 0, scroll);
-		int i=0;
-		JavaScriptArray<String> xValues= new JavaScriptArray<String>();
-		JavaScriptArray<Integer> yValues = new JavaScriptArray<Integer>();
-		for(StatisticDataValue valor:valores){
-			xValues.put(i,LocaleUtil.getBestLabel(valor).replace("\"", ""));
-			yValues.put(i,Integer.parseInt(valor.getY().replace("\"", "")));
-			/*System.out.println("X= "+xValues.get(i)+ " Y="+yValues.get(i));*/
-			i++;
-			//panel.add(new Label("X="+LocaleUtil.getBestLabel(valor).replace("\"", "")+" Y="+valor.getY()));
-		}
-		drawChart(charts[selectedChart],tableTitle, divID, chartWidth, chartHeight, xTitle, yTitle, xValues.getArrayObject(), yValues.getArrayObject());
+		drawChart(charts[selectedChart],tableTitle, panel, chartWidth, chartHeight, xTitle, yTitle, valores);
 	}
 		
 	private Set<String> getServers(String url){
@@ -626,7 +628,7 @@ public class PopupStatisticsView extends Composite{
 	}
 	native static String getQueryJSON(String url,String method,String urlData)/*-{
 		var toReturnData=null;
-		var toReturnJson = $wnd.$.ajax(
+		var toReturnJson = $wnd.jQuery.ajax(
 			{
 				type: 'GET',
 				url: url+method,
@@ -647,35 +649,56 @@ public class PopupStatisticsView extends Composite{
 		} 
 		return toReturnJson.responseText;
 	}-*/;
-	native static void drawChart(String chartType,String tableTitle, String divID, int width,int height, String xTitle,String yTitle,JavaScriptObject xValues,JavaScriptObject yValues)/*-{
-		var data = new $wnd.google.visualization.DataTable();
-        data.addColumn('string', xTitle);
-        data.addColumn('number', yTitle);
-        for(var i=0;i<xValues.length;i++){
-			data.addRow([xValues[i],parseInt(yValues[i])]);
+	private void drawChart(ChartType chartType,String tableTittle, Panel parent,int width,int height,String xTittle,String yTittle,List<StatisticDataValue> values){
+		DataTable dataTable = DataTable.create();
+		dataTable.addColumn(ColumnType.STRING, xTittle);
+		dataTable.addColumn(ColumnType.NUMBER, yTittle);
+		dataTable.addRows(values.size());
+		Collections.sort(values);
+		for(int i=0;i<values.size();i++){
+			dataTable.setCell(i, 0, LocaleUtil.getBestLabel(values.get(i)).replace("\"", ""));
+			dataTable.setCell(i, 1, Double.parseDouble(values.get(i).getY().replace("\"", "")));
 		}
-        // Set chart options
-        var options = {'title':tableTitle,
-                       'width':width,
-                       'height':height};
-
-        // Instantiate and draw our chart, passing in some options.
-         var chart = null;
-        switch (chartType.toLowerCase()) {
-  			case 'pie':
-    			chart = new $wnd.google.visualization.PieChart($wnd.document.getElementById(divID));
-    			break;
-  			case 'line':
-    			chart = new $wnd.google.visualization.LineChart($wnd.document.getElementById(divID));  
-    			break;
-    		case 'bar':
-    			chart = new $wnd.google.visualization.BarChart($wnd.document.getElementById(divID));
-    			break;
-  			default:
-    			chart = new $wnd.google.visualization.PieChart($wnd.document.getElementById(divID));
-    		break;
+		 switch (chartType) {
+			case PIE:
+				PieChartOptions optionsPie=PieChartOptions.create();
+				optionsPie.setTitle(tableTittle);
+				optionsPie.setWidth(width);
+				optionsPie.setHeight(height);
+				optionsPie.setIs3D(true);
+				PieChart chartPie=new PieChart();
+				parent.add(chartPie);
+				chartPie.draw(dataTable, optionsPie);
+ 				break;
+			case LINE:
+				LineChartOptions optionsLine=LineChartOptions.create();
+				optionsLine.setTitle(tableTittle);
+				optionsLine.setWidth(width);
+				optionsLine.setHeight(height);
+				optionsLine.setCurveType(CurveType.NONE);
+				LineChart chartLine=new LineChart();
+				parent.add(chartLine);
+				chartLine.draw(dataTable, optionsLine);
+ 				break;
+			case BAR:
+				BarChartOptions optionsBar=BarChartOptions.create();
+				optionsBar.setTitle(tableTittle);
+				optionsBar.setWidth(width);
+				optionsBar.setHeight(height);
+				BarChart chartBar=new BarChart();
+				parent.add(chartBar);
+				chartBar.draw(dataTable, optionsBar);
+ 				break;
+			default:
+				PieChartOptions optionsDef=PieChartOptions.create();
+				optionsDef.setTitle(tableTittle);
+				optionsDef.setWidth(width);
+				optionsDef.setHeight(height);
+				optionsDef.setIs3D(true);
+				PieChart chartDef=new PieChart();
+				parent.add(chartDef);
+				chartDef.draw(dataTable, optionsDef);
+ 				break;
 		}
-       chart.draw(data, options);
-		
-	}-*/;
+	}
 }
