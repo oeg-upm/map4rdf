@@ -51,6 +51,8 @@ public interface BrowserMessages extends Messages {
 
 	String information();
 	
+	String informationTittle(String resource);
+	
 	String edit();
 	
 	String filtres();
