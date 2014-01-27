@@ -41,33 +41,49 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
  * @author Alexander De Leon
  */
 public interface Map4rdfDao {
-
+	//TODO to remove. Dont use.
 	List<GeoResource> getGeoResources(BoundingBox boundingBox)
 			throws DaoException;
-
+	
+	//For get the resource in "uri" query param.
 	GeoResource getGeoResource(String uri) throws DaoException;
-
+	
+	//For KML service
 	List<GeoResource> getGeoResources(BoundingBox boundingBox,
 			Set<FacetConstraint> constraints) throws DaoException;
-
+	
+	//For facet changed
 	List<GeoResource> getGeoResources(BoundingBox boundingBox,
 			Set<FacetConstraint> constraints, int max) throws DaoException;
-
+	
+	//When user select a statistic dataset and time to view, this method get the values
+	//for draw statistics.
 	List<GeoResourceOverlay> getGeoResourceOverlays(
 			StatisticDefinition statisticDefinition, BoundingBox boundingBox,
 			Set<FacetConstraint> constraints) throws DaoException;
 
+	//For get facets
 	List<Facet> getFacets(String predicateUri, BoundingBox boundingBox)
 			throws DaoException;
-
+	
+	//Get years of statistic dataset. Different years of measurement.
+	//Years for slidebar. This method is called when user select a statistic dataset.
 	List<Year> getYears(String datasetUri) throws DaoException;
-
+	
+	//Get statistics datasets.
+	//This method is called on client app startup. This get the different types of statistics
 	List<Resource> getStatisticDatasets() throws DaoException;
 	
+	//This method get all properties of URI. EditResource use this method.
 	List<SubjectDescription> getSubjectDescription(String subject) throws DaoException;
 	
+	//This method is for get labels of a URI. EditResource use this method.
 	String getLabel(String uri) throws DaoException;
 	
+	//This method is for get resources nearby a point. This is similar to
+	//List<GeoResource> getGeoResources(BoundingBox boundingBox,Set<FacetConstraint> constraints, int max)
+	//We can use getResources instead of this.
+	//TODO: Analyze if this method will can remove. 
 	List<GeoResource> getNextPoints(BoundingBox boundingBox, int max) throws DaoException;
 
 }
