@@ -127,9 +127,10 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							resource.addWikipediaURL(seeAlso);
 						}
 					}
-					if(solution.contains("facetType")){
-						resource.addFacetType(solution.getResource("facetType").getURI());
-						//lastFacetType=solution.getResource("facetType").getURI();
+					if(solution.contains("facetID") && solution.contains("facetValueID")){
+						String facetID=solution.getResource("facetID").getURI();
+						String facetValueID=solution.getResource("facetValueID").getURI();
+						resource.setFacetConstraint(new FacetConstraint(facetID, facetValueID));
 					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
@@ -478,7 +479,7 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
-		query.append("SELECT distinct ?r ?label ?geo ?geoType ?lat ?lng ?seeAlso ?facetType ");
+		query.append("SELECT distinct ?r ?label ?geo ?geoType ?lat ?lng ?seeAlso ?facetID ?facetValueID ");
 		query.append("WHERE { ");
 		query.append("?r <" + Geo.geometry + ">  ?geo. ");
 		query.append("?geo <" + RDF.type + "> ?geoType . ");
@@ -487,12 +488,12 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
 		if (constraints != null) {
 			for (FacetConstraint constraint : constraints) {
-				query.append("{ ?r <" + constraint.getFacetId() + "> <" + constraint.getFacetValueId() + ">. } UNION");
+				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
+				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
+				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
+				query.append("} UNION");
 			}
 			query.delete(query.length() - 5, query.length());
-			for (FacetConstraint constraint : constraints) {
-				query.append(" OPTIONAL{ ?r <" + constraint.getFacetId() + "> ?facetType. }.");
-			}
 		}
 		//filters
 		if (boundingBox!=null) {

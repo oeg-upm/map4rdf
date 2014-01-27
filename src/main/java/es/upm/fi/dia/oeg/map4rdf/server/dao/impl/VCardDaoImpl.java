@@ -123,6 +123,11 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 						Literal labelLiteral = solution.getLiteral("label");
 						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
 					}
+					if(solution.contains("facetID") && solution.contains("facetValueID")){
+						String facetID=solution.getResource("facetID").getURI();
+						String facetValueID=solution.getResource("facetValueID").getURI();
+						resource.setFacetConstraint(new FacetConstraint(facetID, facetValueID));
+					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
 				}
@@ -312,7 +317,7 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	}
 
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
-		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?geo ?lat ?lng ");
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?geo ?lat ?lng ?facetID ?facetValueID ");
 		query.append("WHERE { ");
 		query.append("?r <" + VCard.geo + ">  ?geo. ");
 		query.append("?geo <" + VCard.latitude + ">  ?lat . ");
@@ -320,7 +325,10 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
 		if (constraints != null) {
 			for (FacetConstraint constraint : constraints) {
-				query.append("{ ?r <" + constraint.getFacetId() + "> <" + constraint.getFacetValueId() + ">. } UNION");
+				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
+				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
+				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
+				query.append("} UNION");
 			}
 			query.delete(query.length() - 5, query.length());
 		}
