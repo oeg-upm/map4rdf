@@ -56,7 +56,7 @@ public class EditResourceWidget extends Composite{
 	private EventBus eventBus;
 	private SafeHtml emptyHtml;
 	private WidgetFactory widgetFactory;
-	private Map4RDFDialogBox dialogBox;
+	private Map4RDFMessageDialogBox dialogBox;
 	
 	public EditResourceWidget(String resourceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus, WidgetFactory widgetFactory) {
 		this.resourceUrl=resourceUrl;

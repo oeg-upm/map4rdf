@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -16,12 +15,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class Map4RDFDialogBox extends DialogBox {
+public class Map4RDFMessageDialogBox extends DialogBox {
 	private Label mainLabel;
 	private Panel imagePanel;
 	private ImageResource doneImage;
 	private ImageResource errorImage;
-	public Map4RDFDialogBox(String tittle,String label, ImageResource doneImage,ImageResource errorImage) {
+	public Map4RDFMessageDialogBox(String tittle,String label, ImageResource doneImage,ImageResource errorImage) {
+		super();
+		//Local variables.
 		this.doneImage = doneImage;
 		this.errorImage = errorImage;
 		
@@ -33,22 +34,26 @@ public class Map4RDFDialogBox extends DialogBox {
 
 		// Enable glass background.
 		setGlassEnabled(true);
+		
+		//Disable modal. The user cant click in app(GlassEnabled true) and other startup errors can be show.
+		//If modal is false. Others errors dont be show.
+		setModal(false);
 
 		// DialogBox is a SimplePanel, so you have to set its widget
 		// property to whatever you want its contents to be.
 		Button ok = new Button("OK");
 		ok.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				Map4RDFDialogBox.this.hide();
+				Map4RDFMessageDialogBox.this.hide();
 			}
 		});
 
 		mainLabel = new Label(label);
 
 		VerticalPanel panel = new VerticalPanel();
-		panel.setHeight("140");
-		panel.setWidth("300");
-		setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
+		/*panel.setHeight("140");
+		panel.setWidth("300");*/
+		//setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
 		panel.setSpacing(10);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		HorizontalPanel messagePanel= new HorizontalPanel();
@@ -78,25 +83,25 @@ public class Map4RDFDialogBox extends DialogBox {
 	public void show(String text){
 		imagePanel.clear();
 		mainLabel.setText(text);
-		super.show();
-		modifyPosition();
+		super.center();
+		//modifyPosition();
 	}
 	public void showDone(String text){
 		imagePanel.clear();
 		imagePanel.add(new Image(doneImage));
 		mainLabel.setText(text);
-		super.show();
-		modifyPosition();
+		super.center();
+		//modifyPosition();
 	}
 	public void showError(String text){
 		imagePanel.clear();
 		imagePanel.add(new Image(errorImage));
 		mainLabel.setText(text);
-		super.show();
-		modifyPosition();
+		super.center();
+		//modifyPosition();
 		
 	}
-	private void modifyPosition(){
+	/*private void modifyPosition(){
 		setPopupPosition(Window.getClientWidth()/2-this.getOffsetWidth()/2, Window.getClientHeight()/2-this.getOffsetHeight()/2);
-	}
+	}*/
 }
