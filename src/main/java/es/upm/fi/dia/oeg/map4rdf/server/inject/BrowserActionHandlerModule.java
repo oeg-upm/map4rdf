@@ -26,6 +26,8 @@ package es.upm.fi.dia.oeg.map4rdf.server.inject;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAddInfoConfig;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObs;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObsForProperty;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResources;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitions;
@@ -41,6 +43,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticYears;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetAemetObsForPropertyHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetAemetObsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetFacetDefinitionsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceOverlaysHandler;
@@ -81,5 +85,7 @@ public class BrowserActionHandlerModule extends ActionHandlerModule {
 		super.bindHandler(GetAddInfoConfig.class, GetAddInfoConfigHandler.class);
 		super.bindHandler(GetMultipleConfigurationParameters.class, GetMultipleConfigurationParametersHandler.class);
 		super.bindHandler(GetMapsConfiguration.class, GetMapsConfigurationHandler.class);
+		super.bindHandler(GetAemetObsForProperty.class, GetAemetObsForPropertyHandler.class);
+		super.bindHandler(GetAemetObs.class, GetAemetObsHandler.class);
 	}
 }

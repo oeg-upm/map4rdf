@@ -31,6 +31,7 @@ import com.google.inject.name.Named;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.AemetDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.DbPediaDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoLinkedDataDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoSparqlDaoImpl;
@@ -57,6 +58,8 @@ public class BrowserModule extends AbstractModule {
 			return new VCardDaoImpl(endpointUri);
 		case GEOSPARQL:
 			return new GeoSparqlDaoImpl(endpointUri);
+		case AEMET:
+			return new AemetDaoImpl(endpointUri);
 		}
 		// make compiler happy
 		return null;
