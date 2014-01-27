@@ -45,7 +45,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
-
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParametersResult;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointEvent;
@@ -72,7 +71,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
  * @author Alexander De Leon
- * @author Francisco Siles
+ * Adapted by: @author Francisco Siles
  */
 public class GeoResourceSummary extends Composite {
 
@@ -83,10 +82,10 @@ public class GeoResourceSummary extends Composite {
 	private Geometry lastGeometry;
 	private EventBus eventBus;
 	private GeoResourceSummaryInfo summary;
-	private boolean summaryVisible;
 	private final int intSizeImages=35;
 	private final String sizeImages=intSizeImages+"px";
-	private final String sizeAllTable=(intSizeImages*3)+"px";//sizeImages*3
+	private final int intSizeAllTable=intSizeImages*3;
+	private final String sizeAllTable=intSizeAllTable+"px";//sizeImages*3
 	private final int widgetDistance=3;//distance between widgets
 	private Panel mainPanel;
 	private ArrayList<Widget> allWidgetInOrder;
@@ -123,6 +122,7 @@ public class GeoResourceSummary extends Composite {
 		parameters.add(ParameterNames.WIKIPEDIA_PARSE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
 		parameters.add(ParameterNames.TWITTER_STATUS_URL);
+		parameters.add(ParameterNames.GEOMETRY_MODEL);
 		dispatchAsync.execute(new GetMultipleConfigurationParameters(parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
 			@Override
@@ -151,17 +151,24 @@ public class GeoResourceSummary extends Composite {
 					twitterURL=twitter;
 				}else{
 					Window.alert(ParameterNames.TWITTER_STATUS_URL+" config parameter is null or empty");
-				}		
+				}
+				String geometryModel=result.getResults().get(ParameterNames.GEOMETRY_MODEL);
+				if(geometryModel!=null && !geometryModel.isEmpty()){
+					summary=getSummary(geometryModel);
+				}else{
+					Window.alert(ParameterNames.GEOMETRY_MODEL+" config parameter is null or empty");
+				}
 			}
 		});
 		initWidget(createUi());
 	}
-	public GeoResourceSummary() {
+	/*GeoResourceSummary() {
 		allWidgetInOrder=new ArrayList<Widget>();
 		summaryMove=new SummaryMove(allWidgetInOrder, parametersSummary, this);
-	}
+	}*/
 
 	public void setGeoResource(final GeoResource resource, Geometry geometry) {
+		//TODO closeProperSummary() wait for response Email of Ocorcho.
 		openOrCloseSummary(false);
 		lastGeoResource=resource;
 		lastGeometry=geometry;
@@ -193,10 +200,9 @@ public class GeoResourceSummary extends Composite {
 					});
 					centerPanel.add(image);
 				}
-				openOrCloseSummary(false);
+				summary.addAdditionalInfo(additionalsInfo);
 			}
 		});
-		summary.setGeoResource(resource, geometry);
 		if(wikipediaResultWidget!=null){
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
@@ -235,12 +241,10 @@ public class GeoResourceSummary extends Composite {
 		}
 		summaryMove.cancelMove();
 		parametersSummary=initializeParametersSummary(visibleWidget.size(),moveType);
+		summary.setGeoResource(resource, geometry);
 		summaryMove=new SummaryMove(visibleWidget, parametersSummary, this);
 		moveInitialPosition();
 		summaryMove.startMoveWidgets();
-	}
-	public void closeSummary(){
-		openOrCloseSummary(false);
 	}
 
 	public void moveLeftTopOfCenter(Widget widget,int left,int top){
@@ -252,9 +256,6 @@ public class GeoResourceSummary extends Composite {
 		DOM.setStyleAttribute(widget.getElement(), "top", top+"px");
 	}
 	private Widget createUi() {
-		summary=getSummary();
-		
-		summaryVisible=false;
 		mainPanel= new FlowPanel();
 		mainPanel.setSize(sizeAllTable, sizeAllTable);
 		Image image=new Image(resources.summaryBackGround());
@@ -372,9 +373,8 @@ public class GeoResourceSummary extends Composite {
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				
-				openOrCloseSummary(!summaryVisible);
+			public void onClick(ClickEvent event) {	
+				openOrCloseSummary(!summary.isVisible());
 			}
 		});
 		return image;
@@ -436,7 +436,10 @@ public class GeoResourceSummary extends Composite {
 		rdfAnchor.setTarget("_blank");
 		return rdfAnchor;
 	}
-	private GeoResourceSummaryInfo getSummary(){
+	private GeoResourceSummaryInfo getSummary(String geometryModel){
+		if("AEMET".equalsIgnoreCase(geometryModel)){
+			return new GeoResourceSummaryInfoAemet(dispatchAsync, resources, messages);
+		}
 		return new GeoResourceSummaryInfoDefault(messages, resources);
 	}
 	private Widget getAddToRoutes(){
@@ -554,6 +557,7 @@ public class GeoResourceSummary extends Composite {
 		eventBus.fireEvent(new BufferSetPointEvent(lastGeoResource, lastGeometry));
 	}
 	private void close(){
+		//TODO closeProperSummary() wait for response Email of Ocorcho.
 		closeProperSummary();
 		if(wikipediaResultWidget!=null){
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
@@ -564,35 +568,30 @@ public class GeoResourceSummary extends Composite {
 	private void openPopupStatisticsView(){
 		eventBus.fireEvent(new StatisticsSummaryEvent(true, lastGeoResource));
 	}
-	private void openOrCloseSummary(boolean open){
-		if(open){
+	public void closeSummary(){
+		openOrCloseSummary(false);
+	}
+	private void openOrCloseSummary(boolean openOrClose){
+		if(openOrClose){
 			openProperSummary();
 		}else{
 			closeProperSummary();
 		}
 	}
 	private void openProperSummary(){
-		if(!summaryVisible){
-			mainPanel.add(summary.getWidget());
-			summaryVisible=true;
-			int extraRadiousPX=parametersSummary.getRadiousPX()-intSizeImages;
-			summary.addAdditionalInfo(additionalsInfo, extraRadiousPX);
+		if(!summary.isVisible()){
+			summary.show();
 		}
 	}
 	private void closeProperSummary(){
-		if(summaryVisible){
-			summaryMove.cancelMove();
-			mainPanel.remove(summary.getWidget());
-			summaryVisible=false;
+		if(summary.isVisible()){
+			summary.close();
 		}
 	}
 	private void moveInitialPosition(){
 		summaryMove.moveToInitialPosition();
 	}
 	private ParametersSummaryMove initializeParametersSummary(int widgetsSize,int moveType){
-		//For 4 widgets 104
-		//For 5 widgets 105
-		//For 6 or more  widget 104(6 or more widget are 8 widget and X transparent widget) X{0,1,2}
 		if(widgetsSize==0){widgetsSize=1;}
 		final int parameter=(int)((int)(104/widgetsSize))*widgetsSize;
 		final int firtsTotalTime=parameter*3;
@@ -605,15 +604,6 @@ public class GeoResourceSummary extends Composite {
 			radiousPX=intSizeImages;
 		}
 		return new ParametersSummaryMove(firtsTotalTime,secondTotalTime, steps, diffSteps, diffSpecialSteps, radiousPX,intSizeImages,widgetDistance,moveType);
-		
-		/*final int parameter=105;
-		final int firtsTotalTime=parameter*3;
-		final int secondTotalTime=parameter;
-		final int steps=parameter;
-		final int diffSteps=10;
-		final int diffSpecialSteps=steps/allWidgetInOrder.size();//procure that the division have a int result.
-		final int radiousPX=intSizeImages+10;
-		return new ParametersSummaryMove(firtsTotalTime,secondTotalTime, steps, diffSteps, diffSpecialSteps, radiousPX);*/
 	}
 
 }

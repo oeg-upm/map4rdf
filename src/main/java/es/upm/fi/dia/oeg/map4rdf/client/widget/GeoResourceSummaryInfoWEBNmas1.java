@@ -7,30 +7,41 @@ import com.google.gwt.user.client.ui.Widget;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 
+//TODO {VeryHard} Implement WEBN+1 model!!!
 public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo{
 
 	@Override
-	public void addAdditionalInfo(Map<String, String> additionalsInfo,
-			int extraRadiousPX) {
-		// TODO Auto-generated method stub
+	public void addAdditionalInfo(Map<String, String> additionalsInfo) {
 		
 	}
 
 	@Override
 	public Widget getWidget() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setGeoResource(GeoResource resource, Geometry geometry) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void clearAdditionalInfo() {
-		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isVisible() {
+		return false;
+	}
+
+	@Override
+	public void show() {
+		
+	}
+
+	@Override
+	public void close() {
 		
 	}
 
