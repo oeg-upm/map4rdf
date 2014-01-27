@@ -36,6 +36,7 @@ import net.customware.gwt.presenter.client.place.TokenFormatter;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
@@ -62,7 +63,7 @@ public class Browser implements EntryPoint {
 		}
 		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus());
 		controller.addPresenter(injector.getDashboard(),Places.DASHBOARD);
-            
+		
 		controller.bind();
 		
 		RootLayoutPanel.get().add(controller.getDisplay().asWidget());
@@ -109,9 +110,15 @@ public class Browser implements EntryPoint {
 		
 		String parameters[] = Window.Location.getQueryString().substring(1).split("&");
 		for (String param : parameters) {
-			String[] parts = param.split("=");
+			final String[] parts = param.split("=");
 			if (parts[0].equals("uri")) {
-				LoadResourceEvent.fire(parts[1], injector.getEventBus());
+				Timer timer = new Timer() {		
+					@Override
+					public void run() {
+						LoadResourceEvent.fire(parts[1], injector.getEventBus());
+					}
+				};
+				timer.schedule(2000);
 			}
 		}
         //History.addValueChangeHandler(injector.getDashboard());
