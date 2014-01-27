@@ -195,6 +195,8 @@ public interface BrowserMessages extends Messages {
 	
 	String saveRDFDone();
 	
+	String errorToLoadResourceInUrlParam();
+	
 	
 
 }
