@@ -60,11 +60,12 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			while (queryResult.hasNext()) {
 				QuerySolution solution = queryResult.next();
 				try {
+					String positionUri = solution.getResource("position").getURI();
 					double lat = solution.getLiteral("lat").getDouble();
 					double lng = solution.getLiteral("lng").getDouble();
 
 					if (resource == null) {
-						resource = new AemetResource(uri, new PointBean(uri, lng, lat));
+						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");
@@ -151,59 +152,12 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	}
 
 	/* --------------------- helper methods --- */
-
-	/**
-	 * private List<GeoResource> getGeoResources(BoundingBox boundingBox,
-	 * Set<FacetConstraint> constraints, Integer max) throws DaoException { //
-	 * area.
-	 * 
-	 * HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
-	 * 
-	 * QueryExecution execution =
-	 * QueryExecutionFactory.sparqlService(endpointUri,
-	 * createGetResourcesQuery(boundingBox, constraints, max));
-	 * 
-	 * try { ResultSet queryResult = execution.execSelect(); while
-	 * (queryResult.hasNext()) { QuerySolution solution = queryResult.next();
-	 * try { String uri = solution.getResource("r").getURI(); double lat =
-	 * solution.getLiteral("lat").getDouble(); double lng =
-	 * solution.getLiteral("lng").getDouble();
-	 * 
-	 * GeoResource resource = result.get(uri); if (resource == null) { resource
-	 * = new GeoResource(uri, new PointBean(uri, lng, lat)); result.put(uri,
-	 * resource); } if (solution.contains("label")) { Literal labelLiteral =
-	 * solution.getLiteral("label");
-	 * resource.addLabel(labelLiteral.getLanguage(),
-	 * labelLiteral.getString()+"NANANA"); } } catch (NumberFormatException e) {
-	 * LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage()); } }
-	 * 
-	 * return new ArrayList<GeoResource>(result.values()); } catch (Exception e)
-	 * { throw new DaoException("Unable to execute SPARQL query", e); } finally
-	 * { execution.close(); } }
-	 **/
-
-	/**
-	 * Metodo de prueba para llamar a mis GeoResources
-	 */
-
+	
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
-		// HACER: extender geoResource. Cambiar la query para anadir uri, title.
-		// dibujar todos los GeoResource nuevos.
-
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
-
-		// ORIGINAL
-		// QueryExecution execution =
-		// QueryExecutionFactory.sparqlService(endpointUri,
-		// createGetResourcesQuery(boundingBox, constraints, max));
-		// PRUEBA
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
-
-//		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
-//				createGetResourcesQuery(boundingBox, constraints, max));
-
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
@@ -248,11 +202,6 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	 * @param max
 	 * @return
 	 */
-	// igual que createGetResourcesQuery, pero en vez de recuperar todos los
-	// puntos,
-	// anadimos solo los puntos que cumplan que son de guias o de viajes
-	// (itinerarios)
-	// los facets constraints nos dicen cual es (guias/viaje)
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints,
 			Integer limit) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  SELECT distinct ?r ?position ?lat ?lng ?label ?facetID ?facetValueID ");
@@ -284,21 +233,69 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	}
 
 	private String createGetResourceQuery(String uri) {
-		StringBuilder query = new StringBuilder("SELECT distinct ?lat ?lng ?label ");
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  SELECT distinct ?position ?lat ?lng ?label ");
 		query.append("WHERE { ");
-		query.append("<" + uri + "> <" + Geo.lat + "> ?lat. ");
-		query.append("<" + uri + "> <" + Geo.lng + "> ?lng . ");
-		query.append("OPTIONAL { <" + uri + "> <" + RDFS.label + "> ?label } .");
+		query.append("<"+uri+"> <http://www.w3.org/2003/01/geo/wgs84_pos#location> ?position. ");
+		query.append("?position <" + Geo.lat + "> ?lat. ");
+		query.append("?position <" + Geo.lng + "> ?lng . ");
+		query.append("OPTIONAL { <"+uri+"> <" + RDFS.label + "> ?label } .");
 		query.append("}");
 		return query.toString();
 	}
 
 	@Override
-	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max)
+	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int limit)
 			throws DaoException {
-		
-		// TODO COMPLETE getNextPoints AEMET dao impl
-		return Collections.emptyList();
-	}
+		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
+		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetNextPoints(boundingBox, limit));
+		try {
+			ResultSet queryResult = execution.execSelect();
+			while (queryResult.hasNext()) {
+				QuerySolution solution = queryResult.next();
+				try {
+					String uri = solution.getResource("r").getURI();
+					String positionUri = solution.getResource("position").getURI();
+					double lat = solution.getLiteral("lat").getDouble();
+					double lng = solution.getLiteral("lng").getDouble();
+					GeoResource resource=result.get(uri);
+					
+					if (resource == null) {
+						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
+						result.put(uri, resource);
+					}
+					if (solution.contains("label")) {
+						Literal labelLiteral = solution.getLiteral("label");
+						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
+					}
+				} catch (NumberFormatException e) {
+					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
+				}
+			}
 
+			return new ArrayList<GeoResource>(result.values());
+		} catch (Exception e) {
+			throw new DaoException("Unable to execute SPARQL query", e);
+		} finally {
+			execution.close();
+		}
+	}
+	private String createGetNextPoints(BoundingBox boundingBox, int limit){
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  SELECT distinct ?r ?position ?lat ?lng ?label ?facetID ?facetValueID ");
+		query.append("WHERE { ");
+		query.append("?r <http://www.w3.org/2003/01/geo/wgs84_pos#location> ?position. ");
+		query.append("?position <" + Geo.lat + "> ?lat. ");
+		query.append("?position <" + Geo.lng + "> ?lng . ");
+		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
+		//filters
+		if (boundingBox!=null) {
+			query = addBoundingBoxFilter(query, boundingBox);
+		}
+		
+		query.append("}");
+		if (limit >0) {
+			query.append(" LIMIT " + limit);
+		}
+		return query.toString();
+	}
 }
