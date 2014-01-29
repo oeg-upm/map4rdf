@@ -67,6 +67,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	private BrowserResources browserResources;
 	private DispatchAsync dispatchAsync;
 	private VerticalPanel listPanel;
+	private FlexTable additionalInfoTable;
 	private Panel mainPanel;
 	//private OpenLayersMapView display;
 	private List<AemetObs> obs;
@@ -106,10 +107,10 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	private Widget createUi() {
 		mainPanel = new VerticalPanel();
 		listPanel = new VerticalPanel();
-		//DOM.setStyleAttribute(mainPanel.getElement(), "position", "absolute");
-		//mainPanel.setStyleName(browserResources.css().popup());
+		additionalInfoTable = new FlexTable();
 		mainPanel.setWidth("auto");
 		mainPanel.add(resoruceLabel=new Label());
+		mainPanel.add(additionalInfoTable);
 		mainPanel.add(listPanel); 
 		loadingBox = new LoadingDialogBox(false, false);
 	    loadingBox.setAnimationEnabled(false);
@@ -148,11 +149,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	}
 	private void buildWindow() {
 		listPanel.clear();
-		//HorizontalPanel caractYGraficas = new HorizontalPanel();
-		//VerticalPanel caracteristicas = new VerticalPanel();
-		//VerticalPanel graficas = new VerticalPanel();
-		//caracteristicas.setSpacing(0);
-		//graficas.setSpacing(0);
 		String text = aemetMessages.noObserveData();
 		try {
 			if (obs.isEmpty()) {
@@ -176,7 +172,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 					graf.setSize("35%", "100%");
 					graf.add(new Label(aemetMessages.charts()));
 					//graf.setSpacing(5);
-					// Graficas de alex aqui
 					Anchor dayAnchor = new Anchor(aemetMessages.day());
 					dayAnchor.addClickHandler(new ClickHandler() {
 
@@ -208,20 +203,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 						mainWidget.hide();
 						mainWidget.center();
 					}
-					/*
-					 * graf.add(new Label("|")); Anchor monthAnchor = new
-					 * Anchor("mes"); monthAnchor.addClickHandler(new
-					 * ClickHandler() {
-					 * 
-					 * @Override public void onClick(ClickEvent event) {
-					 * Window.alert("Por hacer"); } }); graf.add(monthAnchor);
-					 */
-					//graficas.add(graf);
-
 				}
-				/*caractYGraficas.add(caracteristicas);
-				caractYGraficas.add(graficas);
-				listPanel.add(caractYGraficas);*/
 			}
 		} catch (Exception e) {
 			Window.alert("Error: " + e.getMessage() + e.toString());
@@ -295,11 +277,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 						tableTittle,
 						browserMessages.close(), plot);
 				dialog.center();
-				//infoWindow.close();
-				/*VerticalPanel vp = new VerticalPanel();
-				vp.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-				vp.add(plot.getWidget());
-				vp.setSize("" + (plot.getWidth()) + "px", "" + (plot.getHeight() + 20) + "px");*/
 				stopLoading();
 			}
 
@@ -405,7 +382,14 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	
 	@Override
 	public void addAdditionalInfo(Map<String, String> additionalsInfo) {
-		//TODO GeoResourceSummaryInfoAemet to complete addAdditionalInfo().
+		if(additionalsInfo!=null){
+			int rows=0;
+			for(String key: additionalsInfo.keySet()){
+				additionalInfoTable.setWidget(rows, 0, new Label(key));
+				additionalInfoTable.setWidget(rows, 1, new Label(additionalsInfo.get(key)));
+				rows++;
+			}
+		}
 	}
 	@Override
 	public Widget getWidget() {
@@ -413,7 +397,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	}
 	@Override
 	public void clearAdditionalInfo() {
-		//TODO GeoResourceSummaryInfoAemet to complete clearAdditionalInfo().
+		additionalInfoTable.clear();
 	}
 	
 	@Override
