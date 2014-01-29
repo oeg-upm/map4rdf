@@ -168,7 +168,7 @@ public class GeoResourceSummary extends Composite {
 	}*/
 
 	public void setGeoResource(final GeoResource resource, Geometry geometry) {
-		//TODO closeProperSummary() wait for response Email of Ocorcho.
+		//TODO Analyze if it is easy to implement closeProperSummary depend on configuration param.
 		openOrCloseSummary(false);
 		lastGeoResource=resource;
 		lastGeometry=geometry;
@@ -557,7 +557,7 @@ public class GeoResourceSummary extends Composite {
 		eventBus.fireEvent(new BufferSetPointEvent(lastGeoResource, lastGeometry));
 	}
 	private void close(){
-		//TODO closeProperSummary() wait for response Email of Ocorcho.
+		//TODO Analyze if it is easy to implement closeProperSummary depend on configuration param.
 		closeProperSummary();
 		if(wikipediaResultWidget!=null){
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
