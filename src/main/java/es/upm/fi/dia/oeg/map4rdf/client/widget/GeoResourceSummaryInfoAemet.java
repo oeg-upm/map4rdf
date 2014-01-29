@@ -158,7 +158,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 				int column=0;
 				final AemetObs firstObservation = obs.get(0);
 				//listPanel.add(new Label(aemetMessages.station() + " " + LocaleUtil.getBestLabel(firstObservation.getEstacion())));
-				listPanel.add(new Label(firstObservation.getIntervalo().toString()));
+				listPanel.add(new Label(aemetMessages.timeOfObservation()+" "+firstObservation.getIntervalo().toString()));
 				FlexTable propertiesPanel=new FlexTable();
 				listPanel.add(propertiesPanel);
 				DOM.setStyleAttribute(propertiesPanel.getElement(), "border", "1px solid black");

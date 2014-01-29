@@ -24,5 +24,6 @@ public interface AemetMessages extends Messages{
 	String liters();
 	String loadingChart();
 	String charts();
+	String timeOfObservation();
 	String tittleChartOf(String tittle,String time,String site);
 }
