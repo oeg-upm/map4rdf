@@ -69,11 +69,6 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	}
 
 	@Override
-	public List<GeoResource> getGeoResources(BoundingBox boundingBox) throws DaoException {
-		return getGeoResources(boundingBox, null);
-	}
-
-	@Override
 	public GeoResource getGeoResource(String uri) throws DaoException {
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, createGetResourceQuery(uri));
 

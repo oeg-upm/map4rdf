@@ -41,9 +41,6 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
  * @author Alexander De Leon
  */
 public interface Map4rdfDao {
-	//TODO to remove. Dont use.
-	List<GeoResource> getGeoResources(BoundingBox boundingBox)
-			throws DaoException;
 	
 	//For get the resource in "uri" query param.
 	GeoResource getGeoResource(String uri) throws DaoException;

@@ -78,11 +78,6 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	}
 
 	@Override
-	public List<GeoResource> getGeoResources(BoundingBox boundingBox) throws DaoException {
-		return getGeoResources(boundingBox, null);
-	}
-
-	@Override
 	public List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, int max)
 			throws DaoException {
 		return getGeoResources(boundingBox, constraints, new Integer(max));
