@@ -42,7 +42,6 @@ public class GetAddInfoConfigHandler implements ActionHandler<GetAddInfoConfig, 
 		for(AdditionalInfo info:addInfoConfigServer.getAdditionalsInfo()){
 			try {
 				URL u = new URL(info.getEndpoint()+parseQuery(info.getQuery(),info.getInputParameters(), action.getResource()));
-				//System.out.println(info.getEndpoint()+parseQuery(info.getQuery(),info.getInputParameters(), action.getResource()));
 				URLConnection conn = u.openConnection();
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 				conn.getInputStream()));

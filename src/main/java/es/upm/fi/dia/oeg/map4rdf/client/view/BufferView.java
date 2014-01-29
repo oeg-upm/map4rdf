@@ -317,7 +317,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		anchorResource.setText(label);
 		anchorResource.setHref(resource.getUri());
 		/*anchorResource.setTarget("_blank");
-		System.out.println("AcnchorResource height: "+anchorResource.getOffsetHeight() );
 		panelAnchorResource.setHeight(anchorResource.getOffsetHeight()+"px");*/
 		this.resource=resource;
 		this.geometry=geometry;

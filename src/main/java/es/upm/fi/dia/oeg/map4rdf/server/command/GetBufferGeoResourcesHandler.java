@@ -53,7 +53,6 @@ public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoR
 				cantidad++;
 			}	
 		}
-		//System.out.println("Cantidad despues del filtro: "+resultList.size());
 		GetBufferGeoResourcesResult result= new GetBufferGeoResourcesResult(resultList, boundingBox);
 		return result;
 	}
@@ -95,12 +94,6 @@ public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoR
 		if(right>180){
 			right=180;
 		}
-		/*System.out.println("Center latitude: "+latitude);
-		System.out.println("Center longitude: "+longitude);
-		System.out.println("Top:"+top);
-		System.out.println("Bottom:"+bottom);
-		System.out.println("Left:"+left);
-		System.out.println("Right:"+right);*/
 		TwoDimentionalCoordinate bottomLeft=new TwoDimentionalCoordinateBean(left, bottom);
 		TwoDimentionalCoordinate topRight=new TwoDimentionalCoordinateBean(right,top);
 		return new BoundingBoxBean(bottomLeft, topRight);

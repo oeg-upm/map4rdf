@@ -280,7 +280,6 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
 		}
-		System.out.println(query.toString());
 		return query.toString();
 	}
 
@@ -297,6 +296,7 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	@Override
 	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max)
 			throws DaoException {
+		
 		// TODO COMPLETE getNextPoints AEMET dao impl
 		return Collections.emptyList();
 	}

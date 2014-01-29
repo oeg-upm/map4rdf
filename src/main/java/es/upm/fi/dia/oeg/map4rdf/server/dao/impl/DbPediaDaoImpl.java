@@ -134,11 +134,9 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		queryBuffer.append("?x <" + Geo.lng + "> _:lng. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }}");
-		//System.out.println(queryBuffer.toString());
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
 		try {
 			ResultSet queryResult = execution.execSelect();
-			//System.out.println("Se recogen los resultados:");
 			while (queryResult.hasNext()) {
 				QuerySolution solution = queryResult.next();
 				String uri = solution.getResource("class").getURI();
@@ -153,7 +151,6 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					Literal label = solution.getLiteral("label");
 					value.addLabel(label.getLanguage(), label.getString());
 				}
-				//System.out.println("++Facet=> URI: "+value.getUri()+" Default label: "+value.getDefaultLabel());
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
@@ -293,7 +290,6 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
 		}
-		//System.out.println(query.toString());
 		return query.toString();
 	}
 	

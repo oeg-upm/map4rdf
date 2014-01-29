@@ -121,8 +121,6 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					}
 					if(solution.contains("seeAlso")){
 						String seeAlso = solution.getResource("seeAlso").getURI();
-						//System.out.println("seeAlso: "+seeAlso);
-						//System.out.println("contains(wikipedia): "+seeAlso.contains("wikipedia"));
 						if(seeAlso.toString().toLowerCase().contains("wikipedia")){
 							resource.addWikipediaURL(seeAlso);
 						}
@@ -217,7 +215,6 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		queryBuffer.append("?x <" + Geo.geometry + "> ?g. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }}");
-		//System.out.println(queryBuffer.toString());
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
 
 		try {
@@ -435,7 +432,6 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if (max >0) {
 			query.append(" LIMIT " + max);
 		}
-		//System.out.println("Query buffer:"+query.toString());
 		return query.toString();
 	}
 
