@@ -1,7 +1,7 @@
 package es.upm.fi.dia.oeg.map4rdf.client.util;
 
 public class DrawPointStyle {
-	public enum Style {FACET, BLUE, GREEN, ORANGE, PURPLE}
+	public enum Style {FACET, NEXT_POINTS, ROUTES, CENTER_NEXT_POINTS, SELECTED_RESOURCE}
 	private Style style;
 	private char leter;
 	private String facetHexColour="#0000FF";
@@ -45,7 +45,7 @@ public class DrawPointStyle {
 		
 	}
 	public DrawPointStyle(char leter){
-		this.style=Style.GREEN;
+		this.style=Style.ROUTES;
 		if(leter>=getMinLeter() && leter <= getMaxLeter()){
 			this.leter=leter;
 		}else{
@@ -66,18 +66,18 @@ public class DrawPointStyle {
 				}
 			}
 			return relationHexColours[position];
-		case BLUE:
+		case NEXT_POINTS:
 			return MARKER_BLUE_ICON;
-		case GREEN:
+		case ROUTES:
 			String toReturn=new String(MARKER_GREEN_ICON);
 			if(leter>getMaxLeter()){
 				leter=getMaxLeter();
 			}
 			toReturn=toReturn.replace("<leter>", String.valueOf(leter));
 			return toReturn;
-		case ORANGE:
+		case CENTER_NEXT_POINTS:
 			return MARKER_ORANGE_ICON;
-		case PURPLE:
+		case SELECTED_RESOURCE:
 			return MARKER_PURPLE_ICON;
 		default:
 			return MARKER_RED_ICON;
@@ -90,14 +90,14 @@ public class DrawPointStyle {
 		this.facetHexColour = facetHexColour;
 	}
 	public int getWidth(){
-		if(style==Style.GREEN){
+		if(style==Style.ROUTES){
 			return 21;
 		}else{
 			return 24;
 		}
 	}
 	public int getHeight(){
-		if(style==Style.GREEN){
+		if(style==Style.ROUTES){
 			return 34;
 		}else{
 			return 21;
@@ -105,7 +105,7 @@ public class DrawPointStyle {
 	}
 	public int getDesplaceOffsetY(){
 		//Depend of image. Desplacement of left-up corner that where image mark.
-		if(style==Style.GREEN){
+		if(style==Style.ROUTES){
 			return -17;
 		}else{
 			return -10;
@@ -113,7 +113,7 @@ public class DrawPointStyle {
 	}
 	public int getDesplaceOffsetX(){
 		//Depend of image. Desplacement of left-up corner that where image mark.
-		if(style==Style.GREEN){
+		if(style==Style.ROUTES){
 			return -10;
 		}else{
 			return -6;

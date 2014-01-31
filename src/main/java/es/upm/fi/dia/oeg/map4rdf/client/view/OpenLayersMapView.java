@@ -108,8 +108,8 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 					public void onClick(ClickEvent event) {
 						window.close();
 						summary.setGeoResource(resource, point);
-						removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
-						drawGeoResource(resource, new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+						removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+						drawGeoResource(resource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 						//setEditLink(resource);
 						window.open(point);
 					}
@@ -123,7 +123,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 							@Override
 							public void onClick(ClickEvent event) {
 								window.close();
-								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, line);
 								//setEditLink(resource);
 								window.open(line.getPoints().get(0));
@@ -138,7 +138,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 							@Override
 							public void onClick(ClickEvent event) {
 								window.close();
-								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, polygon);
 								//setEditLink(resource);
 								window.open(polygon.getPoints().get(0));
@@ -157,7 +157,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 								@Override
 								public void onClick(ClickEvent event) {
 									window.close();
-									removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+									removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 									summary.setGeoResource(resource, poly);
 									//setEditLink(resource);
 									window.open(poly.getPoints().get(0));
@@ -181,7 +181,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 	
 	@Override
 	public void closeWindow() {
-		removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.PURPLE));
+		removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 		window.close();
 		summary.closeSummary();
 	}

@@ -67,7 +67,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	private Panel addResourcePanel;
 	private Panel removeResourcePanel;
 	private Panel resultsBufferWidget;
-	private final DrawPointStyle pointStyle=new DrawPointStyle(DrawPointStyle.Style.BLUE);
+	private final DrawPointStyle pointStyle=new DrawPointStyle(DrawPointStyle.Style.NEXT_POINTS);
 	private GeoResource resource;
 	private Geometry geometry;
 	private enum DistanceTypes{
@@ -196,7 +196,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	
 	private void removePoint() {
 		
-		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ORANGE));
+		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		anchorResource.setText("");
 		anchorResource.setHref("");
 		this.resource=null;
@@ -309,10 +309,10 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	}
 	
 	private void setGeoResource(GeoResource resource, Geometry geometry){
-		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ORANGE));
+		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		List<GeoResource> geoResources=new ArrayList<GeoResource>();
 		geoResources.add(resource);
-		mapPresenter.drawGeoResouces(geoResources,new DrawPointStyle(DrawPointStyle.Style.ORANGE));
+		mapPresenter.drawGeoResouces(geoResources,new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		String label=LocaleUtil.getBestLabel(resource);
 		anchorResource.setText(label);
 		anchorResource.setHref(resource.getUri());
