@@ -246,7 +246,7 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			for (FacetConstraint constraint : constraints) {
 				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
 				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
+				query.append("?r ?facetID <"+constraint.getFacetValueId()+">.");
 				query.append("} UNION");
 			}
 			query.delete(query.length() - 5, query.length());
