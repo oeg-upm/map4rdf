@@ -145,9 +145,46 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		// TODO What can be done here?
 		return Collections.emptyList();
 	}
-
-	/* --------------------- helper methods --- */
 	
+	@Override
+	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int limit)
+			throws DaoException {
+		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
+		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetNextPoints(boundingBox, limit));
+		try {
+			ResultSet queryResult = execution.execSelect();
+			while (queryResult.hasNext()) {
+				QuerySolution solution = queryResult.next();
+				try {
+					String uri = solution.getResource("r").getURI();
+					String positionUri = solution.getResource("position").getURI();
+					double lat = solution.getLiteral("lat").getDouble();
+					double lng = solution.getLiteral("lng").getDouble();
+					GeoResource resource=result.get(uri);
+					
+					if (resource == null) {
+						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
+						result.put(uri, resource);
+					}
+					if (solution.contains("label")) {
+						Literal labelLiteral = solution.getLiteral("label");
+						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
+					}
+				} catch (NumberFormatException e) {
+					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
+				}
+			}
+	
+			return new ArrayList<GeoResource>(result.values());
+		} catch (Exception e) {
+			throw new DaoException("Unable to execute SPARQL query", e);
+		} finally {
+			execution.close();
+		}
+	}
+	
+	/* --------------------- helper methods --- */
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
@@ -238,43 +275,6 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		return query.toString();
 	}
 
-	@Override
-	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int limit)
-			throws DaoException {
-		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
-				createGetNextPoints(boundingBox, limit));
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-				try {
-					String uri = solution.getResource("r").getURI();
-					String positionUri = solution.getResource("position").getURI();
-					double lat = solution.getLiteral("lat").getDouble();
-					double lng = solution.getLiteral("lng").getDouble();
-					GeoResource resource=result.get(uri);
-					
-					if (resource == null) {
-						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
-						result.put(uri, resource);
-					}
-					if (solution.contains("label")) {
-						Literal labelLiteral = solution.getLiteral("label");
-						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
-					}
-				} catch (NumberFormatException e) {
-					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
-				}
-			}
-
-			return new ArrayList<GeoResource>(result.values());
-		} catch (Exception e) {
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
-	}
 	private String createGetNextPoints(BoundingBox boundingBox, int limit){
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  SELECT distinct ?r ?position ?lat ?lng ?label ?facetID ?facetValueID ");
 		query.append("WHERE { ");
