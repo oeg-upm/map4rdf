@@ -38,7 +38,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
 
 public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
-	private static final Logger LOG = Logger.getLogger(DbPediaDaoImpl.class);
+	private static final Logger LOG = Logger.getLogger(AemetDaoImpl.class);
 
 	@Inject
 	public AemetDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
