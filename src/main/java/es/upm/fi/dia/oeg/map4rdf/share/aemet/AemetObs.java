@@ -1,6 +1,8 @@
-package es.upm.fi.dia.oeg.map4rdf.share;
+package es.upm.fi.dia.oeg.map4rdf.share.aemet;
 
 import java.io.Serializable;
+
+import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 
 public class AemetObs implements Serializable {
 

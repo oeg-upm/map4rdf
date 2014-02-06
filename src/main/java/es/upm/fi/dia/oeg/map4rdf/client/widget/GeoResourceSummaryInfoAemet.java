@@ -42,12 +42,12 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.AemetMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetObs;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetIntervalo;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetIntervalo;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 
 /**
  * @author Alexander De Leon

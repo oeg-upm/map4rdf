@@ -36,9 +36,9 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObsForProperty;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetObs;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetIntervalo;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetIntervalo;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**

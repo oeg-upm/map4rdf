@@ -1,4 +1,4 @@
-package es.upm.fi.dia.oeg.map4rdf.share;
+package es.upm.fi.dia.oeg.map4rdf.share.aemet;
 
 import java.io.Serializable;
 

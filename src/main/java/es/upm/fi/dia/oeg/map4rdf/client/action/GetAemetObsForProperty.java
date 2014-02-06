@@ -21,8 +21,8 @@
 package es.upm.fi.dia.oeg.map4rdf.client.action;
 
 import net.customware.gwt.dispatch.shared.Action;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetObs;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetIntervalo;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetIntervalo;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 
 /**
  * @author Alexander De Leon

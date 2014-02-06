@@ -39,7 +39,7 @@ public class GeoResource extends Resource implements Serializable {
 	private HashMap<String, Geometry> geometries;
 	private Set<String> wikipediaPages;
 	private FacetConstraint facetConstraint;
-	GeoResource() {
+	public GeoResource() {
 		// for serialization
 	}
 

@@ -2,7 +2,7 @@ package es.upm.fi.dia.oeg.map4rdf.client.action;
 
 
 import net.customware.gwt.dispatch.shared.Action;
-import es.upm.fi.dia.oeg.map4rdf.share.AemetObs;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 
 public class GetAemetObs implements Action<ListResult<AemetObs>>{
 

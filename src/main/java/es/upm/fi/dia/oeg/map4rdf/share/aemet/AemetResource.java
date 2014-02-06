@@ -1,6 +1,9 @@
-package es.upm.fi.dia.oeg.map4rdf.share;
+package es.upm.fi.dia.oeg.map4rdf.share.aemet;
 
 import java.util.ArrayList;
+
+import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
+import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 
 /**
  * 
@@ -13,7 +16,7 @@ public class AemetResource extends GeoResource {
 	
 	private ArrayList<AemetObs> obs; // prueba, quizas sea mejor en hashmap
 
-	AemetResource() {
+	public AemetResource() {
 		// for serialization
 	}
 

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-import es.upm.fi.dia.oeg.map4rdf.share.AemetIntervalo;
+import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetIntervalo;
 
 public class DateUtil {
 	public static Date asDate(AemetIntervalo intervalo) {
