@@ -36,6 +36,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.DbPediaDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoLinkedDataDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoSparqlDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.VCardDaoImpl;
+import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.WebNMasUnoImpl;
 
 /**
  * @author Alexander De Leon
@@ -60,6 +61,8 @@ public class BrowserModule extends AbstractModule {
 			return new GeoSparqlDaoImpl(endpointUri);
 		case AEMET:
 			return new AemetDaoImpl(endpointUri);
+		case WEBNMASUNO:
+			return new WebNMasUnoImpl(endpointUri);
 		}
 		// make compiler happy
 		return null;

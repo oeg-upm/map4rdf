@@ -71,7 +71,11 @@ public class Constants {
 		 * The AEMET subproject model.
 		 * 
 		 */
-		AEMET;
+		AEMET,
+		/**
+		 * The WebNMasUno subproject model.
+		 * */
+		WEBNMASUNO;
 		
 		
 	}
