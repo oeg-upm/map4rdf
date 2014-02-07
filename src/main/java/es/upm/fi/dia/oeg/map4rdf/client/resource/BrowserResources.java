@@ -29,6 +29,7 @@ import name.alexdeleon.lib.gwtblocks.client.widget.togglebutton.ToggleButton;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
 import com.google.gwt.resources.client.ImageResource.RepeatStyle;
@@ -158,4 +159,7 @@ public interface BrowserResources extends ClientBundle {
 	
 	@Source("errorDialog.png")
 	ImageResource errorImage();
+	
+	@Source("image_missing.png")
+	DataResource missingImage();
 }
