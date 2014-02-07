@@ -296,7 +296,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	}
 
 	private HorizontalPanel dameUnidadMedicion(String label, String uri, String valor) {
-		//TODO GeoResourceSummaryInfoAemet will be adapted to new model (Wait for O.Corcho to change de model).
+		//TODO GeoResourceSummaryInfoAemet will be adapted to new model (Wait for O.Corcho to change the model).
 		HorizontalPanel panelAct = new HorizontalPanel();
 		panelAct.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		panelAct.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
