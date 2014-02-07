@@ -51,7 +51,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 
 /**
  * @author Alexander De Leon
- * Adapted by: @author F.siles
+ * Adapted by: @author Francisco Siles
  */
 
 public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
@@ -101,7 +101,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
             	setVariables(result);	
             	buildWindow();
            	}
-            });
+		});
 	}
 	
 	private Widget createUi() {
