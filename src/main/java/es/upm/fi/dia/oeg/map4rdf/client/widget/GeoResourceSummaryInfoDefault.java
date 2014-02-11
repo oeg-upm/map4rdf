@@ -36,12 +36,12 @@ public class GeoResourceSummaryInfoDefault implements GeoResourceSummaryInfo{
 	private Label label;
 	private Label latitude;
 	private Label crs;
-	private Stylesheet style;
+	//private Stylesheet style;
 	private Panel locationPanel;
 	private FlowPanel additionalInfoPanel;
 	private DialogBox mainWidget;
 	public GeoResourceSummaryInfoDefault(BrowserMessages messages, BrowserResources resources){
-		style = resources.css();
+		//style = resources.css();
 		mainPanel = new FlowPanel();		
 		DOM.setStyleAttribute(mainPanel.getElement(), "textAlign", "left");
 		//DOM.setStyleAttribute(mainPanel.getElement(), "textSize", "8pt");
