@@ -24,6 +24,7 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.conf;
 
+
 /**
  * @author Alexander De Leon
  */
@@ -76,8 +77,6 @@ public class Constants {
 		 * The WebNMasUno subproject model.
 		 * */
 		WEBNMASUNO;
-		
-		
 	}
 
 }

@@ -68,6 +68,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.MapShape;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
+import es.upm.fi.dia.oeg.map4rdf.share.conf.SharedGeometryModels;
 
 /**
  * @author Alexander De Leon
@@ -437,8 +438,11 @@ public class GeoResourceSummary extends Composite {
 		return rdfAnchor;
 	}
 	private GeoResourceSummaryInfo getSummary(String geometryModel){
-		if("AEMET".equalsIgnoreCase(geometryModel)){
+		if(SharedGeometryModels.AEMET.equalsIgnoreCase(geometryModel)){
 			return new GeoResourceSummaryInfoAemet(dispatchAsync, resources, messages);
+		}
+		if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(geometryModel)){
+			return new GeoResourceSummaryInfoWEBNmas1(dispatchAsync,eventBus, resources, messages);
 		}
 		return new GeoResourceSummaryInfoDefault(messages, resources);
 	}
