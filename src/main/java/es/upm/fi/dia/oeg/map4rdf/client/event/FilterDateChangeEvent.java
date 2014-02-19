@@ -26,6 +26,10 @@ package es.upm.fi.dia.oeg.map4rdf.client.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 
+import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter;
+
+import java.util.List;
+
 /**
  * @author Alexander De Leon
  */
@@ -33,10 +37,10 @@ public class FilterDateChangeEvent extends GwtEvent<FilterDateChangeEventHandler
 
 	private static GwtEvent.Type<FilterDateChangeEventHandler> TYPE;
 
-	private final String date;
+	private final List<DateFilter> dateFilters;
 
-	public FilterDateChangeEvent(String date) {
-		this.date = date;
+	public FilterDateChangeEvent(List<DateFilter> dateFilters) {
+		this.dateFilters = dateFilters;
 	}
 
 	public static GwtEvent.Type<FilterDateChangeEventHandler> getType() {
@@ -46,8 +50,8 @@ public class FilterDateChangeEvent extends GwtEvent<FilterDateChangeEventHandler
 		return TYPE;
 	}
 
-	public String getDate() {
-		return date;
+	public List<DateFilter> getDateFilters() {
+		return dateFilters;
 	}
 
 
