@@ -7,7 +7,9 @@ import java.io.Serializable;
  * @author Daniel Garijo
  */
 public class WebNMasUnoResource implements Serializable {
-    public WebNMasUnoResource(){
+	private static final long serialVersionUID = -5479645287952018013L;
+
+	public WebNMasUnoResource(){
 
     }
 
