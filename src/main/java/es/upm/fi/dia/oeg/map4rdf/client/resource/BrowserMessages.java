@@ -24,6 +24,7 @@ import com.google.gwt.i18n.client.Messages;
 
 /**
  * @author Miguel Angel Garcia Delgado
+ * Modify by: @author Francisco Siles Rodríguez 
  */
 public interface BrowserMessages extends Messages {
 	
@@ -197,6 +198,17 @@ public interface BrowserMessages extends Messages {
 	
 	String errorToLoadResourceInUrlParam();
 	
+	String equalsTo();
+	
+	String afterTo();
+	
+	String beforeTo();
+	
+	String afterOrEqualsTo();
+	
+	String beforeOrEqualsTo();
+	
+	String addFilter();
 	
 
 }
