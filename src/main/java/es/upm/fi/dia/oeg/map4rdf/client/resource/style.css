@@ -177,3 +177,23 @@ body{
 	background-color: #FFFFFF;
 	border: 1px solid gray;
 }
+.dateFilterBox{
+	width: 100%;
+	background: rgb(242,246,248); /* Old browsers */
+	background: -moz-radial-gradient(center, ellipse cover,  rgba(242,246,248,1) 0%, rgba(181,198,208,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(242,246,248,1)), color-stop(100%,rgba(181,198,208,1))); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover,  rgba(242,246,248,1) 0%,rgba(181,198,208,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover,  rgba(242,246,248,1) 0%,rgba(181,198,208,1) 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover,  rgba(242,246,248,1) 0%,rgba(181,198,208,1) 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center,  rgba(242,246,248,1) 0%,rgba(181,198,208,1) 100%); /* W3C */
+	filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#b5c6d0',GradientType=1 )"; /* IE6-9 fallback on horizontal gradient */
+}
+.dateFilterPanel{
+	border-top: 2px solid #6699FF;
+	border-bottom: 2px solid #6699FF;
+}
+.dateFilterTitle{
+	font-size: 12px;
+	text-align:center;
+	font-family: Verdana, Arial, sans-serif;
+}
