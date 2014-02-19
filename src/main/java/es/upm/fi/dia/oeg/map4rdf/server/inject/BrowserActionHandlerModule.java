@@ -42,6 +42,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticDatasets;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticYears;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetAemetObsForPropertyHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetAemetObsHandler;
@@ -61,6 +62,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticDatasetsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticYearsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectDescriptionsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectLabelHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetWebNMasUnoResourceHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.SaveRdfFIleHandler;
 /**
  * @author Alexander De Leon
@@ -87,5 +89,6 @@ public class BrowserActionHandlerModule extends ActionHandlerModule {
 		super.bindHandler(GetMapsConfiguration.class, GetMapsConfigurationHandler.class);
 		super.bindHandler(GetAemetObsForProperty.class, GetAemetObsForPropertyHandler.class);
 		super.bindHandler(GetAemetObs.class, GetAemetObsHandler.class);
+		super.bindHandler(GetWebNMasUnoResource.class, GetWebNMasUnoResourceHandler.class);
 	}
 }
