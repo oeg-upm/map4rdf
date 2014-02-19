@@ -1,10 +1,13 @@
 package es.upm.fi.dia.oeg.map4rdf.client.view.v2;
 
-import org.gwtopenmaps.openlayers.client.Bounds;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.layer.GoogleV3;
 import org.gwtopenmaps.openlayers.client.layer.GoogleV3MapType;
 import org.gwtopenmaps.openlayers.client.layer.GoogleV3Options;
+import org.gwtopenmaps.openlayers.client.layer.Layer;
 import org.gwtopenmaps.openlayers.client.layer.OSM;
 import org.gwtopenmaps.openlayers.client.layer.OSMOptions;
 import org.gwtopenmaps.openlayers.client.layer.TransitionEffect;
@@ -12,99 +15,134 @@ import org.gwtopenmaps.openlayers.client.layer.WMS;
 import org.gwtopenmaps.openlayers.client.layer.WMSOptions;
 import org.gwtopenmaps.openlayers.client.layer.WMSParams;
 
-public class LayersManager {
+import com.google.gwt.user.client.Window;
 
-	private static final String IDEE_URL = "http://www.idee.es/wms-c/IDEE-Base/IDEE-Base";
-	private static final String OTALEX_URL = "http://www.ign.es/wms-inspire/ign-base";
-	private static final String OL_URL = "http://vmap0.tiles.osgeo.org/wms/vmap0";
-	private static final String CARTOCIUDAD_URL = "http://www.cartociudad.es/wms-c/CARTOCIUDAD/CARTOCIUDAD";
-	public static WMS getIdeeLayer(double[] resolutions){
-		
+import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
+import es.upm.fi.dia.oeg.map4rdf.share.MapConfiguration;
+
+public class LayersManager {
+	private static WMS getWMS(MapConfiguration map, Bounds bounds, double[] resolutions){
 		WMSParams wmsParams = new WMSParams();
-		WMSOptions wmsLayerParams = new WMSOptions();
-		wmsParams.setLayers("Todas");
-		//wmsLayerParams.setMaxExtent(new Bounds(-50, -50, 50, 50));
-		wmsLayerParams.setAttribution("Maps provided by <a href =\"http://www.idee.es\">IDEE</a>");
-		wmsLayerParams.setResolutions(resolutions);
-		WMS wmsLayer = new WMS("IDEE", IDEE_URL, wmsParams, wmsLayerParams);
+		WMSOptions wmsOptions = new WMSOptions();
+		if(map.haveLayers()){
+			wmsParams.setLayers(map.getLayers());
+		}
+		if(map.haveAttribution()){
+			wmsOptions.setAttribution(map.getAttribution());
+		}
+		if(map.haveResolution() && map.getResolution()){
+			wmsOptions.setResolutions(resolutions);
+		}
+		if(map.haveProjection()){
+			wmsOptions.setProjection(map.getProjection());
+		}
+		if(map.haveMaxExtends() && map.getMaxExtends()){
+			wmsOptions.setMaxExtent(bounds);
+		}
+		if(map.haveFormat()){
+			wmsParams.setFormat(map.getFormat());
+		}
+		if(map.haveTransitionEffect() && map.getTransitionEffect()){
+			wmsOptions.setTransitionEffect(TransitionEffect.RESIZE);
+		}
+		if(map.haveNumZoomLevels()){
+			wmsOptions.setNumZoomLevels(map.getNumZoomLevels());
+		}
+		WMS wmsLayer = new WMS(LocaleUtil.getBestLabel(map), map.getServiceURL(), wmsParams, wmsOptions);
 		return wmsLayer;
 	}
-	public static WMS getCartociudadLayer(double[] resolutions){
-		WMSParams wmsParams = new WMSParams();
-		WMSOptions wmsLayerParams = new WMSOptions();
-		wmsParams.setLayers("Todas");
-		wmsLayerParams.setNumZoomLevels(20);
-		wmsLayerParams.setProjection("EPSG:4258");
-		//wmsLayerParams.setMaxExtent(new Bounds(-50, -50, 50, 50));
-		wmsLayerParams.setAttribution("Maps provided by <a href =\"http://www.cartociudad.es\">CartoCiudad </a>");
-		wmsLayerParams.setResolutions(resolutions);
-		WMS wmsLayer = new WMS("CartoCiudad", CARTOCIUDAD_URL, wmsParams, wmsLayerParams);
-		return wmsLayer;
-	}
-	public static WMS newIDEE(double[] resolutions){
-		WMSParams wmsParams = new WMSParams();
-		WMSOptions wmsLayerParams = new WMSOptions();
-		wmsParams.setLayers("IGNBaseTodo");
-		//wmsLayerParams.setMaxExtent(new Bounds(-50, -50, 50, 50));
-		wmsLayerParams.setAttribution("Maps provided by <a href =\"http://www.idee.es\">IDEE</a>");
-		wmsLayerParams.setResolutions(resolutions);
-		WMS wmsLayer = new WMS("IDEE", OTALEX_URL, wmsParams, wmsLayerParams);
-		return wmsLayer;
-	}
-	public static OSM getOpenStreetMapsLayer(Bounds bounds) {
+	private static OSM getOSM(MapConfiguration map, Bounds bounds, double[] resolutions){
 		OSMOptions options = new OSMOptions();
-		options.setMaxExtent(bounds);
-		options.setNumZoomLevels(20);
-		//OSM openStreetMap = OSM.Mapnik("Open Street Maps",options);
-		OSM other = new OSM("Open Street Maps", "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png", options);
-		//return openStreetMap;
-		return other;
+		if(map.haveAttribution()){
+			options.setAttribution(map.getAttribution());
+		}
+		if(map.haveResolution() && map.getResolution()){
+			options.setResolutions(resolutions);
+		}
+		if(map.haveProjection()){
+			options.setProjection(map.getProjection());
+		}
+		if(map.haveMaxExtends() && map.getMaxExtends()){
+			options.setMaxExtent(bounds);
+		}
+		if(map.haveTransitionEffect() && map.getTransitionEffect()){
+			options.setTransitionEffect(TransitionEffect.RESIZE);
+		}
+		if(map.haveNumZoomLevels()){
+			options.setNumZoomLevels(map.getNumZoomLevels());
+		}
+		if(map.haveSphericalMercator()){
+			options.setSphericalMercator(map.getSphericalMercator());
+		}
+		OSM osm;
+		if(map.haveServiceURL()){
+			 osm = new OSM(LocaleUtil.getBestLabel(map), map.getServiceURL() , options);
+		}else{
+			osm = OSM.Mapnik(LocaleUtil.getBestLabel(map),options);
+		}
+		return osm;
 	}
-	public static WMS getOpenLayersSphericalLayer(){
-		WMSParams wmsParams = new WMSParams();
-		wmsParams.setFormat("image/png");
-		wmsParams.setLayers("basic");
-		WMSOptions wmsLayerParams = new WMSOptions();
-		wmsLayerParams.setProjection("EPSG:900913");
-		wmsLayerParams.setTransitionEffect(TransitionEffect.RESIZE);
-		WMS wmsLayer = new WMS(
-				"Open Layers Maps",
-				OL_URL,wmsParams,wmsLayerParams);
-		return wmsLayer;
-	}
-	
-	public static WMS getOpenLayersFlatLayer() {
-		WMSParams wmsParams = new WMSParams();
-		wmsParams.setFormat("image/png");
-		wmsParams.setLayers("Vmap0");
-		WMSOptions wmsLayerParams = new WMSOptions();
-		wmsLayerParams.setTransitionEffect(TransitionEffect.RESIZE);
-		WMS wmsLayer = new WMS(
-				"Open Layers Maps",
-				OL_URL,wmsParams,wmsLayerParams);
-		return wmsLayer;
-	}
-	
-	public static WMS getOpenLayersFlatBasicLayer() {
-		WMSParams wmsParams = new WMSParams();
-		wmsParams.setFormat("image/png");
-		wmsParams.setLayers("basic");
-		WMSOptions wmsLayerParams = new WMSOptions();
-		wmsLayerParams.setTransitionEffect(TransitionEffect.RESIZE);
-		WMS wmsLayer = new WMS(
-				"Open Layers Maps (Basic)",
-				OL_URL,wmsParams,wmsLayerParams);
-		return wmsLayer;
-	}
-	
-	public static GoogleV3 getGoogleLayer(Bounds bounds){
-		GoogleV3Options googleOptions = new GoogleV3Options();
-		googleOptions.setType(GoogleV3MapType.G_NORMAL_MAP);
+	private static GoogleV3 getGoogleV3(MapConfiguration map, Bounds bounds, double[] resolutions){
+		GoogleV3Options options = new GoogleV3Options();
+		/*googleOptions.setType(GoogleV3MapType.G_NORMAL_MAP);
 		googleOptions.setSphericalMercator(true);
 		googleOptions.setMaxExtent(bounds);
-		googleOptions.setNumZoomLevels(20);
+		googleOptions.setNumZoomLevels(20);*/
 		//googleOptions.setMaxExtent(bounds);
-		GoogleV3 google = new GoogleV3("Google Maps", googleOptions);
+		if(map.haveGMapType()){
+			GoogleV3MapType googleType=GoogleV3MapType.valueOf(map.getgMapType().name());
+			if(googleType!=null){
+				options.setType(googleType);
+			}else{
+				Window.alert("Google type in server is not valid GoogleV3 type in client");
+			}
+		}
+		if(map.haveAttribution()){
+			options.setAttribution(map.getAttribution());
+		}
+		if(map.haveResolution() && map.getResolution()){
+			options.setResolutions(resolutions);
+		}
+		if(map.haveProjection()){
+			options.setProjection(map.getProjection());
+		}
+		if(map.haveMaxExtends() && map.getMaxExtends()){
+			options.setMaxExtent(bounds);
+		}
+		if(map.haveTransitionEffect() && map.getTransitionEffect()){
+			options.setTransitionEffect(TransitionEffect.RESIZE);
+		}
+		if(map.haveNumZoomLevels()){
+			options.setNumZoomLevels(map.getNumZoomLevels());
+		}
+		if(map.haveSphericalMercator()){
+			options.setSphericalMercator(map.getSphericalMercator());
+		}
+		GoogleV3 google = new GoogleV3(LocaleUtil.getBestLabel(map), options);
 		return google;
+	}
+	public static Layer[] getLayers(List<MapConfiguration> maps,Bounds bounds, double[] resolutions){
+		List<Layer> layers=new ArrayList<Layer>();
+		for(MapConfiguration map:maps){
+			switch (map.getMapServiceType()) {
+			case OSM:
+				layers.add(getOSM(map, bounds, resolutions));
+				break;
+			case WMS:
+				layers.add(getWMS(map, bounds, resolutions));
+				break;
+			case Google:
+				layers.add(getGoogleV3(map, bounds, resolutions));
+				break;
+			default:
+				break;
+			}
+		}
+		Layer[] layersArray=new Layer[layers.size()];
+		int i=0;
+		for(Layer layer:layers){
+			layersArray[i++]=layer;
+		}
+		return layersArray;
 	}
 }
