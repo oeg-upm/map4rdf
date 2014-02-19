@@ -210,5 +210,7 @@ public interface BrowserMessages extends Messages {
 	
 	String addFilter();
 	
+	String existsOtherDateFilterEqual();
+	
 
 }
