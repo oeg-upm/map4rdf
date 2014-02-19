@@ -323,7 +323,7 @@ public class OpenLayersMapView implements MapView {
 		//building layers
 		/*GoogleV3 googleLayer = LayersManager.getGoogleLayer(bounds);
 		OSM openStreetMapsLayer = LayersManager.getOpenStreetMapsLayer(bounds);*/
-		map.addLayers(LayersManager2.getLayers(maps, bounds, resolutions));
+		map.addLayers(LayersManager.getLayers(maps, bounds, resolutions));
 		LonLat lonlat=new LonLat(DEFAULT_CENTER.lon(), DEFAULT_CENTER.lat());
 		lonlat.transform(defaultProjection, map.getProjection());
 		map.setCenter(lonlat, DEFAULT_ZOOM_LEVEL);
@@ -356,7 +356,7 @@ public class OpenLayersMapView implements MapView {
 		WMS otalexLayer = LayersManager.newIDEE(resolutions);
 		//WMS olLayer = LayersManager.getOpenLayersFlatLayer();
 		//WMS olBasicLayer = LayersManager.getOpenLayersFlatBasicLayer();*/
-		map.addLayers(LayersManager2.getLayers(maps, bounds, resolutions));
+		map.addLayers(LayersManager.getLayers(maps, bounds, resolutions));
 		LonLat lonlat=new LonLat(DEFAULT_CENTER.lon(), DEFAULT_CENTER.lat());
 		lonlat.transform(defaultProjection, map.getProjection());
 		map.setCenter(lonlat, DEFAULT_ZOOM_LEVEL);
