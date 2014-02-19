@@ -212,5 +212,6 @@ public interface BrowserMessages extends Messages {
 	
 	String existsOtherDateFilterEqual();
 	
+	String errorFilterType();
 
 }
