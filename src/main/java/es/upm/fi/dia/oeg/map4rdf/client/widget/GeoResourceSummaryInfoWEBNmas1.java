@@ -186,9 +186,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		if(toApply==null){
 			return new ArrayList<WebNMasUnoGuide>();
 		}
-		System.out.println("Entran=>"+toApply.size());
 		if(dateFilters.isEmpty() || toApply.isEmpty()){
-			System.out.println("Sale igual.");
 			return toApply;
 		}
 		List<WebNMasUnoGuide> dataFiltered=new ArrayList<WebNMasUnoGuide>();
@@ -206,7 +204,6 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				dataFiltered.add(guide);
 			}
 		}
-		System.out.println("Salen=>"+dataFiltered.size());
 		return dataFiltered;
 	}
 	// TODO search and remove all incrusted styles.
