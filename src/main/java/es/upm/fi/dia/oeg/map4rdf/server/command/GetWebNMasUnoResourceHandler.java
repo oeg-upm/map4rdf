@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
@@ -28,15 +30,22 @@ import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoTrip;
 
 /**
- * @author Daniel Garijo
- * Adapted by: @author Francisco Siles
+ * @author Daniel Garijo Adapted by: @author Francisco Siles
  */
-public class GetWebNMasUnoResourceHandler implements ActionHandler<GetWebNMasUnoResource, SingletonResult<WebNMasUnoResourceContainer>> {
+public class GetWebNMasUnoResourceHandler
+		implements
+		ActionHandler<GetWebNMasUnoResource, SingletonResult<WebNMasUnoResourceContainer>> {
 
 	private String endpointUri;
 
+	/*
+	 * TODO Analyze if is possible to implement multithreading for obtain data
+	 * and images, also for get guides and trips in different threads
+	 */
+
 	@Inject
-	public GetWebNMasUnoResourceHandler(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
+	public GetWebNMasUnoResourceHandler(
+			@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
 		this.endpointUri = endpointUri;
 	}
 
@@ -64,142 +73,223 @@ public class GetWebNMasUnoResourceHandler implements ActionHandler<GetWebNMasUno
 		// nothing to do
 
 	}
-	
+
 	private WebNMasUnoResourceContainer getDatosGuiasViajes(String uri) {
 		WebNMasUnoResourceContainer resource = new WebNMasUnoResourceContainer();
-		Map<String,WebNMasUnoGuide> guides=new HashMap<String, WebNMasUnoGuide>();
-		long start=Calendar.getInstance().getTimeInMillis();
-		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri,
-				createGetGuidesTripsQuery(100, uri));
-		ResultSet queryResult2 = exec2.execSelect();
-		long medium1=Calendar.getInstance().getTimeInMillis();
-		long checkURI=0;
-		long checkImage=0;
-		int imagenes=0;
-		while (queryResult2.hasNext()) {
+		List<WebNMasUnoGuide> guides = getGuides(100, uri);
+		if (guides != null && !guides.isEmpty()) {
+			resource.addAllGuides(guides);
+		}
+		List<WebNMasUnoTrip> trips = getTrips(100, uri);
+		if (trips != null && !trips.isEmpty()) {
+			resource.addAllTrips(trips);
+		}
+		return resource;
+
+	}
+
+	private List<WebNMasUnoGuide> getGuides(int i, String uri) {
+		/*
+		 * TODO modify this method, wait for Ocorcho to change the model. The
+		 * images are property in endpoint. The application does not need to get
+		 * redirected urls and does not need to check urls.
+		 */
+		Map<String, WebNMasUnoGuide> guides = new HashMap<String, WebNMasUnoGuide>();
+		long start = Calendar.getInstance().getTimeInMillis();
+		QueryExecution exec = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetGuidesQuery(100, uri));
+		ResultSet queryResult = exec.execSelect();
+		long medium1 = Calendar.getInstance().getTimeInMillis();
+		long checkURI = 0;
+		long checkImage = 0;
+		int imagenes = 0;
+		while (queryResult.hasNext()) {
 			// guia
 			String uriGuide = "", urlGuide = "", titleGuide = "", dateGuia = "";
-			// viaje
-			String uriTrip = "", titTrip = "", idIt = "", tripURL = "", dateViaje = "";
-			QuerySolution solution2 = queryResult2.next();
-			if (solution2.contains("noticia")) {
-				uriGuide = solution2.getResource("noticia").getURI();
+			QuerySolution solution = queryResult.next();
+			if (solution.contains("noticia")) {
+				uriGuide = solution.getResource("noticia").getURI();
 			} else {
 				uriGuide = "";
 			}
-			if (solution2.contains("title")) {
-				titleGuide = solution2.getLiteral("title").getLexicalForm();
+			if (solution.contains("title")) {
+				titleGuide = solution.getLiteral("title").getLexicalForm();
 			} else {
 				titleGuide = "";
 			}
-			if (solution2.contains("url")) {
-				urlGuide = solution2.getLiteral("url").getLexicalForm();
+			if (solution.contains("url")) {
+				urlGuide = solution.getLiteral("url").getLexicalForm();
 			} else {
 				urlGuide = "";
 			}
-			if (solution2.contains("dateG")) {
-				dateGuia = solution2.getLiteral("dateG").getLexicalForm();
+			if (solution.contains("dateG")) {
+				dateGuia = solution.getLiteral("dateG").getLexicalForm();
 			} else {
 				dateGuia = "";
 			}
-			if (solution2.contains("trip")) {
-				uriTrip = solution2.getResource("trip").getURI();
-			} else {
-				uriTrip = "";
-			}
-			if (solution2.contains("it")) {
-				idIt = solution2.getResource("it").getURI();
-			} else {
-				idIt = "";
-			}
-			if (solution2.contains("tripTitle")) {
-				titTrip = solution2.getLiteral("tripTitle").getLexicalForm();
-			} else {
-				titTrip = "";
-			}
-			if (solution2.contains("tripURL")) {
-				tripURL = solution2.getLiteral("tripURL").getLexicalForm();
-			} else {
-				tripURL = "";
-			}
-			if (solution2.contains("dateV")) {
-				dateViaje = solution2.getLiteral("dateV").getLexicalForm();
-			} else {
-				dateViaje = "";
-			}
-			long tempCheckURIStart=Calendar.getInstance().getTimeInMillis();
-			if (!uriGuide.equals("") && !uriGuide.isEmpty() 
-					&& !urlGuide.equals("") && !urlGuide.isEmpty() && checkIfURLExists(urlGuide)) {
-				long tempCheckURIStop=Calendar.getInstance().getTimeInMillis();
-				checkURI+=tempCheckURIStop-tempCheckURIStart;
+			long tempCheckURIStart = Calendar.getInstance().getTimeInMillis();
+			if (!uriGuide.equals("") && !uriGuide.isEmpty()
+					&& !urlGuide.equals("") && !urlGuide.isEmpty()
+					&& checkIfURLExists(urlGuide)) {
+				long tempCheckURIStop = Calendar.getInstance()
+						.getTimeInMillis();
+				checkURI += tempCheckURIStop - tempCheckURIStart;
 				WebNMasUnoGuide g;
-				if(guides.containsKey(uriGuide) && guides.get(uriGuide)!=null){
-					g=guides.get(uriGuide);
-				}else{
-					g = new WebNMasUnoGuide(titleGuide, urlGuide,
-							uriGuide, dateGuia);
+				if (guides.containsKey(uriGuide)
+						&& guides.get(uriGuide) != null) {
+					g = guides.get(uriGuide);
+				} else {
+					g = new WebNMasUnoGuide(titleGuide, urlGuide, uriGuide,
+							dateGuia);
 					guides.put(uriGuide, g);
 				}
-				//resource.addGuide(g);
-				WebNMasUnoImage image=null;
-				if(solution2.contains("uriImage") && solution2.contains("pnameImage")){
-					String uriImage=solution2.getResource("uriImage").getURI();
-					String pnameImage=solution2.getLiteral("pnameImage").getLexicalForm();
-					long tempCheckImageStart=Calendar.getInstance().getTimeInMillis();
-					String imageURL=getImageURL(urlGuide,g.getImages().size());
-					long tempCheckImageStop=Calendar.getInstance().getTimeInMillis();
-					checkImage+=tempCheckImageStop-tempCheckImageStart;
-					if(!imageURL.equals("") && !imageURL.isEmpty()){
-						if(solution2.contains("titImage")){
-							String titImage=solution2.getLiteral("titImage").getLexicalForm();
-							image= new WebNMasUnoImage(uriImage, getNewPname(pnameImage),imageURL, titImage);
+				// resource.addGuide(g);
+				WebNMasUnoImage image = null;
+				if (solution.contains("uriImage")
+						&& solution.contains("pnameImage")) {
+					String uriImage = solution.getResource("uriImage").getURI();
+					String pnameImage = solution.getLiteral("pnameImage")
+							.getLexicalForm();
+					long tempCheckImageStart = Calendar.getInstance()
+							.getTimeInMillis();
+					String imageURL = getImageURL(urlGuide, g.getImages()
+							.size());
+					long tempCheckImageStop = Calendar.getInstance()
+							.getTimeInMillis();
+					checkImage += tempCheckImageStop - tempCheckImageStart;
+					if (!imageURL.equals("") && !imageURL.isEmpty()) {
+						if (solution.contains("titImage")) {
+							String titImage = solution.getLiteral("titImage")
+									.getLexicalForm();
+							image = new WebNMasUnoImage(uriImage,
+									getNewPname(pnameImage), imageURL, titImage);
 							imagenes++;
-						}else{
-							image=new WebNMasUnoImage(uriImage,getNewPname(pnameImage),imageURL);
+						} else {
+							image = new WebNMasUnoImage(uriImage,
+									getNewPname(pnameImage), imageURL);
 							imagenes++;
 						}
 					}
 				}
-				if(image!=null){
+				if (image != null) {
 					g.addImage(image);
 				}
-			} else if (!uriTrip.equals("")) {
-				WebNMasUnoTrip t = new WebNMasUnoTrip(titTrip, tripURL,
-						uriTrip, idIt, dateViaje);
-				resource.addTrip(t);
 			}
 		}
-		resource.addAllGuides(guides.values());
-		long end=Calendar.getInstance().getTimeInMillis();
-		int recursosSinImagenes=0;
-		int imagenesDeMas=0;
-		for(WebNMasUnoGuide guide:guides.values()){
-			if(guide.getImages().isEmpty()){
+		long end = Calendar.getInstance().getTimeInMillis();
+		int recursosSinImagenes = 0;
+		int imagenesDeMas = 0;
+		for (WebNMasUnoGuide guide : guides.values()) {
+			if (guide.getImages().isEmpty()) {
 				recursosSinImagenes++;
-			}else if(guide.getImages().size()>1){
-				imagenesDeMas+=guide.getImages().size()-1;
+			} else if (guide.getImages().size() > 1) {
+				imagenesDeMas += guide.getImages().size() - 1;
 			}
 		}
-		/*System.out.println("-----------------------------------------------------");
-		System.out.println("Punto:"+uri);
-		System.out.println("Recursos obtenidos:"+guides.values().size());
-		System.out.println("Imagenes obtenidas:"+imagenes);
-		System.out.println("Recursos sin imagenes:"+recursosSinImagenes);
-		System.out.println("Imagenes de mas en recursos:"+imagenesDeMas);
-		System.out.println("Tiempo ejecutar select:"+(medium1-start));
-		System.out.println("Tiempo en conseguir todos los datos:"+(end-medium1));
-		System.out.println("Tiempo en checkear URIs:"+checkURI);
-		System.out.println("Tiempo en obtener las imagenes:"+checkImage);
-		System.out.println("Tiempo total:"+(end-start));
-		System.out.println("-----------------------------------------------------");*/
-		return resource;
-	
+		/*
+		 * System.out.println(
+		 * "-----------------------------------------------------");
+		 * System.out.println("Punto:"+uri);
+		 * System.out.println("Recursos obtenidos:"+guides.values().size());
+		 * System.out.println("Imagenes obtenidas:"+imagenes);
+		 * System.out.println("Recursos sin imagenes:"+recursosSinImagenes);
+		 * System.out.println("Imagenes de mas en recursos:"+imagenesDeMas);
+		 * System.out.println("Tiempo ejecutar select:"+(medium1-start));
+		 * System.
+		 * out.println("Tiempo en conseguir todos los datos:"+(end-medium1));
+		 * System.out.println("Tiempo en checkear URIs:"+checkURI);
+		 * System.out.println("Tiempo en obtener las imagenes:"+checkImage);
+		 * System.out.println("Tiempo total:"+(end-start)); System.out.println(
+		 * "-----------------------------------------------------");
+		 */
+		return new ArrayList<WebNMasUnoGuide>(guides.values());
 	}
 
-	private String createGetGuidesTripsQuery(Integer limit, String uri) {
+	private List<WebNMasUnoTrip> getTrips(int i, String uri) {
+		// viaje
+		QueryExecution exec = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetTripsQuery(i, uri));
+		Map<String, WebNMasUnoTrip> tripsMaps = new HashMap<String, WebNMasUnoTrip>();
+		ResultSet queryResult = exec.execSelect();
+		while (queryResult.hasNext()) {
+			QuerySolution solution = queryResult.next();
+			String uriTrip = "", titTrip = "", idIt = "", tripURL = "", dateViaje = "";
+			if (solution.contains("trip")) {
+				uriTrip = solution.getResource("trip").getURI();
+			} else {
+				uriTrip = "";
+			}
+			if (solution.contains("it")) {
+				idIt = solution.getResource("it").getURI();
+			} else {
+				idIt = "";
+			}
+			if (solution.contains("tripTitle")) {
+				titTrip = solution.getLiteral("tripTitle").getLexicalForm();
+			} else {
+				titTrip = "";
+			}
+			if (solution.contains("tripURL")) {
+				tripURL = solution.getLiteral("tripURL").getLexicalForm();
+			} else {
+				tripURL = "";
+			}
+			if (solution.contains("created")) {
+				dateViaje = solution.getLiteral("created").getLexicalForm();
+			} else {
+				dateViaje = "";
+			}
+			if (!uriTrip.equals("")) {
+				WebNMasUnoTrip t = new WebNMasUnoTrip(titTrip, tripURL,
+						uriTrip, idIt, dateViaje);
+				addOtherTripsVariables(t, solution);
+				if (!tripsMaps.containsKey(uriTrip)) {
+					tripsMaps.put(uriTrip, t);
+				}
+			}
+		}
+		return new ArrayList<WebNMasUnoTrip>(tripsMaps.values());
+	}
+
+	private void addOtherTripsVariables(WebNMasUnoTrip trip,
+			QuerySolution solution) {
+		// ADD ?pL ?pH ?dL ?dH ?tD ?prL ?prH
+		// pL = price less than
+		// pH = price more than
+		// dL = duration less than
+		// dH = duration more than
+		// tD = description
+		// prL = distance less km than
+		// prh = dsitance more km than
+		if (solution.contains("pL")) {
+			trip.setPriceLess((solution.getLiteral("pL").getLexicalForm()));
+		}
+		if (solution.contains("pH")) {
+			trip.setPriceMore((solution.getLiteral("pH").getLexicalForm()));
+		}
+		if (solution.contains("dL")) {
+			trip.setDurationLess((solution.getLiteral("dL").getLexicalForm()));
+		}
+		if (solution.contains("dH")) {
+			trip.setDurationMore((solution.getLiteral("dH").getLexicalForm()));
+		}
+		if (solution.contains("tD")) {
+			trip.setDescription((solution.getLiteral("tD").getLexicalForm()));
+		}
+		if (solution.contains("prL")) {
+			trip.setDistanceLess((solution.getLiteral("prL").getLexicalForm()));
+		}
+		if (solution.contains("prH")) {
+			trip.setDistanceMore((solution.getLiteral("prH").getLexicalForm()));
+		}
+	}
+
+	private String createGetGuidesQuery(Integer limit, String uri) {
+		// TODO: Remove get TRIP in this query.
 		StringBuilder query = new StringBuilder("");
-		query.append("SELECT distinct ?noticia ?title ?url ?dateG ?uriImage ?pnameImage ?titImage ?trip ?tripTitle ?tripURL ?it ?dateV WHERE {");
-		query.append("{?noticia <http://www.w3.org/2003/01/geo/wgs84_pos#location> <"+uri+">.");
+		query.append("SELECT distinct ?noticia ?title ?url ?dateG ?uriImage ?pnameImage ?titImage WHERE {");
+		query.append("?noticia <http://www.w3.org/2003/01/geo/wgs84_pos#location> <"
+				+ uri + ">.");
 		query.append("?noticia a <http://webenemasuno.linkeddata.es/ontology/OPMO/Guide>.");
 		query.append("OPTIONAL {?noticia <http://rdfs.org/sioc/ns#title> ?title . }");
 		query.append("OPTIONAL {?noticia <http://rdfs.org/sioc/ns#created_at> ?dateG . }");
@@ -212,76 +302,115 @@ public class GetWebNMasUnoResourceHandler implements ActionHandler<GetWebNMasUno
 		query.append("?uriImage <http://openprovenance.org/model/opmo#pname> ?pnameImage.}");
 		query.append("OPTIONAL{?uriImage <http://metadata.net/mpeg7/mpeg7.owl#title> ?tittleImageUri.");
 		query.append("?tittleImageUri <http://www.w3.org/2000/01/rdf-schema#label> ?titImage.}");
-		query.append("}UNION{");
-		query.append("?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?it.");
-		query.append("?it <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?part.");
-		query.append("?part <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPoint> <http://webenemasuno.linkeddata.es/elviajero/resource/Point/POINT41.65_-4.71666666666667>.");
-		query.append("OPTIONAL{?trip <http://openprovenance.org/model/opmo#pname> ?tripURL. }");
-		query.append("OPTIONAL {?trip <http://rdfs.org/sioc/ns#created_at> ?dateV . }");
-		query.append("OPTIONAL{?trip <http://purl.org/dc/terms/title> ?tripTitle. }");
-		query.append("}}");
+		query.append("}");
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
 		}
 		return query.toString();
 	}
-	private String getImageURL(String URL,int prevImages){
-		String convertedURL=getRedirectedURL(URL);
-    	convertedURL=convertedURL.replace("elviajero.elpais.com","ep01.epimg.net");
-    	convertedURL=convertedURL.replace("diario", "diario/imagenes");
-    	convertedURL=convertedURL.replace(".html", "_"+String.format("%010d", prevImages)+"_sumario_normal.jpg");
-    	if(!checkIfURLExists(convertedURL)){
-    		return "";
-    	}else{
-    		return convertedURL;
-    	}
+
+	private String createGetTripsQuery(Integer limit, String uri) {
+		// TODO: Check if this query do good the work.
+		// Guides and trips obtain in other methods, use multithreading to
+		// obtain values.
+		StringBuilder query = new StringBuilder(
+				"SELECT distinct ?trip ?tripTitle ?tripURL ?it ?created ?pL ?pH ?dL ?dH ?tD ?prL ?prH WHERE{ ");
+		query.append("?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?it.");
+		query.append("?it <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?part.");
+		query.append("?part <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPoint> <"
+				+ uri + ">.");
+		// URL
+		query.append("OPTIONAL{?trip <http://openprovenance.org/model/opmo#pname> ?tripURL. }");
+		// title
+		query.append("OPTIONAL{?trip <http://purl.org/dc/terms/title> ?tripTitle. }");
+		// created
+		query.append("?trip <http://rdfs.org/sioc/ns#created_at> ?created.");
+		// price
+		query.append("OPTIONAL{?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPrice> ?p}.");
+		query.append("OPTIONAL{?p <http://webenemasuno.linkeddata.es/ontology/OPMO/lessEurosThan> ?pL}.");
+		query.append("OPTIONAL{?p <http://webenemasuno.linkeddata.es/ontology/OPMO/moreEurosThan> ?pH }.");
+		// duration
+		query.append("OPTIONAL{?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasDuration> ?d}.");
+		query.append("OPTIONAL{?d <http://webenemasuno.linkeddata.es/ontology/OPMO/lessWeeksThan> ?dL}.");
+		query.append("OPTIONAL{?d <http://webenemasuno.linkeddata.es/ontology/OPMO/moreWeeksThan> ?dH }.");
+		// description (if any)
+		query.append("OPTIONAL{?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/tripDescription> ?tD}.");
+		// distance
+		query.append("OPTIONAL{?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasDistance> ?pr}.");
+		query.append("OPTIONAL{?pr <http://webenemasuno.linkeddata.es/ontology/OPMO/lessKmThan> ?prL}.");
+		query.append("OPTIONAL{?pr <http://webenemasuno.linkeddata.es/ontology/OPMO/moreKmThan> ?prH }.");
+		query.append("}");
+		if (limit != null) {
+			query.append(" LIMIT " + limit);
+		}
+		return query.toString();
 	}
-	private String getNewPname(String URL){
+
+	private String getImageURL(String URL, int prevImages) {
+		String convertedURL = getRedirectedURL(URL);
+		convertedURL = convertedURL.replace("elviajero.elpais.com",
+				"ep01.epimg.net");
+		convertedURL = convertedURL.replace("diario", "diario/imagenes");
+		convertedURL = convertedURL.replace(".html",
+				"_" + String.format("%010d", prevImages)
+						+ "_sumario_normal.jpg");
+		if (!checkIfURLExists(convertedURL)) {
+			return "";
+		} else {
+			return convertedURL;
+		}
+	}
+
+	private String getNewPname(String URL) {
 		return getRedirectedURL(URL);
 	}
-	private String getRedirectedURL(String URL){
-		String toReturn="";
-		HttpURLConnection con=null;
+
+	private String getRedirectedURL(String URL) {
+		String toReturn = "";
+		HttpURLConnection con = null;
 		try {
-			con = (HttpURLConnection) new URL(
-			        URL).openConnection();
-		    con.connect();
-		    con.setInstanceFollowRedirects(false);
-		    int responseCode = con.getResponseCode();
-		    if ((responseCode / 100) == 3) {
-		        String newLocationHeader = con.getHeaderField("Location");
-		        responseCode = con.getResponseCode();
-		        if(isRelativeURL(newLocationHeader)){
-		        	String urlFull=con.getURL().toString();
-		        	urlFull=urlFull.replaceAll(con.getURL().getPath(), newLocationHeader);
-		        	toReturn=urlFull;
-		        }else{
-		        	URL urlLocation = new URL(newLocationHeader);
-		        	String urlFull=urlLocation.toString();
-		        	toReturn=urlFull;
-		        }
-		    }
-		    if((responseCode/100) == 2 ){
-		    	toReturn=URL;
-		    }
+			con = (HttpURLConnection) new URL(URL).openConnection();
+			con.connect();
+			con.setInstanceFollowRedirects(false);
+			int responseCode = con.getResponseCode();
+			if ((responseCode / 100) == 3) {
+				String newLocationHeader = con.getHeaderField("Location");
+				responseCode = con.getResponseCode();
+				if (isRelativeURL(newLocationHeader)) {
+					String urlFull = con.getURL().toString();
+					urlFull = urlFull.replaceAll(con.getURL().getPath(),
+							newLocationHeader);
+					toReturn = urlFull;
+				} else {
+					URL urlLocation = new URL(newLocationHeader);
+					String urlFull = urlLocation.toString();
+					toReturn = urlFull;
+				}
+			}
+			if ((responseCode / 100) == 2) {
+				toReturn = URL;
+			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
-			//Nothing
+			// Nothing
 			e.printStackTrace();
-		}finally{
-			if(con!=null){con.disconnect();}
+		} finally {
+			if (con != null) {
+				con.disconnect();
+			}
 		}
 		return toReturn;
 	}
+
 	private boolean isRelativeURL(String newLocationHeader) {
 		try {
 			URL urlLocation = new URL(newLocationHeader);
-			if(urlLocation.getHost()==null 
-					|| urlLocation.getHost().isEmpty() 
-					|| urlLocation.getHost().equals("")){
+			if (urlLocation.getHost() == null
+					|| urlLocation.getHost().isEmpty()
+					|| urlLocation.getHost().equals("")) {
 				return true;
 			}
 			return false;
@@ -291,36 +420,37 @@ public class GetWebNMasUnoResourceHandler implements ActionHandler<GetWebNMasUno
 		return true;
 	}
 
-	private boolean checkIfURLExists(String URL){
-		boolean toReturn=false;
-		HttpURLConnection con=null;
+	private boolean checkIfURLExists(String URL) {
+		boolean toReturn = false;
+		HttpURLConnection con = null;
 		try {
-			 con = (HttpURLConnection) new URL(
-			        URL).openConnection();
-		    con.connect();
-		    con.setInstanceFollowRedirects(false);
-		    int responseCode = con.getResponseCode();
-		    if ((responseCode / 100) == 2) {
-		        toReturn=true;
-		    }
-		    if((responseCode/100) ==3){
-		    	String newURL=getRedirectedURL(URL);
-		    	if(newURL!=null && URL!=null && URL.equals(newURL)){
-		    		return true;
-		    	}
-		    	if(newURL!=null && !newURL.equals("") && !newURL.isEmpty()){
-		    		return checkIfURLExists(newURL);
-		    	}
-		    }
+			con = (HttpURLConnection) new URL(URL).openConnection();
+			con.connect();
+			con.setInstanceFollowRedirects(false);
+			int responseCode = con.getResponseCode();
+			if ((responseCode / 100) == 2) {
+				toReturn = true;
+			}
+			if ((responseCode / 100) == 3) {
+				String newURL = getRedirectedURL(URL);
+				if (newURL != null && URL != null && URL.equals(newURL)) {
+					return true;
+				}
+				if (newURL != null && !newURL.equals("") && !newURL.isEmpty()) {
+					return checkIfURLExists(newURL);
+				}
+			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
-			//Nothing to do
+			// Nothing to do
 			e.printStackTrace();
 		} finally {
-			if(con!=null){con.disconnect();}
+			if (con != null) {
+				con.disconnect();
+			}
 		}
 		return toReturn;
 	}
