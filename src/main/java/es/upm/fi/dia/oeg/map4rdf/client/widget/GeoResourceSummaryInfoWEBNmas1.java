@@ -137,11 +137,11 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				if(result.getValue().haveGuides() || result.getValue().haveTrips()){
 					if(result.getValue().haveGuides()){
 						tab.add(guidesPanel, webNmessages.guides());
-						addGuides(applyFilters(result.getValue().getGuides()), guidesPanel);
+						addGuides(applyFiltersGuide(result.getValue().getGuides()), guidesPanel);
 					}
 					if(result.getValue().haveTrips()){
 						tab.add(tripsPanel,webNmessages.trips());
-						addTrips(result.getValue().getTrips(), tripsPanel);
+						addTrips(applyFiltersTrip(result.getValue().getTrips()), tripsPanel);
 					}
 					mainPanel.add(tab);
 				}else{
@@ -174,9 +174,10 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		if(dateFilters==null){
 			dateFilters=new ArrayList<DateFilter>();
 		}
-		addGuides(applyFilters(lastGuides), guidesPanel);
+		addGuides(applyFiltersGuide(lastGuides), guidesPanel);
+		addTrips(applyFiltersTrip(lastTrips), tripsPanel);
 	}
-	private List<WebNMasUnoGuide> applyFilters(List<WebNMasUnoGuide> toApply){
+	private List<WebNMasUnoGuide> applyFiltersGuide(List<WebNMasUnoGuide> toApply){
 		if(toApply==null){
 			return new ArrayList<WebNMasUnoGuide>();
 		}
@@ -200,11 +201,39 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		}
 		return dataFiltered;
 	}
+	private List<WebNMasUnoTrip> applyFiltersTrip(List<WebNMasUnoTrip> toApply){
+		if(toApply==null){
+			return new ArrayList<WebNMasUnoTrip>();
+		}
+		if(dateFilters.isEmpty() || toApply.isEmpty()){
+			return toApply;
+		}
+		List<WebNMasUnoTrip> dataFiltered=new ArrayList<WebNMasUnoTrip>();
+		for(WebNMasUnoTrip trip:toApply){
+			boolean passAllFilters=true;
+			for(DateFilter filter:dateFilters){
+				Date date=getDate(trip.getDate());
+				if(date==null){break;}
+				if(!filter.passFilter(date)){
+					passAllFilters=false;
+					break;
+				}
+			}
+			if(passAllFilters){
+				dataFiltered.add(trip);
+			}
+		}
+		return dataFiltered;
+	}
 	// TODO search and remove all incrusted styles.
 	private void addGuides(List<WebNMasUnoGuide> guides, Panel panel){
 		panel.clear();
 		if(guides.isEmpty()){
-			panel.add(new Label(webNmessages.notGuidesForDateFilter()));
+			if(!lastGuides.isEmpty()){
+				panel.add(new Label(webNmessages.notGuidesForDateFilter()));
+			}else{
+				return;
+			}
 		}
 		VerticalPanel verticalPanel=new VerticalPanel();
 		verticalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -244,7 +273,118 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		
 	}
 	private void addTrips(List<WebNMasUnoTrip> trips, Panel panel){
+		panel.clear();
+		if(trips.isEmpty()){
+			if(!trips.isEmpty()){
+				panel.add(new Label(webNmessages.notTripsForDateFilter()));
+			}else{
+				return;
+			}
+		}
+		ScrollPanel scroll=new ScrollPanel();
+		VerticalPanel vertical=new VerticalPanel();
+		vertical.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		scroll.setWidget(vertical);
+		int tripStyle=0;
+		for(WebNMasUnoTrip trip:trips){
+			vertical.add(getTripWidget(trip,tripStyle));
+			tripStyle=(tripStyle+1)%2;
+		}
+		panel.add(scroll);
 		//TODO implement trips WebNMas1
+	}
+	private Widget getTripWidget(WebNMasUnoTrip trip,int style) {
+		VerticalPanel vertical = new VerticalPanel();
+		vertical.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		HorizontalPanel mainLine= new HorizontalPanel();
+		mainLine.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		mainLine.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		mainLine.setSpacing(7);
+		mainLine.add(new Label(webNmessages.title()));
+		mainLine.add(new Anchor(trip.getTitle(), trip.getURL(), "_blank"));
+		Image rdfImage= new Image(browserResources.rdfIcon());
+		Anchor rdfAnchor=new Anchor("",trip.getURI(),"_blank");
+		rdfAnchor.getElement().appendChild(rdfImage.getElement());
+		mainLine.add(rdfAnchor);
+		mainLine.add(new Label(getVisualDate(trip.getDate())));
+		vertical.add(mainLine);
+		Widget moreInfoTrip=getMoreInfoTripWidget(trip);
+		if(moreInfoTrip!=null){
+			vertical.add(moreInfoTrip);
+		}
+		if(style==1){
+			//TODO set style 1
+		}
+		if(style==2){
+			//TODO set style 2
+		}
+		//TODO add drawTrip and history
+		return vertical;
+	}
+	private Widget getMoreInfoTripWidget(WebNMasUnoTrip trip){
+		VerticalPanel vertical=new VerticalPanel();
+		FlexTable table= new FlexTable();
+		boolean addedAMoreInfo=false;
+		int actualRow=0;
+		if(trip.haveDistanceLess() || trip.haveDistanceMore()){
+			int actualColumn=0;
+			addedAMoreInfo=true;
+			table.getRowFormatter().setVerticalAlign(actualRow, HasVerticalAlignment.ALIGN_MIDDLE);
+			if(trip.haveDistanceLess()){
+				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_CENTER);
+				table.setWidget(actualRow, actualColumn, new Label(webNmessages.distanceLess()+" "+trip.getDistanceLess()));
+				actualColumn++;
+			}
+			if(trip.haveDistanceMore()){
+				table.setWidget(actualRow, actualColumn, new Label(webNmessages.distanceMore()+" "+trip.getDistanceMore()));
+			}
+			actualRow++;
+		}
+		if(trip.haveDurationLess() || trip.haveDurationMore()){
+			int actualColumn=0;
+			addedAMoreInfo=true;
+			table.getRowFormatter().setVerticalAlign(actualRow, HasVerticalAlignment.ALIGN_MIDDLE);
+			if(trip.haveDurationLess()){
+				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_CENTER);
+				table.setWidget(actualRow, actualColumn, new Label(webNmessages.durationLess()+" "+trip.getDurationLess()));
+				actualColumn++;
+			}
+			if(trip.haveDurationMore()){
+				table.setWidget(actualRow, actualColumn, new Label(webNmessages.durationMore()+" "+trip.getDurationMore()));
+			}
+			actualRow++;
+		}
+		if(trip.havePriceLess() || trip.havePriceMore()){
+			int actualColumn=0;
+			addedAMoreInfo=true;
+			table.getRowFormatter().setVerticalAlign(actualRow, HasVerticalAlignment.ALIGN_MIDDLE);
+			if(trip.havePriceLess()){
+				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_CENTER);
+				table.setWidget(actualRow, actualColumn, new Label(webNmessages.priceLess()+" "+trip.getPriceLess()));
+				actualColumn++;
+			}
+			if(trip.havePriceMore()){
+				table.setWidget(actualRow, actualColumn, new Label(webNmessages.priceMore()+" "+trip.getPriceMore()));
+			}
+			actualRow++;
+		}
+		if(addedAMoreInfo){
+			vertical.add(table);
+		}
+		if(trip.haveDescription()){
+			Label description = new Label(webNmessages.description()+" "+trip.getDescription());
+			vertical.add(description);
+		}
+		if(addedAMoreInfo || trip.haveDescription()){	
+			return vertical;
+		}else{
+			return null;
+		}
 	}
 	private void addSubSetGuides(List<WebNMasUnoGuide> guides, FlexTable table, int height){
 		table.clear();
