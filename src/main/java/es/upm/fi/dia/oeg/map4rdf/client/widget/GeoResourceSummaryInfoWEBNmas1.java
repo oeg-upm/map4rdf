@@ -59,6 +59,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	private FlowPanel tripsPanel=new FlowPanel();
 	private List<WebNMasUnoGuide> lastGuides;
 	private List<DateFilter> dateFilters;
+	private List<WebNMasUnoTrip> lastTrips;
 	
 	public GeoResourceSummaryInfoWEBNmas1(DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources,BrowserMessages browserMessages){
 		this.browserMessages=browserMessages;
@@ -66,6 +67,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		this.dispatchAsync=dispatchAsync;
 		this.dateFilters=new ArrayList<DateFilter>();
 		this.lastGuides=new ArrayList<WebNMasUnoGuide>();
+		this.lastTrips=new ArrayList<WebNMasUnoTrip>();
 		eventBus.addHandler(FilterDateChangeEvent.getType(), this);
 		createUI();
 	}
@@ -128,30 +130,22 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				}
 				guidesPanel=new FlowPanel();
 				tripsPanel=new FlowPanel();
-				if(result.getValue().haveGuides() && result.getValue().haveTrips()){
-					lastGuides=result.getValue().getGuides();
-					mainWidget.setText(browserMessages.informationTittle(""));
-					TabPanel tab=new TabPanel();
-					tab.add(guidesPanel, webNmessages.guides());
-					addGuides(result.getValue().getGuides(), guidesPanel);
-					tab.add(tripsPanel,webNmessages.trips());
-					addTrips(result.getValue().getTrips(), tripsPanel);
+				mainWidget.setText(browserMessages.informationTittle(""));
+				TabPanel tab=new TabPanel();
+				lastGuides=result.getValue().getGuides();
+				lastTrips=result.getValue().getTrips();
+				if(result.getValue().haveGuides() || result.getValue().haveTrips()){
+					if(result.getValue().haveGuides()){
+						tab.add(guidesPanel, webNmessages.guides());
+						addGuides(applyFilters(result.getValue().getGuides()), guidesPanel);
+					}
+					if(result.getValue().haveTrips()){
+						tab.add(tripsPanel,webNmessages.trips());
+						addTrips(result.getValue().getTrips(), tripsPanel);
+					}
 					mainPanel.add(tab);
 				}else{
-					if(result.getValue().haveGuides()){
-						lastGuides=result.getValue().getGuides();
-						mainWidget.setText(webNmessages.guides());
-						mainPanel.add(new Label(webNmessages.guides()));
-						mainPanel.add(guidesPanel);
-						addGuides(applyFilters(result.getValue().getGuides()), guidesPanel);
-					}else if(result.getValue().haveTrips()){
-						mainWidget.setText(webNmessages.trips());
-						mainPanel.add(new Label(webNmessages.trips()));
-						mainPanel.add(tripsPanel);
-						addTrips(result.getValue().getTrips(), tripsPanel);
-					}else{
-						mainPanel.add(new Label(webNmessages.noGuidesAndTrips()));
-					}
+					mainPanel.add(new Label(webNmessages.noGuidesAndTrips()));
 				}
 				if(wasShowing){
 					mainWidget.center();
