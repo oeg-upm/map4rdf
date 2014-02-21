@@ -7,4 +7,5 @@ public interface WebNMasUnoMessages extends Messages{
 	String trips();
 	String noGuidesAndTrips();
 	String notGuidesForDateFilter();
+	String notTripsForDateFilter();
 }
