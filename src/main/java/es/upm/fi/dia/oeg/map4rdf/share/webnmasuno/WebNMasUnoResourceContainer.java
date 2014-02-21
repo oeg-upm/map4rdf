@@ -36,7 +36,9 @@ public class WebNMasUnoResourceContainer extends GeoResource {
 	public void addAllGuides(Collection<WebNMasUnoGuide> guides){
 		this.guides.addAll(guides);
 	}
-
+	public void addAllTrips(Collection<WebNMasUnoTrip> trips){
+		this.trips.addAll(trips);
+	}
 	public ArrayList<WebNMasUnoTrip> getTrips() {
 		return trips;
 	}
