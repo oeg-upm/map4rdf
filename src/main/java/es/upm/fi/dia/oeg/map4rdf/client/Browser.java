@@ -59,7 +59,6 @@ public class Browser implements EntryPoint {
 		} catch (Exception e) {
 			injector = null;
 			e.printStackTrace();
-			//System.err.println(e);
 		}
 		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus());
 		controller.addPresenter(injector.getDashboard(),Places.DASHBOARD);
