@@ -503,14 +503,17 @@ public class OpenLayersMapLayer implements MapLayer,
 	@Override
 	public void onFeatureUnselected(FeatureUnselectedEvent eventObject) {
 		//getMapView().closeWindow();
-		List<ClickHandler> clickHandlers = handlers.get(eventObject
+		
+		//Disabled because the new GUI do auto close without click on the image of last resource.
+		
+		/*List<ClickHandler> clickHandlers = handlers.get(eventObject
 				.getVectorFeature().getAttributes()
 				.getAttributeAsString("map4rdf_id"));
 		if (clickHandlers != null) {
 			for (ClickHandler handler : clickHandlers) {
 				handler.onClick(null);
 			}
-		}
+		}*/
 		
 	}
 
