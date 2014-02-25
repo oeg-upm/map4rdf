@@ -39,8 +39,10 @@ import es.upm.fi.dia.oeg.map4rdf.client.view.GeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DataToolBar;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.FacetWidget;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummaryInfoDefault;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummaryInfoWEBNmas1;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.Timeline;
+
 
 /**
  * @author Alexander De Leon
@@ -49,7 +51,7 @@ public interface BrowserResources extends ClientBundle {
 
 	interface BrowserCss extends LoadingWidget.Stylesheet, ToggleButton.Stylesheet, FacetWidget.Stylesheet,
 			DataToolBar.Stylesheet, Timeline.Stylesheet, GeoResourceSummaryInfoDefault.Stylesheet, PopupGeoprocessingView.Stylesheet,
-			GeoprocessingView.Stylesheet,FiltersView.Stylesheet,CssResource{
+			GeoprocessingView.Stylesheet,FiltersView.Stylesheet,GeoResourceSummaryInfoWEBNmas1.Stylesheet,CssResource{
 		String header();
 
 		String footer();
