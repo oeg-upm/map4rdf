@@ -49,6 +49,11 @@ import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoTrip;
 //TODO {VeryHard} Implement WEBN+1 model!!!
 public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,FilterDateChangeEventHandler{
 	
+	public interface Stylesheet {
+		String WEBNmas1Line0Style();
+		String WEBNmas1Line1Style();
+	}
+	
 	private DialogBox mainWidget;
 	private BrowserMessages browserMessages;
 	private BrowserResources browserResources;
@@ -60,7 +65,6 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	private List<WebNMasUnoGuide> lastGuides;
 	private List<DateFilter> dateFilters;
 	private List<WebNMasUnoTrip> lastTrips;
-	
 	public GeoResourceSummaryInfoWEBNmas1(DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources,BrowserMessages browserMessages){
 		this.browserMessages=browserMessages;
 		this.browserResources=browserResources;
@@ -112,6 +116,8 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	@Override
 	public void setGeoResource(GeoResource resource, Geometry geometry) {
 		mainPanel.clear();
+		lastGuides.clear();
+		lastTrips.clear();
 		mainPanel.add(new Label(browserMessages.loading()));
 		dispatchAsync.execute(new GetWebNMasUnoResource(resource.getUri()), new AsyncCallback<SingletonResult<WebNMasUnoResourceContainer>>() {
 
@@ -135,13 +141,15 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				lastGuides=result.getValue().getGuides();
 				lastTrips=result.getValue().getTrips();
 				if(result.getValue().haveGuides() || result.getValue().haveTrips()){
-					if(result.getValue().haveGuides()){
-						tab.add(guidesPanel, webNmessages.guides());
-						addGuides(applyFiltersGuide(result.getValue().getGuides()), guidesPanel);
-					}
 					if(result.getValue().haveTrips()){
-						tab.add(tripsPanel,webNmessages.trips());
 						addTrips(applyFiltersTrip(result.getValue().getTrips()), tripsPanel);
+						tab.add(tripsPanel,webNmessages.trips());
+						tab.selectTab(tab.getWidgetIndex(tripsPanel));
+					}
+					if(result.getValue().haveGuides()){
+						addGuides(applyFiltersGuide(result.getValue().getGuides()), guidesPanel);
+						tab.add(guidesPanel, webNmessages.guides());
+						tab.selectTab(tab.getWidgetIndex(guidesPanel));
 					}
 					mainPanel.add(tab);
 				}else{
@@ -275,13 +283,15 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	private void addTrips(List<WebNMasUnoTrip> trips, Panel panel){
 		panel.clear();
 		if(trips.isEmpty()){
-			if(!trips.isEmpty()){
+			if(!dateFilters.isEmpty()){
 				panel.add(new Label(webNmessages.notTripsForDateFilter()));
 			}else{
 				return;
 			}
 		}
 		ScrollPanel scroll=new ScrollPanel();
+		int height=(int)(Window.getClientHeight()*0.5);
+		scroll.setHeight(height+"px");
 		VerticalPanel vertical=new VerticalPanel();
 		vertical.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -297,10 +307,10 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	private Widget getTripWidget(WebNMasUnoTrip trip,int style) {
 		VerticalPanel vertical = new VerticalPanel();
 		vertical.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		HorizontalPanel mainLine= new HorizontalPanel();
 		mainLine.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		mainLine.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		mainLine.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		mainLine.setSpacing(7);
 		mainLine.add(new Label(webNmessages.title()));
 		mainLine.add(new Anchor(trip.getTitle(), trip.getURL(), "_blank"));
@@ -314,11 +324,12 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		if(moreInfoTrip!=null){
 			vertical.add(moreInfoTrip);
 		}
-		if(style==1){
-			//TODO set style 1
+		//TODO Talk with O.Corcho for backgrounds colors !!!!! And obtain the best visualization.
+		if(style==0){
+			vertical.addStyleName(browserResources.css().WEBNmas1Line0Style());
 		}
-		if(style==2){
-			//TODO set style 2
+		if(style==1){
+			vertical.setStyleName(browserResources.css().WEBNmas1Line1Style());
 		}
 		//TODO add drawTrip and history
 		return vertical;
@@ -334,11 +345,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			table.getRowFormatter().setVerticalAlign(actualRow, HasVerticalAlignment.ALIGN_MIDDLE);
 			if(trip.haveDistanceLess()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
-				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_CENTER);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
 				table.setWidget(actualRow, actualColumn, new Label(webNmessages.distanceLess()+" "+trip.getDistanceLess()));
 				actualColumn++;
 			}
 			if(trip.haveDistanceMore()){
+				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
 				table.setWidget(actualRow, actualColumn, new Label(webNmessages.distanceMore()+" "+trip.getDistanceMore()));
 			}
 			actualRow++;
@@ -349,11 +362,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			table.getRowFormatter().setVerticalAlign(actualRow, HasVerticalAlignment.ALIGN_MIDDLE);
 			if(trip.haveDurationLess()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
-				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_CENTER);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
 				table.setWidget(actualRow, actualColumn, new Label(webNmessages.durationLess()+" "+trip.getDurationLess()));
 				actualColumn++;
 			}
 			if(trip.haveDurationMore()){
+				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
 				table.setWidget(actualRow, actualColumn, new Label(webNmessages.durationMore()+" "+trip.getDurationMore()));
 			}
 			actualRow++;
@@ -364,11 +379,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			table.getRowFormatter().setVerticalAlign(actualRow, HasVerticalAlignment.ALIGN_MIDDLE);
 			if(trip.havePriceLess()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
-				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_CENTER);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
 				table.setWidget(actualRow, actualColumn, new Label(webNmessages.priceLess()+" "+trip.getPriceLess()));
 				actualColumn++;
 			}
 			if(trip.havePriceMore()){
+				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
+				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
 				table.setWidget(actualRow, actualColumn, new Label(webNmessages.priceMore()+" "+trip.getPriceMore()));
 			}
 			actualRow++;
