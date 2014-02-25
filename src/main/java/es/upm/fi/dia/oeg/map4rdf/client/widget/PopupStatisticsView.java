@@ -359,7 +359,6 @@ public class PopupStatisticsView extends Composite{
 		errorLabel.setVisible(false);
 		drawStatistic();
 	}
-	//TODO fix problem that reload data when the user only change the drawType.
 	private void handlerChartChange(){
 		statisticsGrid.clear();
 		DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
