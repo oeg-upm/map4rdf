@@ -82,6 +82,7 @@ public class PopupStatisticsView extends Composite{
 	}
 	private ChartType [] charts={ChartType.PIE,ChartType.LINE,ChartType.BAR};
 	private int selectedChart=0;
+	private List<StatisticDataValue> lastStatisticsValues;
 	//TODO add aemet LoadingBox for statistics here and replace the old loadingWidget.
 	private LoadingWidget loadingWidget;
 		
@@ -318,6 +319,7 @@ public class PopupStatisticsView extends Composite{
 	}
 	private void handlerStatisticChange(ChangeEvent event){
 		hideWidgets();
+		lastStatisticsValues=null;
 		if(statisticsBox.getItemCount()>statistics.size()){
 			statisticsBox.removeItem(0);
 		}
@@ -329,6 +331,7 @@ public class PopupStatisticsView extends Composite{
 
 	private void handlerDimensionXChange(ChangeEvent event){
 		hideWidgets();
+		lastStatisticsValues=null;
 		if(dimensionsXBox.getItemCount()>dimensions.size()){
 			dimensionsXBox.removeItem(0);
 		}
@@ -338,6 +341,7 @@ public class PopupStatisticsView extends Composite{
 	}
 	private void handlerDimensionYChange(ChangeEvent event){
 		hideWidgets();
+		lastStatisticsValues=null;
 		if(dimensionsYBox.getItemCount()>selectedDimensionX.getDimensionsY().size()){
 			dimensionsYBox.removeItem(0);
 		}
@@ -351,6 +355,7 @@ public class PopupStatisticsView extends Composite{
 		}
 	}
 	private void handlerAggrChange(ChangeEvent event){
+		lastStatisticsValues=null;
 		errorLabel.setVisible(false);
 		drawStatistic();
 	}
@@ -396,7 +401,10 @@ public class PopupStatisticsView extends Composite{
 		}
 	}
 	private void drawStatistic(){
-		List<StatisticDataValue> valores = getValues(resource.getUri(), selectedStatistic.getServer().getUri(), selectedStatistic.getUri(), selectedDimensionX.getUri(), selectedDimensionY.getUri());
+		if(lastStatisticsValues==null){
+			lastStatisticsValues  = getValues(resource.getUri(), selectedStatistic.getServer().getUri(), selectedStatistic.getUri(), selectedDimensionX.getUri(), selectedDimensionY.getUri());
+		}
+		
 		ScrollPanel scroll = new ScrollPanel();
 		FlowPanel panel = new FlowPanel();
 		scroll.add(panel);
@@ -411,7 +419,7 @@ public class PopupStatisticsView extends Composite{
 		//int[] yValues= new int[valores.size()];
 		//panel.getElement().setId(divID);
 		statisticsGrid.setWidget(0, 0, scroll);
-		drawChart(charts[selectedChart],tableTitle, panel, chartWidth, chartHeight, xTitle, yTitle, valores);
+		drawChart(charts[selectedChart],tableTitle, panel, chartWidth, chartHeight, xTitle, yTitle, lastStatisticsValues);
 	}
 		
 	private Set<String> getServers(String url){
