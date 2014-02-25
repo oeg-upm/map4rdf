@@ -310,9 +310,6 @@ public class GetWebNMasUnoResourceHandler
 	}
 
 	private String createGetTripsQuery(Integer limit, String uri) {
-		// TODO: Check if this query do good the work.
-		// Guides and trips obtain in other methods, use multithreading to
-		// obtain values.
 		StringBuilder query = new StringBuilder(
 				"SELECT distinct ?trip ?tripTitle ?tripURL ?it ?created ?pL ?pH ?dL ?dH ?tD ?prL ?prH WHERE{ ");
 		query.append("?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?it.");
