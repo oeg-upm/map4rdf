@@ -213,16 +213,11 @@ public class GetWebNMasUnoResourceHandler
 		ResultSet queryResult = exec.execSelect();
 		while (queryResult.hasNext()) {
 			QuerySolution solution = queryResult.next();
-			String uriTrip = "", titTrip = "", idIt = "", tripURL = "", dateViaje = "";
+			String uriTrip = "", titTrip = "", tripURL = "", dateViaje = "";
 			if (solution.contains("trip")) {
 				uriTrip = solution.getResource("trip").getURI();
 			} else {
 				uriTrip = "";
-			}
-			if (solution.contains("it")) {
-				idIt = solution.getResource("it").getURI();
-			} else {
-				idIt = "";
 			}
 			if (solution.contains("tripTitle")) {
 				titTrip = solution.getLiteral("tripTitle").getLexicalForm();
@@ -241,7 +236,7 @@ public class GetWebNMasUnoResourceHandler
 			}
 			if (!uriTrip.equals("")) {
 				WebNMasUnoTrip t = new WebNMasUnoTrip(titTrip, tripURL,
-						uriTrip, idIt, dateViaje);
+						uriTrip, uri, dateViaje);
 				addOtherTripsVariables(t, solution);
 				if (!tripsMaps.containsKey(uriTrip)) {
 					tripsMaps.put(uriTrip, t);
@@ -311,11 +306,8 @@ public class GetWebNMasUnoResourceHandler
 
 	private String createGetTripsQuery(Integer limit, String uri) {
 		StringBuilder query = new StringBuilder(
-				"SELECT distinct ?trip ?tripTitle ?tripURL ?it ?created ?pL ?pH ?dL ?dH ?tD ?prL ?prH WHERE{ ");
-		query.append("?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?it.");
-		query.append("?it <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?part.");
-		query.append("?part <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPoint> <"
-				+ uri + ">.");
+				"SELECT distinct ?trip ?tripTitle ?tripURL ?created ?pL ?pH ?dL ?dH ?tD ?prL ?prH WHERE{ ");
+		query.append("?trip <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> <"+uri+">.");
 		// URL
 		query.append("OPTIONAL{?trip <http://openprovenance.org/model/opmo#pname> ?tripURL. }");
 		// title
