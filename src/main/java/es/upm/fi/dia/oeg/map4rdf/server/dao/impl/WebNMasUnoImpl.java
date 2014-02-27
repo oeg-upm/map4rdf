@@ -24,7 +24,10 @@ import es.upm.fi.dia.oeg.map4rdf.share.Facet;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResourceOverlay;
+import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PointBean;
+import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
+import es.upm.fi.dia.oeg.map4rdf.share.PolyLineBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 import es.upm.fi.dia.oeg.map4rdf.share.Year;
@@ -204,9 +207,15 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 					WebNMasUnoResourceContainer resource = null;
 					resource = result.get(uri);
 					if (resource == null) {
-						resource = new WebNMasUnoResourceContainer(uri,
-								new PointBean(uri, lng, lat));
-						result.put(uri, resource);
+						if(solution.contains("facetValueID") && solution.getResource("facetValueID").getURI().contains("Trip")){
+							resource = new WebNMasUnoResourceContainer(uri,
+									getItinerary(uri));
+							result.put(uri, resource);
+						}else{
+							resource = new WebNMasUnoResourceContainer(uri,
+									new PointBean(uri, lng, lat));
+							result.put(uri, resource);
+						}
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");
@@ -237,10 +246,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 		StringBuilder query = new StringBuilder(
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  SELECT distinct ?r ?lat ?lng ?label ?facetID ?facetValueID ");
 		query.append("WHERE { ");
-		query.append("?r <" + Geo.lat + "> ?lat. ");
-		query.append("?r <" + Geo.lng + "> ?lng . ");
-		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
 			for (FacetConstraint constraint : constraints) {
 				if (constraint.getFacetValueId().contains("Trip")) {
 					// tratamiento especial si es un viaje
@@ -248,15 +254,22 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 							+ constraint.getFacetValueId() + ">.");
 					query.append("?t <"+constraint.getFacetId()+"> ?facetValueID.");
 					query.append("?t ?facetID <"+constraint.getFacetValueId()+">.");
-					query.append("?t <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?it.");
-					query.append("?it <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?pe.");
-					query.append("?pe <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPoint> ?r. } UNION");
+					query.append("?t <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?r.");
+					query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
+					query.append("?r <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?part.");
+					query.append("?part <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPoint> ?point. ");
+					query.append("?point <"+Geo.lat+"> ?lat.");
+					query.append("?point <"+Geo.lng+"> ?lng.");
+					query.append("} UNION");
 				} else if (constraint.getFacetValueId().contains("Point")) {
 					//Tratamiento especial si es un punto
 					query.append("{ ?r <" + constraint.getFacetId() + "> <"
 							+ constraint.getFacetValueId() + ">.");
 					query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-					query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
+					query.append("?r ?facetID <"+constraint.getFacetValueId()+">.");
+					query.append("?r <" + Geo.lat + "> ?lat. ");
+					query.append("?r <" + Geo.lng + "> ?lng . ");
+					query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
 					query.append("} UNION");
 				} else {
 					// cualquier cosa con localizacion (guias, aristas)
@@ -264,7 +277,11 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 							+ constraint.getFacetValueId() + ">. ");
 					query.append("?g <"+constraint.getFacetId()+"> ?facetValueID.");
 					query.append("?g ?facetID <"+constraint.getFacetValueId()+">.");
-					query.append("?g <http://www.w3.org/2003/01/geo/wgs84_pos#location> ?r. } UNION");
+					query.append("?g <"+Geo.location+"> ?r.");
+					query.append("?r <" + Geo.lat + "> ?lat. ");
+					query.append("?r <" + Geo.lng + "> ?lng . ");
+					query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
+					query.append(" } UNION");
 				}
 			}
 			query.delete(query.length() - 5, query.length());
@@ -281,7 +298,48 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 		}
 		return query.toString();
 	}
+	private PolyLine getItinerary(String uriItinerario)
+			throws DaoException {
+		// query 1. The path & order of the itinerary.
+		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetItineraryQuery(1000, uriItinerario));// como mucho un
+																// itinerario de
+																// 1000 puntos
+		ResultSet queryResult2 = exec2.execSelect();
+		String point = "";
+		double lat, longitude;
+		ArrayList<Point> puntosOrdenados = new ArrayList<Point>();
+		while (queryResult2.hasNext()) {
+			QuerySolution solution2 = queryResult2.next();
+			point = solution2.getResource("point").getURI();
+			lat = solution2.getLiteral("lat").getDouble();
+			longitude = solution2.getLiteral("long").getDouble();
+			PointBean p1 = new PointBean(point, longitude, lat);
+			puntosOrdenados.add(p1);
+		}
+		// Los puntos vienen ordenados ya por ?order (en la consulta)
+		PolyLineBean p = new PolyLineBean(uriItinerario, puntosOrdenados);
+		return p;
+	}
+	private String createGetItineraryQuery(Integer limit, String uri) {
+		StringBuilder query = new StringBuilder(
+				"SELECT distinct ?order ?point ?lat ?long ");
+		query.append("WHERE{ ");
+		query.append("<"
+				+ uri
+				+ "> <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?path.");
+		query.append("?path <http://webenemasuno.linkeddata.es/ontology/OPMO/hasOrder> ?order.");
+		query.append("?path <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPoint> ?point.");
+		query.append("?point <http://www.w3.org/2003/01/geo/wgs84_pos#lat> ?lat.");
+		query.append("?point <http://www.w3.org/2003/01/geo/wgs84_pos#long> ?long.");
 
+		query.append("}");
+		query.append("ORDER BY ?order");
+		if (limit != null) {
+			query.append(" LIMIT " + limit);
+		}
+		return query.toString();
+	}
 	private String createGetResourceQuery(String uri) {
 		StringBuilder query = new StringBuilder(
 				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>  SELECT distinct ?position ?lat ?lng ?label ");
