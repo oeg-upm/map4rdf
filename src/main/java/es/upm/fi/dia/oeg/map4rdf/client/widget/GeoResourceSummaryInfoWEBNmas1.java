@@ -298,7 +298,9 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		scroll.setWidget(vertical);
 		int tripStyle=0;
 		for(WebNMasUnoTrip trip:trips){
-			vertical.add(getTripWidget(trip,tripStyle));
+			Widget widget=getTripWidget(trip,tripStyle);
+			DOM.setStyleAttribute(widget.getElement(), "paddingBottom", "25px");
+			vertical.add(widget);
 			tripStyle=(tripStyle+1)%2;
 		}
 		panel.add(scroll);
