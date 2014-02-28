@@ -1,2 +1,15 @@
-This project aims at developing tools to visualize information coming from RDF datasets.
-- map4rdf is a maps viewer of RDF resources with geometrical information.
+Recently we have seen a large increase in the amount of geospacial data that is being published using RDF and Linked Data principles. Efforts such as the W3C Geo XG, and most recently the GeoSPARQL initiative are providing the necessary vocabularies to publish this kind of information on the Web of Data. map4rdf is a mapping and faceted browsing tool for exploring and visualizing RDF datasets enhanced with geometrical Information.
+
+map4rdf is an open source software. Just configure it to use your SPARQL endpoint and provide your users with a nice map-based visualization of your data. The geospatial aspects of the data can be modelled using either the data model from W3C Geo XG or the geometrical data model proposed by GeoLinkedData
+
+map4rdf provides:
+
+* Faceted browser interface.
+* Geospatial and geometrical visualization using Google Maps and Open Street Maps.
+* Visualization of geometries (LineStrings, Polygons, etc) when using the GeoLinkedData data model.
+* Visualization of statistical data using SCOVO.
+* Editing and storing displayed data in RDF data format.
+* Query Filtering.
+* Easy configuration via admin panel or configuration file.
+
+
