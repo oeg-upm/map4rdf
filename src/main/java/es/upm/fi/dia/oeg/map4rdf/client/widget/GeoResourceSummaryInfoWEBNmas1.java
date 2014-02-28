@@ -326,14 +326,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		if(moreInfoTrip!=null){
 			vertical.add(moreInfoTrip);
 		}
-		//TODO Talk with O.Corcho for backgrounds colors !!!!! And obtain the best visualization.
 		if(style==0){
 			vertical.addStyleName(browserResources.css().WEBNmas1Line0Style());
 		}
 		if(style==1){
 			vertical.setStyleName(browserResources.css().WEBNmas1Line1Style());
 		}
-		//TODO add drawTrip and history
+		//TODO add history
 		return vertical;
 	}
 	private Widget getMoreInfoTripWidget(WebNMasUnoTrip trip){
