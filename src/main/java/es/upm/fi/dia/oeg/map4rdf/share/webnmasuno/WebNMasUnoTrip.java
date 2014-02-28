@@ -1,6 +1,8 @@
 package es.upm.fi.dia.oeg.map4rdf.share.webnmasuno;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WebNMasUnoTrip extends WebNMasUnoResource implements Serializable {
 
@@ -17,6 +19,7 @@ public class WebNMasUnoTrip extends WebNMasUnoResource implements Serializable {
 	private String distanceLess="";
 	private String distanceMore="";
 	private String description="";
+	private List<TripProvenance> provenances=new ArrayList<TripProvenance>();
 	
 	@SuppressWarnings("unused")
 	private WebNMasUnoTrip() {
@@ -114,7 +117,14 @@ public class WebNMasUnoTrip extends WebNMasUnoResource implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public List<TripProvenance> getProvenances() {
+		return provenances;
+	}
 
+	public boolean addTripProvenance(TripProvenance tripProvenance){
+		return provenances.add(tripProvenance);
+	}
 	public boolean haveDistanceMore(){
 		return distanceMore!=null && !distanceMore.isEmpty();
 	}
