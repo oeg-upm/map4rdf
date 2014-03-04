@@ -24,6 +24,8 @@ import com.ibm.icu.util.Calendar;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
+import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance;
+import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance.TripProvenanceType;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoGuide;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoImage;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
@@ -37,11 +39,6 @@ public class GetWebNMasUnoResourceHandler
 		ActionHandler<GetWebNMasUnoResource, SingletonResult<WebNMasUnoResourceContainer>> {
 
 	private String endpointUri;
-
-	/*
-	 * TODO Analyze if is possible to implement multithreading for obtain data
-	 * and images, also for get guides and trips in different threads
-	 */
 
 	@Inject
 	public GetWebNMasUnoResourceHandler(
@@ -240,6 +237,7 @@ public class GetWebNMasUnoResourceHandler
 				addOtherTripsVariables(t, solution);
 				if (!tripsMaps.containsKey(uriTrip)) {
 					tripsMaps.put(uriTrip, t);
+					addProvenanceTrip(uriTrip, t);
 				}
 			}
 		}
@@ -278,9 +276,84 @@ public class GetWebNMasUnoResourceHandler
 			trip.setDistanceMore((solution.getLiteral("prH").getLexicalForm()));
 		}
 	}
+	private void addProvenanceTrip(String uriTrip, WebNMasUnoTrip trip){
+		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri,
+				createGetTripProvenance(1000, uriTrip));
+		ResultSet queryResult2 = exec2.execSelect();
+		String nextV = "";
+		while (queryResult2.hasNext()) {
+			QuerySolution solution2 = queryResult2.next();
+			if (solution2.contains("nextV")) {
+				nextV = solution2.getResource("nextV").getURI();
+			}
+			TripProvenance provenance = createTripProvenance(solution2,trip.getDate());
+			if(provenance!=null){
+				trip.addTripProvenance(provenance);
+			}
+		}
+		int maxProvenances=100;
+		while (!nextV.trim().isEmpty() && maxProvenances>0) {
+			exec2 = QueryExecutionFactory.sparqlService(endpointUri, createGetTripProvenance(1000, nextV));
+			maxProvenances--;
+			queryResult2 = exec2.execSelect();
+			nextV = "";
+			while (queryResult2.hasNext()) {
+				QuerySolution solution2 = queryResult2.next();
+				if (solution2.contains("nextV")) {
+					nextV = solution2.getResource("nextV").getURI();
+				}
+				TripProvenance provenance = createTripProvenance(solution2,trip.getDate());
+				if(provenance!=null){
+					trip.addTripProvenance(provenance);
+				}
+			}
+		}
+	}
+
+	private TripProvenance createTripProvenance(QuerySolution qs,String refTime) {
+		String reference = "", time = "";
+		reference = qs.getResource("reference").getURI();
+		if (qs.contains("time")) {
+			time = qs.getLiteral("time").getLexicalForm();
+		} else {
+			time = refTime;
+		}
+		TripProvenanceType provenanceType=TripProvenanceType.GUIDE;
+		if (reference.contains("/Post/")) {
+			provenanceType=TripProvenanceType.POST;
+		} else if (reference.contains("/Image/")){
+			provenanceType=TripProvenanceType.IMAGE;
+		} else if (reference.contains("/Video/")) {
+			provenanceType=TripProvenanceType.VIDEO;
+		}else if (reference.contains("/Guide/")) {
+			provenanceType=TripProvenanceType.GUIDE;
+		}else{
+			return null;
+		}
+		TripProvenance provenance= new TripProvenance(reference,provenanceType);
+		provenance.setTime(time);
+		if (qs.contains("pname")) {
+			provenance.setUrl(qs.getLiteral("pname").getLexicalForm());
+		}
+		if(qs.contains("tit")){
+			provenance.setTitle(qs.getLiteral("tit").getLexicalForm());
+		}
+		if(qs.contains("sub")){
+			provenance.setSubTitle(qs.getLiteral("sub").getLexicalForm());
+		}
+		if(qs.contains("lt")){
+			provenance.setTitle(qs.getLiteral("lt").getLexicalForm());
+		}
+		if(qs.contains("la")){
+			provenance.setSubTitle(qs.getLiteral("la").getLexicalForm());
+		}
+		if(qs.contains("blog")){
+			provenance.setBlog(qs.getResource("blog").getURI());
+		}
+		return provenance;
+	}
 
 	private String createGetGuidesQuery(Integer limit, String uri) {
-		// TODO: Remove get TRIP in this query.
 		StringBuilder query = new StringBuilder("");
 		query.append("SELECT distinct ?noticia ?title ?url ?dateG ?uriImage ?pnameImage ?titImage WHERE {");
 		query.append("?noticia <http://www.w3.org/2003/01/geo/wgs84_pos#location> <"
@@ -334,6 +407,52 @@ public class GetWebNMasUnoResourceHandler
 		}
 		return query.toString();
 	}
+	private String createGetTripProvenance(Integer limit, String uri) {
+		
+		StringBuilder query = new StringBuilder(
+				"SELECT distinct ?reference ?time ?pname ?tit ?sub ?lt ?la ?blog ?nextV WHERE{ ");
+		query.append("?gen <http://openprovenance.org/model/opmo#effect> <"
+				+ uri + ">.");
+		query.append("?gen <http://openprovenance.org/model/opmo#cause> ?process.");
+		query.append("?used <http://openprovenance.org/model/opmo#effect> ?process.");
+		query.append("?used <http://openprovenance.org/model/opmo#cause> ?reference.");
+		// date para el timeline
+		query.append("OPTIONAL{?used <http://openprovenance.org/model/opmo#time> ?t.");
+		query.append("?t <http://openprovenance.org/model/opmo#exactlyAt> ?time.}");
+		// pname es comun
+		query.append("OPTIONAL{?reference <http://openprovenance.org/model/opmo#pname> ?pname}");
+		// GUIDE: title, description, rights, creator, RDF
+		query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#title> ?tit}");
+		query.append("OPTIONAL{?reference <http://webenemasuno.linkeddata.es/ontology/OPMO/subtitle> ?sub}");
+		// query.append("OPTIONAL{?reference <http://purl.org/dc/terms/rightsHolder> ?rights}");
+		// query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#has_creator> ?cr}");
+		// IMAGE-VIDEO: title, description, rights, creator, RDF
+		// query.append("OPTIONAL{?reference <http://webenemasuno.linkeddata.es/ontology/MPEG7/rightsHolder> ?rights."
+		// + "?rights <http://www.w3.org/2000/01/rdf-schema#label> ?lr}.");
+		query.append("OPTIONAL{?reference <http://metadata.net/mpeg7/mpeg7.owl#title> ?tI."
+				+ "?tI <http://www.w3.org/2000/01/rdf-schema#label> ?lt}.");
+		query.append("OPTIONAL{?reference <http://metadata.net/mpeg7/mpeg7.owl#abstract> ?a."
+				+ "?a <http://www.w3.org/2000/01/rdf-schema#label> ?la}.");
+		// POST: blog link
+		query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#has_container> ?blog}.");// title
+																							// ya
+																							// viene
+																							// de
+																							// guide
+
+		// next Version
+		query.append("OPTIONAL{?b <http://openprovenance.org/model/opmo#cause> <"
+				+ uri + ">.");
+		query.append("?b a <http://webenemasuno.linkeddata.es/ontology/OPMO/LaterVersionThan>.");
+		query.append("?b <http://openprovenance.org/model/opmo#effect> ?nextV }");
+
+		query.append("}");
+		if (limit != null) {
+			query.append(" LIMIT " + limit);
+		}
+		return query.toString();
+	}
+	
 
 	private String getImageURL(String URL, int prevImages) {
 		String convertedURL = getRedirectedURL(URL);
