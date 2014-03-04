@@ -11,7 +11,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
  * @author Daniel Garijo
  */
 public class WebNMasUnoItinerary extends GeoResource implements Serializable {
-    private ArrayList<String> titulosViajes; //titulos de los Viajes a los que pertenece este itinerario.
+	private static final long serialVersionUID = -1215755446891911826L;
+	private ArrayList<String> titulosViajes; //titulos de los Viajes a los que pertenece este itinerario.
     public WebNMasUnoItinerary() {
         titulosViajes = new ArrayList<String>();
     }
