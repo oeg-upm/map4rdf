@@ -16,8 +16,6 @@ public class TripProvenance extends Resource{
 	String time;
 	String url;
 	String blog;
-	String multimediaLabel;
-	String multimediaUrl;
 	public TripProvenance(String uri, TripProvenanceType type) {
 		super(uri);
 		this.type=type;
@@ -36,12 +34,6 @@ public class TripProvenance extends Resource{
 	}
 	public boolean haveBlog(){
 		return blog!=null && !blog.isEmpty();
-	}
-	public boolean haveMultimediaLabel(){
-		return multimediaLabel!=null && !multimediaLabel.isEmpty();
-	}
-	public boolean haveMultimediaURL(){
-		return multimediaUrl!=null && !multimediaUrl.isEmpty();
 	}
 	public TripProvenanceType getProvenanceType() {
 		return type;
@@ -79,16 +71,4 @@ public class TripProvenance extends Resource{
 	public void setBlog(String blog) {
 		this.blog = blog;
 	}
-	public String getMultimediaLabel() {
-		return multimediaLabel;
-	}
-	public void setIMultimediaLabel(String multimediaLabel) {
-		this.multimediaLabel = multimediaLabel;
-	}
-	public String getmultimediaUrl() {
-		return multimediaUrl;
-	}
-	public void setMultimediaUrl(String multimediaUrl) {
-		this.multimediaUrl = multimediaUrl;
-	}	
 }
