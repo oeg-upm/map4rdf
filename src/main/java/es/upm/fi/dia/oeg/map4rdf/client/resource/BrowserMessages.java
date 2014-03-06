@@ -215,5 +215,7 @@ public interface BrowserMessages extends Messages {
 	String errorFilterType();
 	
 	String addADateFilter();
+	
+	String additionalInfo();
 
 }
