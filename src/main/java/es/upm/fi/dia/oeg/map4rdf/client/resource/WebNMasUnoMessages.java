@@ -16,4 +16,5 @@ public interface WebNMasUnoMessages extends Messages{
 	public String distanceLess();
 	public String distanceMore();
 	public String description();
+	public String historic();
 }
