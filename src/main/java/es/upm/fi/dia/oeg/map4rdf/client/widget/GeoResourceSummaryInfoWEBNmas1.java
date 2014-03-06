@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,27 +42,34 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.WebNMasUnoMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
+import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoGuide;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoImage;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoTrip;
 
-//TODO {VeryHard} Implement WEBN+1 model!!!
 public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,FilterDateChangeEventHandler{
 	
 	public interface Stylesheet {
 		String WEBNmas1Line0Style();
 		String WEBNmas1Line1Style();
+		String WEBNmas1Line0TripProvenanceLine0();
+		String WEBNmas1Line0TripProvenanceLine1();
+		String WEBNmas1Line1TripProvenanceLine0();
+		String WEBNmas1Line1TripProvenanceLine1();
+		String WEBNmas1CellPadding();
 	}
 	
 	private DialogBox mainWidget;
 	private BrowserMessages browserMessages;
 	private BrowserResources browserResources;
 	private Panel mainPanel;
+	private TabPanel mainTabPanel=new TabPanel();
 	private DispatchAsync dispatchAsync;
 	private WebNMasUnoMessages webNmessages=GWT.create(WebNMasUnoMessages.class);
 	private FlowPanel guidesPanel=new FlowPanel();
 	private FlowPanel tripsPanel=new FlowPanel();
+	private Grid additionalInfoPanel=new Grid(0, 0);
 	private List<WebNMasUnoGuide> lastGuides;
 	private List<DateFilter> dateFilters;
 	private List<WebNMasUnoTrip> lastTrips;
@@ -100,12 +108,30 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 
 	@Override
 	public void addAdditionalInfo(Map<String, String> additionalsInfo) {
-		//TODO: Implement WebNMasUno AdditionalInfo
+		if(additionalsInfo!=null && !additionalsInfo.isEmpty()){
+			if(mainTabPanel!=null){
+				additionalInfoPanel=new Grid(additionalsInfo.size(),2);
+				additionalInfoPanel.setCellSpacing(10);
+				int row=0;
+				for(String key:additionalsInfo.keySet()){
+					additionalInfoPanel.setWidget(row, 0, new Label(key));
+					additionalInfoPanel.setWidget(row, 1, new Label(additionalsInfo.get(key)));
+					row++;
+				}
+				mainTabPanel.add(additionalInfoPanel,browserMessages.additionalInfo());
+			}
+		}
 	}
 
 	@Override
 	public void clearAdditionalInfo() {
-		//TODO: Implement WebNMasUno ClearAdditionalInfo
+		if(mainTabPanel!=null && additionalInfoPanel!=null && mainTabPanel.getWidgetIndex(additionalInfoPanel)>=0){
+			mainTabPanel.selectTab(0);
+			mainTabPanel.remove(additionalInfoPanel);
+		}
+		if(additionalInfoPanel!=null){
+			additionalInfoPanel.clear();
+		}
 	}
 
 	@Override
@@ -116,6 +142,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	@Override
 	public void setGeoResource(GeoResource resource, Geometry geometry) {
 		mainPanel.clear();
+		mainTabPanel.clear();
 		lastGuides.clear();
 		lastTrips.clear();
 		mainPanel.add(new Label(browserMessages.loading()));
@@ -130,6 +157,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			@Override
 			public void onSuccess(SingletonResult<WebNMasUnoResourceContainer> result) {
 				mainPanel.clear();
+				mainPanel.add(mainTabPanel);
 				boolean wasShowing=mainWidget.isShowing();
 				if(wasShowing){
 					mainWidget.hide();
@@ -137,23 +165,23 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				guidesPanel=new FlowPanel();
 				tripsPanel=new FlowPanel();
 				mainWidget.setText(browserMessages.informationTittle(""));
-				TabPanel tab=new TabPanel();
 				lastGuides=result.getValue().getGuides();
 				lastTrips=result.getValue().getTrips();
 				if(result.getValue().haveGuides() || result.getValue().haveTrips()){
 					if(result.getValue().haveTrips()){
 						addTrips(applyFiltersTrip(result.getValue().getTrips()), tripsPanel);
-						tab.add(tripsPanel,webNmessages.trips());
-						tab.selectTab(tab.getWidgetIndex(tripsPanel));
+						mainTabPanel.add(tripsPanel,webNmessages.trips());
+						mainTabPanel.selectTab(mainTabPanel.getWidgetIndex(tripsPanel));
 					}
 					if(result.getValue().haveGuides()){
 						addGuides(applyFiltersGuide(result.getValue().getGuides()), guidesPanel);
-						tab.add(guidesPanel, webNmessages.guides());
-						tab.selectTab(tab.getWidgetIndex(guidesPanel));
+						mainTabPanel.add(guidesPanel, webNmessages.guides());
+						mainTabPanel.selectTab(mainTabPanel.getWidgetIndex(guidesPanel));
 					}
-					mainPanel.add(tab);
+					mainPanel.add(mainTabPanel);
 				}else{
 					mainPanel.add(new Label(webNmessages.noGuidesAndTrips()));
+					mainPanel.add(mainTabPanel);
 				}
 				if(wasShowing){
 					mainWidget.center();
@@ -294,22 +322,25 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		scroll.setHeight(height+"px");
 		VerticalPanel vertical=new VerticalPanel();
 		vertical.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		scroll.setWidget(vertical);
 		int tripStyle=0;
 		for(WebNMasUnoTrip trip:trips){
 			Widget widget=getTripWidget(trip,tripStyle);
-			DOM.setStyleAttribute(widget.getElement(), "paddingBottom", "25px");
+			//DOM.setStyleAttribute(widget.getElement(), "paddingBottom", "25px");
 			vertical.add(widget);
 			tripStyle=(tripStyle+1)%2;
 		}
 		panel.add(scroll);
-		//TODO implement trips WebNMas1
 	}
 	private Widget getTripWidget(WebNMasUnoTrip trip,int style) {
+		HorizontalPanel toReturn=new HorizontalPanel();
+		toReturn.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		toReturn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		VerticalPanel vertical = new VerticalPanel();
 		vertical.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		toReturn.add(vertical);
 		HorizontalPanel mainLine= new HorizontalPanel();
 		mainLine.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainLine.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -320,21 +351,96 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		Anchor rdfAnchor=new Anchor("",trip.getURI(),"_blank");
 		rdfAnchor.getElement().appendChild(rdfImage.getElement());
 		mainLine.add(rdfAnchor);
-		mainLine.add(new Label(getVisualDate(trip.getDate())));
+		Label timeLabel=new Label(getVisualDate(trip.getDate()));
+		timeLabel.setWidth("75px");
+		mainLine.add(timeLabel);
 		vertical.add(mainLine);
 		Widget moreInfoTrip=getMoreInfoTripWidget(trip);
 		if(moreInfoTrip!=null){
 			vertical.add(moreInfoTrip);
 		}
 		if(style==0){
-			vertical.addStyleName(browserResources.css().WEBNmas1Line0Style());
+			toReturn.addStyleName(browserResources.css().WEBNmas1Line0Style());
 		}
 		if(style==1){
-			vertical.setStyleName(browserResources.css().WEBNmas1Line1Style());
+			toReturn.setStyleName(browserResources.css().WEBNmas1Line1Style());
 		}
-		//TODO add history
-		return vertical;
+		VerticalPanel provenances=new VerticalPanel();
+		provenances.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		provenances.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		int pronvenanceStyle=0;
+		for(TripProvenance tripProvenance:trip.getProvenances()){
+			Widget tripProvenanceWidget= getTripProvenanceWidget(tripProvenance,(style*10)+pronvenanceStyle);
+			if(tripProvenanceWidget!=null){
+				provenances.add(tripProvenanceWidget);
+				pronvenanceStyle=(pronvenanceStyle+1)%2;
+			}
+		}
+		if(provenances.getWidgetCount()>0){
+			VerticalPanel temp=new VerticalPanel();
+			temp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			temp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			Label historic=new Label(webNmessages.historic());
+			historic.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			temp.add(historic);
+			temp.add(provenances);
+			toReturn.add(temp);
+		}
+		return toReturn;
 	}
+	private Widget getTripProvenanceWidget(TripProvenance tripProvenance,int style) {
+		VerticalPanel toReturn= new VerticalPanel();
+		HorizontalPanel horizontal= new HorizontalPanel();
+		toReturn.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		toReturn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		horizontal.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		horizontal.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		toReturn.add(horizontal);
+		if(tripProvenance.haveTitle()){
+			if(tripProvenance.haveURL()){
+				Anchor title=new Anchor(tripProvenance.getTitle());
+				title.addStyleName(browserResources.css().WEBNmas1CellPadding());
+				title.setHref(tripProvenance.getUrl());
+				title.setTarget("_blank");
+				horizontal.add(title);
+			}else{
+				horizontal.add(new Label(tripProvenance.getTitle()));
+			}
+		}
+		if(tripProvenance.haveBlog()){
+			Anchor linkBlog= new Anchor("",tripProvenance.getBlog(),"_blank");
+			linkBlog.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			Image rdfBlog=new Image(browserResources.rdfIcon());
+			linkBlog.getElement().appendChild(rdfBlog.getElement());
+			horizontal.add(linkBlog);
+		}
+		if(tripProvenance.haveTime()){
+			Label timeLabel=new Label(getVisualDate(tripProvenance.getTime()));
+			timeLabel.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			horizontal.add(timeLabel);
+		}
+		if(tripProvenance.haveSubTitle()){
+			Label subTitleLabel=new Label(tripProvenance.getSubTitle());
+			subTitleLabel.setWidth("350px");
+			subTitleLabel.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			toReturn.add(subTitleLabel);
+		}
+		if(style==00){
+			toReturn.setStyleName(browserResources.css().WEBNmas1Line0TripProvenanceLine0());
+		}else if(style==01){
+			toReturn.setStyleName(browserResources.css().WEBNmas1Line0TripProvenanceLine1());
+		}else if(style==10){
+			toReturn.setStyleName(browserResources.css().WEBNmas1Line1TripProvenanceLine0());
+		}else if(style==11){
+			toReturn.setStyleName(browserResources.css().WEBNmas1Line1TripProvenanceLine1());
+		}
+		if(horizontal.getWidgetCount()>0){
+			return toReturn;
+		}else{
+			return null;
+		}
+	}
+
 	private Widget getMoreInfoTripWidget(WebNMasUnoTrip trip){
 		VerticalPanel vertical=new VerticalPanel();
 		FlexTable table= new FlexTable();
