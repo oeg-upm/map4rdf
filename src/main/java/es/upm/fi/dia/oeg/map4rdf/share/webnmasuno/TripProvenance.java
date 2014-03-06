@@ -16,6 +16,11 @@ public class TripProvenance extends Resource{
 	String time;
 	String url;
 	String blog;
+	
+	private TripProvenance(){
+		super("");
+		//For serialize
+	}
 	public TripProvenance(String uri, TripProvenanceType type) {
 		super(uri);
 		this.type=type;
