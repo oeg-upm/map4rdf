@@ -122,7 +122,7 @@ public class SummaryMove {
 				try {
 					doLastMoves();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Window.alert("An exception ocurred when move widgets"+e.getMessage());
 				}
 			}
 		};

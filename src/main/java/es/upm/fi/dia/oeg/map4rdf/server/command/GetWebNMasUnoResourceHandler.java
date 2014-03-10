@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
@@ -39,7 +41,7 @@ public class GetWebNMasUnoResourceHandler
 		ActionHandler<GetWebNMasUnoResource, SingletonResult<WebNMasUnoResourceContainer>> {
 
 	private String endpointUri;
-
+	private Logger logger = Logger.getLogger(GetWebNMasUnoResourceHandler.class);
 	@Inject
 	public GetWebNMasUnoResourceHandler(
 			@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
@@ -499,12 +501,12 @@ public class GetWebNMasUnoResourceHandler
 				toReturn = URL;
 			}
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (Exception e) {
 			// Nothing
-			e.printStackTrace();
+			logger.error(e);
 		} finally {
 			if (con != null) {
 				con.disconnect();
@@ -549,12 +551,12 @@ public class GetWebNMasUnoResourceHandler
 				}
 			}
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (Exception e) {
 			// Nothing to do
-			e.printStackTrace();
+			logger.error(e);
 		} finally {
 			if (con != null) {
 				con.disconnect();

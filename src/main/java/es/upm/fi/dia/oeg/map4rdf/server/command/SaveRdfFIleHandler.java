@@ -29,20 +29,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
+
+import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
-
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
-import es.upm.fi.dia.oeg.map4rdf.server.bootstrap.Bootstrapper;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
@@ -56,7 +54,7 @@ public class SaveRdfFIleHandler implements
 
 	private ServletContext servletContext;
 	private Configuration config;
-	
+	private Logger logger = Logger.getLogger(SaveRdfFIleHandler.class);
 	@Override
 	public Class<SaveRdfFile> getActionType() {
 		return SaveRdfFile.class;
@@ -70,9 +68,8 @@ public class SaveRdfFIleHandler implements
         try {
             config = new Configuration(propIn);
         } catch (IOException ex) {
-            Logger.getLogger(Bootstrapper.class.getName()).log(Level.SEVERE, null, ex);
+        	logger.error(ex);
         }
-		
 	}
 
 	@Override
@@ -91,7 +88,7 @@ public class SaveRdfFIleHandler implements
 				if(!file.createNewFile()){
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e);
 				return new SingletonResult<String>("Cant create the file");
 			}
     	}	
@@ -104,7 +101,7 @@ public class SaveRdfFIleHandler implements
 	    	output.close();
 	    	
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 			return new SingletonResult<String>("Buffered ERROR");
 		}
 		

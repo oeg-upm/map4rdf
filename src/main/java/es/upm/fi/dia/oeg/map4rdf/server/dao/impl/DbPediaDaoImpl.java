@@ -94,6 +94,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return resource;
 		} catch (Exception e) {
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -149,7 +150,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -203,6 +204,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 			return new ArrayList<GeoResource>(result.values());
 		} catch (Exception e) {
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -248,6 +250,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 			return new ArrayList<GeoResource>(result.values());
 		} catch (Exception e) {
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();

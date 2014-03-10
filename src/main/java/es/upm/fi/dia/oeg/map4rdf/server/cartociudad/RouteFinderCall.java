@@ -144,11 +144,11 @@ public class RouteFinderCall {
 			}
 
 		} catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
+			logger.error(pce);
 		} catch (SAXException se) {
-			se.printStackTrace();
+			logger.error(se);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error(ioe);
 		}
 
 		return output;

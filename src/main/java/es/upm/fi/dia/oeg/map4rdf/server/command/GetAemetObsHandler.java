@@ -3,6 +3,8 @@ package es.upm.fi.dia.oeg.map4rdf.server.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
@@ -29,6 +31,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult<AemetObs>> {
 
 	private final String endpointUri;
+	private Logger logger = Logger.getLogger(GetAemetObsHandler.class);
 	@Inject
 	public GetAemetObsHandler(@Named(ParameterNames.ENDPOINT_URL)String endpointUri) {
 		this.endpointUri=endpointUri;
@@ -43,7 +46,7 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 		try {
 			return getDatosObservacion(uri);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			throw new ActionException("Data access error", e);	
 		}
 	}

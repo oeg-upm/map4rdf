@@ -250,7 +250,6 @@ public class OpenLayersMapView implements MapView {
 			dispatchAsync.execute(new GetMapsConfiguration(), new AsyncCallback<GetMapsConfigurationResult>() {
 				@Override
 				public void onFailure(Throwable caught) {
-					caught.printStackTrace();
 					Window.alert("Mapview can't contact with server to obtain Maps. Please contact with System Admin.");
 				}
 				@Override

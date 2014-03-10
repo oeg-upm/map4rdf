@@ -140,7 +140,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOG.error(e);
 				}
 			}
 			//result.put("null", new GeoResource("Un punto del EPSG:23030", new PointBean("Centrada", 423099.45795635181,4456995.0407910971, "EPSG:23030")));
@@ -243,7 +243,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -326,7 +326,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();

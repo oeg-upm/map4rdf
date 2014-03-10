@@ -26,6 +26,8 @@ package es.upm.fi.dia.oeg.map4rdf.client;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import net.customware.gwt.presenter.client.place.PlaceChangedEvent;
 import net.customware.gwt.presenter.client.place.PlaceManager;
 import net.customware.gwt.presenter.client.place.DefaultPlaceManager;
@@ -52,13 +54,14 @@ import es.upm.fi.dia.oeg.map4rdf.client.navigation.Places;
  */
 public class Browser implements EntryPoint {
 	Injector injector = null;
+	Logger logger = Logger.getLogger(Browser.class);
 	@Override
 	public void onModuleLoad() {
 		try {
 		injector = GWT.create(Injector.class);
 		} catch (Exception e) {
 			injector = null;
-			e.printStackTrace();
+			logger.error(e);
 		}
 		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus());
 		controller.addPresenter(injector.getDashboard(),Places.DASHBOARD);

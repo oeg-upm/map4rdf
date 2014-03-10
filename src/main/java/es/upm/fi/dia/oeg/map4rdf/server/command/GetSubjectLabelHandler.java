@@ -24,6 +24,8 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.command;
 
+import org.apache.log4j.Logger;
+
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
@@ -42,7 +44,8 @@ public class GetSubjectLabelHandler implements
 		ActionHandler<GetSubjectLabel, SingletonResult<String>> {
 	
 	private final Map4rdfDao dao;
-
+	private Logger logger = Logger.getLogger(GetSubjectLabelHandler.class);
+	
 	@Override
 	public Class<GetSubjectLabel> getActionType() {
 		return GetSubjectLabel.class;
@@ -61,7 +64,7 @@ public class GetSubjectLabelHandler implements
 			try {
 				label = dao.getLabel(action.getSubjectLabel());
 			} catch (DaoException e) {
-				e.printStackTrace();
+				logger.error(e);
 				return new SingletonResult<String>("");
 			}
 			return new SingletonResult<String>(label);
