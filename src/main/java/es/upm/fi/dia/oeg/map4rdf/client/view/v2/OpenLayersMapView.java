@@ -89,10 +89,12 @@ public class OpenLayersMapView implements MapView {
 	private DispatchAsync dispatchAsync;
 	// drawing
 	private FilterAreaLayer filterAreaLayer;
+	private WidgetFactory widgetFactory;
 	
-	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources) {
+	public OpenLayersMapView(final WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources) {
 		this.browserResources=browserResources;
 		this.eventBus=eventBus;
+		this.widgetFactory = widgetFactory;
 		loadingWidget = widgetFactory.getLoadingWidget();
 		createUi();
 		defaultLayer = (OpenLayersMapLayer) createLayer("default");
@@ -108,7 +110,7 @@ public class OpenLayersMapView implements MapView {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("Mapview can't contact with server. Please contact with System Admin.");
+				widgetFactory.getDialogBox().showError("Mapview can't contact with server. Please contact with System Admin.");
 			}
 
 			@Override
@@ -224,7 +226,7 @@ public class OpenLayersMapView implements MapView {
 		boolean errors=false;
 		for(String i:getParameters){
 			if(!parameters.containsKey(i)){
-				Window.alert("check "+i+" parameter in config file");
+				widgetFactory.getDialogBox().showError("check "+i+" parameter in config file");
 				errors=true;
 			}
 		}
@@ -235,22 +237,22 @@ public class OpenLayersMapView implements MapView {
 			String centerString=parameters.get(ParameterNames.MAP_DEFAULT_CENTER);
 			String[] centerStringSplit=centerString.split(",");
 			if(centerStringSplit.length!=2){
-				Window.alert("Malformed "+ParameterNames.MAP_DEFAULT_CENTER+" parameter in config file. Please contact with system admin.");
+				widgetFactory.getDialogBox().showError("Malformed "+ParameterNames.MAP_DEFAULT_CENTER+" parameter in config file. Please contact with system admin.");
 			}
 			try{
 				DEFAULT_CENTER = new LonLat(Double.parseDouble(centerStringSplit[0]),Double.parseDouble(centerStringSplit[1]));
 			}catch(Exception e){
-				Window.alert("Can't parse to double "+ParameterNames.MAP_DEFAULT_CENTER+" parameter in config file. Please contact with system admin.");
+				widgetFactory.getDialogBox().showError("Can't parse to double "+ParameterNames.MAP_DEFAULT_CENTER+" parameter in config file. Please contact with system admin.");
 			}
 			try{
 				DEFAULT_ZOOM_LEVEL = Integer.parseInt(parameters.get(ParameterNames.MAP_ZOOM_LEVEL));
 			}catch(Exception e){
-				Window.alert("Can't parse to int "+ParameterNames.MAP_ZOOM_LEVEL+" parameter in config file. Please contact with system admin.");
+				widgetFactory.getDialogBox().showError("Can't parse to int "+ParameterNames.MAP_ZOOM_LEVEL+" parameter in config file. Please contact with system admin.");
 			}
 			dispatchAsync.execute(new GetMapsConfiguration(), new AsyncCallback<GetMapsConfigurationResult>() {
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("Mapview can't contact with server to obtain Maps. Please contact with System Admin.");
+					widgetFactory.getDialogBox().showError("Mapview can't contact with server to obtain Maps. Please contact with System Admin.");
 				}
 				@Override
 				public void onSuccess(GetMapsConfigurationResult result) {

@@ -44,6 +44,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoprocessingType;
@@ -57,6 +58,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	private EventBus eventBus;
 	private BrowserResources browserResources;
 	private BrowserMessages browserMessages;
+	private WidgetFactory widgetFactory;
 	//private Grid mainGrid;
 	private Anchor anchorResource;
 	private FlowPanel panelAnchorResource;
@@ -75,13 +77,14 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	}
 	@Inject
 	public BufferView(EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
-			BrowserMessages browserMessages){
+			BrowserMessages browserMessages, WidgetFactory widgetFactory){
 		this.dispatchAsync = dispatchAsync;
 		this.mapPresenter=mapPresenter;
 		this.resultsPresenter=resultsPresenter;
 		this.browserMessages=browserMessages;
 		this.browserResources=browserResources;
 		this.eventBus=eventBus;
+		this.widgetFactory = widgetFactory;
 		eventBus.addHandler(BufferSetPointEvent.getType(),this);
 		initWidget(createUi());
 	}
@@ -229,7 +232,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				public void onFailure(Throwable caught) {
 					
 					mapPresenter.getDisplay().stopProcessing();
-					Window.alert(browserMessages.errorCommunication());
+					widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
 				}
 			
 				@Override
@@ -298,13 +301,13 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	}
 	private void throwErrorMenssageOfConvertion(double number){
 		if(number==-1.0){
-			Window.alert(browserMessages.errorConvertDistance());
+			widgetFactory.getDialogBox().showError(browserMessages.errorConvertDistance());
 		}
 		if(number==-2.0){
-			Window.alert(browserMessages.errorDistanceNegative());
+			widgetFactory.getDialogBox().showError(browserMessages.errorDistanceNegative());
 		}
 		if(number==-3.0){
-			Window.alert(browserMessages.errorDistanceUnit());
+			widgetFactory.getDialogBox().showError(browserMessages.errorDistanceUnit());
 		}
 	}
 	

@@ -40,7 +40,6 @@ public class WidgetFactory {
 	private final DispatchAsync dispatchAsync;
 	//private boolean wikipediaAvailable;
 	private static LoadingWidget loadingWidget;
-	private static Map4RDFMessageDialogBox dialogBox;
 
 	@Inject
 	public WidgetFactory(EventBus eventBus,BrowserMessages messages, BrowserResources resources, DispatchAsync dispatchAsync) {
@@ -51,7 +50,7 @@ public class WidgetFactory {
 	}
 
 	public GeoResourceSummary createGeoResourceSummary() {
-		return new GeoResourceSummary(dispatchAsync,eventBus, messages, resources);
+		return new GeoResourceSummary(dispatchAsync,eventBus, messages, resources,this);
 	}
 
 	public Timeline createTimeline() {
@@ -65,9 +64,7 @@ public class WidgetFactory {
 	}
 	
 	public Map4RDFMessageDialogBox getDialogBox(){
-		if(dialogBox==null){
-			dialogBox=new Map4RDFMessageDialogBox("Map4RDF", "",resources.doneImage(),resources.errorImage());
-		}
+		Map4RDFMessageDialogBox dialogBox=new Map4RDFMessageDialogBox("Map4RDF", "",resources.doneImage(),resources.errorImage());
 		return dialogBox;
 	}
 }

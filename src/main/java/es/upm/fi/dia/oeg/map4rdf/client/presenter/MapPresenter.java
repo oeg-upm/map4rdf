@@ -60,6 +60,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapView;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
@@ -75,6 +76,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 	private Set<FacetConstraint> facetConstraints;
 	private final DispatchAsync dispatchAsync;
 	//private StatisticDefinition statisticDefinition;
+	private WidgetFactory widgetFactory;
 	
 	public interface Display extends WidgetDisplay, MapView {
 
@@ -104,9 +106,10 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 	}
 
 	@Inject
-	public MapPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync) {
+	public MapPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory) {
 		super(display, eventBus);
 		this.dispatchAsync = dispatchAsync;
+		this.widgetFactory = widgetFactory;
 		eventBus.addHandler(FacetReloadEvent.getType(), this);
 		eventBus.addHandler(FacetConstraintsChangedEvent.getType(), this);
 		eventBus.addHandler(AreaFilterModeChangeEvent.getType(), this);
@@ -174,7 +177,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
+						widgetFactory.getDialogBox().showError(caught.getMessage());
 					}
 
 					@Override

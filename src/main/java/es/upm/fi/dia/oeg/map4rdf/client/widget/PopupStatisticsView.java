@@ -22,7 +22,6 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -60,6 +59,7 @@ public class PopupStatisticsView extends Composite{
 	private BrowserMessages browserMessages;
 	private BrowserResources browserResources;
 	private EventBus eventBus;
+	private WidgetFactory widgetFactory;
 	private Grid statisticsGrid;
 	private ListBox statisticsBox;
 	private ListBox dimensionsXBox;
@@ -86,12 +86,13 @@ public class PopupStatisticsView extends Composite{
 	//TODO add aemet LoadingBox for statistics here and replace the old loadingWidget.
 	private LoadingWidget loadingWidget;
 		
-	public PopupStatisticsView(GeoResource resource,String statisticsServiceURL,int width,int height,EventBus eventBus,BrowserMessages browserMessages,BrowserResources browserResources){
+	public PopupStatisticsView(GeoResource resource,String statisticsServiceURL,int width,int height,EventBus eventBus,BrowserMessages browserMessages,BrowserResources browserResources,WidgetFactory widgetFactory){
 		this.resource=resource;
 		this.statisticsServiceURL=statisticsServiceURL;
 		this.eventBus= eventBus;
 		this.browserMessages = browserMessages;
 		this.browserResources = browserResources;
+		this.widgetFactory = widgetFactory;
 		this.width=width;
 		this.height=height;
 		initWidget(createUi());
@@ -384,10 +385,10 @@ public class PopupStatisticsView extends Composite{
 					dimensionsXBox.addItem(LocaleUtil.getBestLabel(dimensions.get(i)).replace("\"", ""));
 				}
 			} else {
-				Window.alert(browserMessages.errorNotDimensions());
+				widgetFactory.getDialogBox().showError(browserMessages.errorNotDimensions());
 			}
 		}else{
-			Window.alert(browserMessages.errorCommunication());
+			widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
 		}
 	}
 	

@@ -36,7 +36,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -63,6 +62,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter.DateFilterType;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DatePickerWithYearSelector;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.SharedGeometryModels;
 
@@ -79,6 +79,7 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	private final BrowserMessages messages;
 	private final BrowserResources resources;
 	private final EventBus eventBus;
+	private WidgetFactory widgetFactory;
 	
 	private FlowPanel panel;
 	private FlowPanel dateFilterPanel;
@@ -88,10 +89,12 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	
 	
 	@Inject
-	public FiltersView(BrowserMessages messages, BrowserResources resources,DispatchAsync dispatchAsync, EventBus eventBus) {
+	public FiltersView(BrowserMessages messages, BrowserResources resources,DispatchAsync dispatchAsync, EventBus eventBus,
+			WidgetFactory widgetFactory) {
 		this.resources = resources;
 		this.messages = messages;
 		this.eventBus = eventBus;
+		this.widgetFactory = widgetFactory;
 		this.dateFilters = new ArrayList<DateFilter>();
 		initWidget(createUi());
 		dispatchAsync.execute(new GetConfigurationParameter(ParameterNames.GEOMETRY_MODEL), new AsyncCallback<SingletonResult<String>>() {
@@ -190,7 +193,7 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	}
 	private void addFilter(FlowPanel filters,DateFilter dateFilter){
 		if(dateFilters.contains(dateFilter)){
-			Window.alert(messages.existsOtherDateFilterEqual());
+			widgetFactory.getDialogBox().showError(messages.existsOtherDateFilterEqual());
 		}else{
 			HorizontalPanel dateFilterPanel = new HorizontalPanel();
 			dateFilterPanel.setSpacing(5);
@@ -209,7 +212,7 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 				filters.add(dateFilterPanel);
 				fireDateFilterChangeEvent();
 			}else{
-				Window.alert(messages.errorFilterType());
+				widgetFactory.getDialogBox().showError(messages.errorFilterType());
 			}
 		}
 	}

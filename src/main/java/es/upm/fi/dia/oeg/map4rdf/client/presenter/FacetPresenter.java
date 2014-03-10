@@ -32,7 +32,6 @@ import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -41,6 +40,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitionsResult;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FacetPresenter.Display.FacetSelectionHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetGroup;
 
@@ -66,15 +67,19 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 	private final DispatchAsync dispatchAsync;
 	private final List<FacetConstraint> constraints = new ArrayList<FacetConstraint>();
-
+	private WidgetFactory widgetFactory;
+	private BrowserMessages messages; 
+	
 	public List<FacetConstraint> getConstraints(){
 		return this.constraints;
 	}
 	
 	@Inject
-	public FacetPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync) {
+	public FacetPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
 		super(display, eventBus);
 		this.dispatchAsync = dispatchAsync;
+		this.widgetFactory = widgetFactory;
+		this.messages = messages;
     }
 
 	/* -------------- Presenter callbacks -- */
@@ -104,8 +109,7 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				
-				Window.alert(caught.toString());
+				widgetFactory.getDialogBox().showError(messages.errorCommunication()+" "+caught.getMessage());
 			}
 
 			@Override

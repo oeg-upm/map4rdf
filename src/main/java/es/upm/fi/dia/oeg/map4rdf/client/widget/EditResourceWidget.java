@@ -56,7 +56,6 @@ public class EditResourceWidget extends Composite{
 	private EventBus eventBus;
 	private SafeHtml emptyHtml;
 	private WidgetFactory widgetFactory;
-	private Map4RDFMessageDialogBox dialogBox;
 	
 	public EditResourceWidget(String resourceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus, WidgetFactory widgetFactory) {
 		this.resourceUrl=resourceUrl;
@@ -73,8 +72,6 @@ public class EditResourceWidget extends Composite{
 	
 	private Widget createUi() {
 	 	mainPanel = new FlowPanel();
-	 	dialogBox= widgetFactory.getDialogBox();
-		dialogBox.hide();
     	tree = new Tree();
     	emptyHtml=new SafeHtml() {
 			private static final long serialVersionUID = 1L;
@@ -163,7 +160,7 @@ public class EditResourceWidget extends Composite{
         dispatchAsync.execute(action, new AsyncCallback<ListResult<SubjectDescription>>() {
 		@Override
 			public void onFailure(Throwable caught) {
-				dialogBox.showError(messages.canNotLoaddescription());
+				widgetFactory.getDialogBox().showError(messages.canNotLoaddescription());
 				display.stopProcessing();
 			}
 			@Override
@@ -191,7 +188,7 @@ public class EditResourceWidget extends Composite{
 			        
 			        	@Override
 						public void onFailure(Throwable caught) {
-							dialogBox.showError(messages.canNotLoaddescription());
+			        		widgetFactory.getDialogBox().showError(messages.canNotLoaddescription());
 							display.stopProcessing();
 						}
 
@@ -261,19 +258,19 @@ public class EditResourceWidget extends Composite{
 			@Override
 			public void onFailure(Throwable caught) {
 				display.stopProcessing();
-				dialogBox.showError(messages.saveRDFError());
-				//Window.alert("Unexcepted error occured");
+				widgetFactory.getDialogBox().showError(messages.saveRDFError());
+				//widgetFactory.getDialogBox().showError("Unexcepted error occured");
 			}
 
 			@Override
 			public void onSuccess(SingletonResult<String> result) {
 				display.stopProcessing();
 				if(result.getValue()!=null && result.getValue().isEmpty()){
-					dialogBox.showDone(messages.saveRDFDone());
-					//Window.alert("Your changes were saved");
+					widgetFactory.getDialogBox().showDone(messages.saveRDFDone());
+					//widgetFactory.getDialogBox().showError("Your changes were saved");
 				}else{
-					dialogBox.showError(messages.saveRDFError());
-					//Window.alert("Unexcepted error occured");
+					widgetFactory.getDialogBox().showError(messages.saveRDFError());
+					//widgetFactory.getDialogBox().showError("Unexcepted error occured");
 				}
 			}
 		});

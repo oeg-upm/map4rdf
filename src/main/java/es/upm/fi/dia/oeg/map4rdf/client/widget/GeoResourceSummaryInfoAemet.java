@@ -66,6 +66,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	private BrowserMessages browserMessages;
 	private BrowserResources browserResources;
 	private DispatchAsync dispatchAsync;
+	private WidgetFactory widgetFactory;
 	private VerticalPanel listPanel;
 	private FlexTable additionalInfoTable;
 	private Panel mainPanel;
@@ -76,11 +77,12 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	private DialogBox mainWidget;
 	private Label resoruceLabel;
 	
-	public GeoResourceSummaryInfoAemet(DispatchAsync dispatchAsync,BrowserResources browserResources,BrowserMessages browserMessages) {
+	public GeoResourceSummaryInfoAemet(DispatchAsync dispatchAsync,BrowserResources browserResources,BrowserMessages browserMessages, WidgetFactory widgetFactory) {
 		this.aemetMessages = GWT.create(AemetMessages.class);/*messages;*/
 		this.dispatchAsync = dispatchAsync;
 		this.browserMessages = browserMessages;
 		this.browserResources = browserResources;
+		this.widgetFactory = widgetFactory;
 		createUi();
 	}
 	@Override
@@ -93,7 +95,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 		dispatchAsync.execute(action, new AsyncCallback<ListResult<AemetObs>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(browserMessages.errorCommunication());
+				widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
 			}
             @Override
             public void onSuccess(ListResult<AemetObs> result) {
@@ -205,7 +207,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 				}
 			}
 		} catch (Exception e) {
-			Window.alert("Error: " + e.getMessage() + e.toString());
+			widgetFactory.getDialogBox().showError("Error: " + e.getMessage()+ " " + e.toString());
 			listPanel.clear();
 			listPanel.add(new Label(text));
 		}
@@ -237,7 +239,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 			@Override
 			public void onFailure(Throwable caught) {
 				stopLoading();
-				Window.alert(caught.getMessage());
+				widgetFactory.getDialogBox().showError(caught.getMessage());
 			}
 
 			@Override

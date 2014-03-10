@@ -15,8 +15,6 @@ import org.gwtopenmaps.openlayers.client.layer.WMS;
 import org.gwtopenmaps.openlayers.client.layer.WMSOptions;
 import org.gwtopenmaps.openlayers.client.layer.WMSParams;
 
-import com.google.gwt.user.client.Window;
-
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.share.MapConfiguration;
 
@@ -93,8 +91,6 @@ public class LayersManager {
 			GoogleV3MapType googleType=GoogleV3MapType.valueOf(map.getgMapType().name());
 			if(googleType!=null){
 				options.setType(googleType);
-			}else{
-				Window.alert("Google type in server is not valid GoogleV3 type in client");
 			}
 		}
 		if(map.haveAttribution()){

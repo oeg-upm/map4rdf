@@ -37,7 +37,6 @@ import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -74,7 +73,6 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DataToolBar;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.EditResourceWidget;
-import es.upm.fi.dia.oeg.map4rdf.client.widget.Map4RDFMessageDialogBox;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupStatisticsView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
@@ -209,7 +207,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		if(statisticsSummaryEvent.isOpen()){
 			int height = mapPresenter.getDisplay().asWidget().getOffsetHeight();
 			int width = mapPresenter.getDisplay().asWidget().getOffsetWidth();
-			getDisplay().setMainPopup(width, height, new PopupStatisticsView(statisticsSummaryEvent.getGeoResource(),statisticsURL,width,height,eventBus,messages,resources).asWidget(),"Big");
+			getDisplay().setMainPopup(width, height, new PopupStatisticsView(statisticsSummaryEvent.getGeoResource(),statisticsURL,width,height,eventBus,messages,resources,widgetFactory).asWidget(),"Big");
 		}else{
 			getDisplay().closeMainPopup();
 		}
@@ -265,7 +263,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("Dashboard can't contact with server, please contact with System Admin.");
+				widgetFactory.getDialogBox().showError("Dashboard can't contact with server, please contact with System Admin.");
 				getDisplay().addWestWidget(facetPresenter.getDisplay().asWidget(), messages.facets());
 				if(result != null && result.asList().size()>0) {
 					getDisplay().addWestWidget(dataToolBar, messages.overlays());					
@@ -280,7 +278,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 			public void onSuccess(GetMultipleConfigurationParametersResult values) {	
 				String stat=values.getResults().get(ParameterNames.STATISTICS_SERVICE_URL);
 				if(stat == null || stat.isEmpty()){
-					Window.alert("Config parameter \""+ParameterNames.STATISTICS_SERVICE_URL+"\" is null or empty");
+					widgetFactory.getDialogBox().showError("Config parameter \""+ParameterNames.STATISTICS_SERVICE_URL+"\" is null or empty");
 				}else{
 					statisticsURL=stat;
 				}
@@ -385,8 +383,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
                 	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries()));
                 	mapPresenter.getDisplay().stopProcessing();
             	}else{
-            		Map4RDFMessageDialogBox message=widgetFactory.getDialogBox();
-            		message.showError(messages.errorToLoadResourceInUrlParam());
+            		widgetFactory.getDialogBox().showError(messages.errorToLoadResourceInUrlParam());
             	}
             }
         });

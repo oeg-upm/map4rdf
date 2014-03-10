@@ -79,6 +79,7 @@ public class GeoResourceSummary extends Composite {
 	
 	private BrowserMessages messages;
 	private BrowserResources resources;
+	private WidgetFactory widgetFactory;
 	private GeoResource lastGeoResource;
 	private Geometry lastGeometry;
 	private EventBus eventBus;
@@ -112,10 +113,11 @@ public class GeoResourceSummary extends Composite {
 	public final String SUMMARY_WIDGETS_NAMES = WidgetsNames.ALL_IN_ORDER;
 	private int moveType;
 	
-	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources) {
+	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, final WidgetFactory widgetFactory) {
 		this.messages = messages;
 		this.resources=appResources;
 		this.eventBus = eventBus;
+		this.widgetFactory = widgetFactory;
 		allWidgetsWithName=new HashMap<String, Widget>();
 		allWidgetInOrder=new ArrayList<Widget>();
 		this.dispatchAsync=dispatchAsync;
@@ -128,7 +130,7 @@ public class GeoResourceSummary extends Composite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("Summary widgets can't contact with server, please contact with System Admin.");
+				widgetFactory.getDialogBox().showError("Summary widgets can't contact with server, please contact with System Admin.");
 				initAsync(null);
 			}
 
@@ -138,11 +140,11 @@ public class GeoResourceSummary extends Composite {
 				if(wiki!=null && !wiki.isEmpty()){
 					wikipediaParseURL=wiki;
 				}else{
-					Window.alert(ParameterNames.WIKIPEDIA_PARSE_URL + " config parameter is null or empty.");
+					widgetFactory.getDialogBox().showError(ParameterNames.WIKIPEDIA_PARSE_URL + " config parameter is null or empty.");
 				}
 				String summaryWidgets=result.getResults().get(ParameterNames.SUMMARY_WIDGETS);
 				if(summaryWidgets==null || summaryWidgets.isEmpty()){
-					Window.alert(ParameterNames.SUMMARY_WIDGETS+" config parameter is null or empty");
+					widgetFactory.getDialogBox().showError(ParameterNames.SUMMARY_WIDGETS+" config parameter is null or empty");
 					initAsync(null);
 				}else{
 					initAsync(summaryWidgets.toLowerCase());
@@ -151,13 +153,13 @@ public class GeoResourceSummary extends Composite {
 				if(twitter!=null && !twitter.isEmpty()){
 					twitterURL=twitter;
 				}else{
-					Window.alert(ParameterNames.TWITTER_STATUS_URL+" config parameter is null or empty");
+					widgetFactory.getDialogBox().showError(ParameterNames.TWITTER_STATUS_URL+" config parameter is null or empty");
 				}
 				String geometryModel=result.getResults().get(ParameterNames.GEOMETRY_MODEL);
 				if(geometryModel!=null && !geometryModel.isEmpty()){
 					summary=getSummary(geometryModel);
 				}else{
-					Window.alert(ParameterNames.GEOMETRY_MODEL+" config parameter is null or empty");
+					widgetFactory.getDialogBox().showError(ParameterNames.GEOMETRY_MODEL+" config parameter is null or empty");
 				}
 			}
 		});
@@ -439,7 +441,7 @@ public class GeoResourceSummary extends Composite {
 	}
 	private GeoResourceSummaryInfo getSummary(String geometryModel){
 		if(SharedGeometryModels.AEMET.equalsIgnoreCase(geometryModel)){
-			return new GeoResourceSummaryInfoAemet(dispatchAsync, resources, messages);
+			return new GeoResourceSummaryInfoAemet(dispatchAsync, resources, messages, widgetFactory);
 		}
 		if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(geometryModel)){
 			return new GeoResourceSummaryInfoWEBNmas1(dispatchAsync,eventBus, resources, messages);

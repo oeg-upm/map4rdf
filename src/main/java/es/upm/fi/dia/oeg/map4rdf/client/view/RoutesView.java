@@ -10,6 +10,7 @@ import java.util.Map;
 import org.gwtopenmaps.openlayers.client.LonLat;
 
 
+
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 
@@ -44,7 +45,6 @@ import com.google.gwt.maps.client.geocode.DirectionsPanel;
 import com.google.gwt.maps.client.geocode.Waypoint;
 import com.google.gwt.maps.client.geom.LatLng;*/
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -85,6 +85,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.RoutesAddGeoResourceType;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.RoutesDescriptionWidget;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.RoutesWidget;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoprocessingType;
@@ -104,6 +105,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 	private ResultsPresenter resultsPresenter;
 	private BrowserResources browserResources;
 	private BrowserMessages browserMessages;
+	private WidgetFactory widgetFactory;
 	private ScrollPanel scrollPanel;
 	private Panel panel;
 	private InlineHTML addPointMessage;
@@ -135,13 +137,14 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 	
 	@Inject
 	public RoutesView(EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
-			BrowserMessages browserMessages) {
+			BrowserMessages browserMessages, WidgetFactory widgetFactory) {
 		this.dispatchAsync = dispatchAsync;
 		this.eventBus=eventBus;
 		this.mapPresenter = mapPresenter;
 		this.resultsPresenter = resultsPresenter;
 		this.browserResources=browserResources;
 		this.browserMessages=browserMessages;
+		this.widgetFactory = widgetFactory;
 		relationHandler=new HashMap<ClickHandler, PanelWithGeoResourceGeometry>();
 		route=new ArrayList<GeoResourceGeometry>();
 		rows=0;
@@ -261,7 +264,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 					travelMode=travelModes.get(travelListBox.getItemText(travelListBox.getSelectedIndex()));
 					changeOptions();
 				} else {
-					Window.alert("This travel mode doesn't exist.");
+					widgetFactory.getDialogBox().showError("This travel mode doesn't exist.");
 				}
 			}
 		});
@@ -405,7 +408,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			}
 		}
 		if(route.size()<2){
-			Window.alert(browserMessages.error2OrMorePoints());
+			widgetFactory.getDialogBox().showError(browserMessages.error2OrMorePoints());
 			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
 			mapPresenter.getDisplay().stopProcessing();
 			return;
@@ -417,7 +420,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			@Override
 			public void onFailure(Throwable caught) {
 				
-				Window.alert(browserMessages.errorCommunication());
+				widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
 				mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
 				mapPresenter.getDisplay().stopProcessing();
 			}
@@ -428,7 +431,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				List<GeoResource> listGeoResource = new ArrayList<GeoResource>();
 				List<Point> points = result.getPoints();
 				if(points.isEmpty()){
-					//Window.alert(browserMessages.errorNotRouteTo());
+					//widgetFactory.getDialogBox().showError(browserMessages.errorNotRouteTo());
 					/*for(GeoResourceGeometry geoRG : route){
 						points.addAll(geoRG.getGeometry().getPoints());
 					}*/
@@ -745,7 +748,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		DirectionsService service=DirectionsService.newInstance();
 		DirectionsRequest request = DirectionsRequest.newInstance();
 		if(route.size()<2){
-			Window.alert(browserMessages.error2OrMorePoints());
+			widgetFactory.getDialogBox().showError(browserMessages.error2OrMorePoints());
 			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
 			mapPresenter.getDisplay().stopProcessing();
 			return;
@@ -813,7 +816,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			dashboardPresenter.getDisplay().setMainPopup(200,150,getPopupWidget(browserMessages.requestDenied()),"Center");
 			break;
 		default:
-			Window.alert("Google directions problem:"+status.toString());
+			widgetFactory.getDialogBox().showError("Google directions problem:"+status.toString());
 			break;
 		}
 		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
