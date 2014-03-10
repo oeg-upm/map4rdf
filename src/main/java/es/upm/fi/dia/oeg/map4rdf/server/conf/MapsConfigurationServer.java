@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import es.upm.fi.dia.oeg.map4rdf.share.MapConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.share.MapConfiguration.GoogleV3MapServerType;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.MapsParametersNames;
 
 public class MapsConfigurationServer {
 	private ArrayList<MapConfiguration> mapsConfiguration=new ArrayList<MapConfiguration>();
+	private Logger logger = Logger.getLogger(MapsConfigurationServer.class);
 	public MapsConfigurationServer(GetServletContext getServletContext,String sphericalMercator){
 		String[] mapsFiles=null;
 		String mapsFolder=null;
@@ -29,12 +32,11 @@ public class MapsConfigurationServer {
 			if(mapsValue!=null && !mapsValue.isEmpty()){
 				mapsFiles=mapsValue.split(";");
 			}else{
-				System.err.println("Propertie "+mapsPropertieName+" is null or empty in "+Constants.MAPS_CONFIGURATION_FILE);
+				logger.error("Property "+mapsPropertieName+" is null or empty in "+Constants.MAPS_CONFIGURATION_FILE);
 				return;
 			}
 		} catch (Exception e) {
-			System.err.println("Can't obtain maps configuration file: "+Constants.MAPS_CONFIGURATION_FILE);
-			e.printStackTrace();
+			logger.error("Can't obtain maps configuration file: "+Constants.MAPS_CONFIGURATION_FILE,e);
 		}
 		if(mapsFiles==null || mapsFiles.length==0){
 			return;
@@ -50,12 +52,11 @@ public class MapsConfigurationServer {
 		Properties properties = new Properties();
 		try {
 			if(servletContext.getServletContext()==null){
-				System.err.println("Servlet Context is null");
+				logger.error("Servlet Context is null");
 			}
 			properties.load(servletContext.getServletContext().getResourceAsStream(file));
 		} catch (Exception e) {
-			System.err.println("Can't obtain map file: "+file);
-			e.printStackTrace();
+			logger.error("Can't obtain map file: "+file,e);
 			return null;
 		}
 		String typeString=properties.getProperty(MapsParametersNames.TYPE);
@@ -69,7 +70,7 @@ public class MapsConfigurationServer {
 			}	
 		}
 		if(type==null){
-			System.err.println("File \""+file+"\" not contain a valid propertie: \""+MapsParametersNames.TYPE+"\"");
+			logger.error("File \""+file+"\" not contain a valid propertie: \""+MapsParametersNames.TYPE+"\"");
 			return null;
 		}
 		MapConfiguration map=new MapConfiguration(file, type);
@@ -86,7 +87,7 @@ public class MapsConfigurationServer {
 			map.setServiceURL(value);
 		}else{
 			if(type.equals(MapConfiguration.MapServiceType.WMS)){
-				System.err.println("The map: "+ file + " need to have propertie "+MapsParametersNames.URL+ " because this map is WMS type.");
+				logger.error("The map: "+ file + " need to have propertie "+MapsParametersNames.URL+ " because this map is WMS type.");
 				return null;
 			}
 		}
@@ -100,10 +101,10 @@ public class MapsConfigurationServer {
 					map.setSphericalMercator(false);
 				}
 				if(!map.haveSphericalMercator()){
-					System.err.println("Bad value of propertie: \""+MapsParametersNames.SPHERICAL_MERCATOR+"\" in map file: "+file);
+					logger.error("Bad value of propertie: \""+MapsParametersNames.SPHERICAL_MERCATOR+"\" in map file: "+file);
 				}
 			}else{
-				System.err.println("WARNING: WMS don't need propertie \""+MapsParametersNames.SPHERICAL_MERCATOR+ "\" in map file: "+file);
+				logger.warn("WARNING: WMS don't need propertie \""+MapsParametersNames.SPHERICAL_MERCATOR+ "\" in map file: "+file);
 			}
 		}
 		value=properties.getProperty(MapsParametersNames.GTYPE);
@@ -116,10 +117,10 @@ public class MapsConfigurationServer {
 					}
 				}
 			}else{
-				System.err.println("WARNING: Only Google type can have propertie \""+MapsParametersNames.GTYPE+ "\" in map file: "+file);
+				logger.warn("WARNING: Only Google type can have propertie \""+MapsParametersNames.GTYPE+ "\" in map file: "+file);
 			}
 			if(!map.haveGMapType()){
-				System.err.println("WARNING(Use default propertie): File \""+file+"\" not contain a valid propertie: \""+MapsParametersNames.GTYPE+"\"");
+				logger.warn("WARNING(Use default propertie): File \""+file+"\" not contain a valid propertie: \""+MapsParametersNames.GTYPE+"\"");
 			}
 		}
 		value=properties.getProperty(MapsParametersNames.NUM_ZOOM_LEVELS);
@@ -129,11 +130,10 @@ public class MapsConfigurationServer {
 				if(zoom>0){
 					map.setNumZoomLevels(zoom);
 				}else{
-					System.err.println("Propertie \""+MapsParametersNames.NUM_ZOOM_LEVELS+"\" need to be positive in map file: "+file);
+					logger.error("Propertie \""+MapsParametersNames.NUM_ZOOM_LEVELS+"\" need to be positive in map file: "+file);
 				}
 			}catch(Exception e){
-				System.err.println("Can't parse propertie \""+MapsParametersNames.NUM_ZOOM_LEVELS +"\" to integer in map file: "+file);
-				e.printStackTrace();
+				logger.error("Can't parse propertie \""+MapsParametersNames.NUM_ZOOM_LEVELS +"\" to integer in map file: "+file,e);
 			}
 			
 		}
@@ -146,7 +146,7 @@ public class MapsConfigurationServer {
 				map.setTransitionEffect(false);
 			}
 			if(!map.haveTransitionEffect()){
-				System.err.println("Bad value of propertie: \""+MapsParametersNames.TRANSITION_EFFECT+"\" in map file: "+file);
+				logger.error("Bad value of propertie: \""+MapsParametersNames.TRANSITION_EFFECT+"\" in map file: "+file);
 			}
 		}
 		value=properties.getProperty(MapsParametersNames.FORMAT);
@@ -154,7 +154,7 @@ public class MapsConfigurationServer {
 			if(type.equals(MapConfiguration.MapServiceType.WMS)){
 				map.setFormat(value);
 			}else{
-				System.err.println("WARNING: Only WMS type can have propertie \""+MapsParametersNames.FORMAT+ "\" in map file: "+file);
+				logger.warn("WARNING: Only WMS type can have propertie \""+MapsParametersNames.FORMAT+ "\" in map file: "+file);
 			}
 		}
 		value=properties.getProperty(MapsParametersNames.SET_MAX_EXTENDS);
@@ -166,7 +166,7 @@ public class MapsConfigurationServer {
 				map.setMaxExtends(false);
 			}
 			if(!map.haveMaxExtends()){
-				System.err.println("Bad value of propertie: \""+MapsParametersNames.SET_MAX_EXTENDS+"\" in map file: "+file);
+				logger.error("Bad value of propertie: \""+MapsParametersNames.SET_MAX_EXTENDS+"\" in map file: "+file);
 			}
 		}
 		value=properties.getProperty(MapsParametersNames.PROJECTION);
@@ -182,7 +182,7 @@ public class MapsConfigurationServer {
 				map.setResolution(false);
 			}
 			if(!map.haveResolution()){
-				System.err.println("Bad value of propertie: \""+MapsParametersNames.SET_RESOLUTIONS+"\" in map file: "+file);
+				logger.error("Bad value of propertie: \""+MapsParametersNames.SET_RESOLUTIONS+"\" in map file: "+file);
 			}
 		}
 		value=properties.getProperty(MapsParametersNames.ATTRIBUTION);
@@ -194,7 +194,7 @@ public class MapsConfigurationServer {
 			if(type.equals(MapConfiguration.MapServiceType.WMS)){
 				map.setLayers(value);
 			}else{
-				System.err.println("WARNING: Only WMS type could have propertie \""+MapsParametersNames.LAYERS+ "\" in map file: "+file);
+				logger.warn("WARNING: Only WMS type could have propertie \""+MapsParametersNames.LAYERS+ "\" in map file: "+file);
 			}
 		}
 		return map;
@@ -207,7 +207,7 @@ public class MapsConfigurationServer {
 			if(label.length==2){
 				toReturn.put(label[1], label[0]);
 			}else{
-				System.err.println("Malformed label: "+eachLabel+" in map file: "+mapFile);
+				logger.error("Malformed label: "+eachLabel+" in map file: "+mapFile);
 			}
 		}
 		return toReturn;

@@ -136,7 +136,6 @@ public class GeoUtils {
 				}
 			}
 			return geometries;
-			//System.err.println("At this moment, MAP4RDF dont permit WKT->LineString.");
 			
 		}
 		if(realWKTText.contains(WKTTypes.Polygon.toString())){
@@ -158,7 +157,6 @@ public class GeoUtils {
 				}
 			}
 			return geometries;
-			//System.err.println("At this moment, MAP4RDF dont permit WKT->Polygon");
 		}
 		return null;
 	}
@@ -178,9 +176,9 @@ public class GeoUtils {
 				TwoDimentionalCoordinateBean point= new TwoDimentionalCoordinateBean(x, y,crs);
 				toReturn.add(point);
 			}catch(NumberFormatException e){
-				System.err.println(e);
-				System.err.println("NumberFormatException in parse point:"+WKTPoint);
-				System.err.println("In URI:"+uri);
+				LOG.error(e);
+				LOG.error("NumberFormatException in parse point:"+WKTPoint);
+				LOG.error("In URI:"+uri);
 			}
 		}
 		return toReturn;

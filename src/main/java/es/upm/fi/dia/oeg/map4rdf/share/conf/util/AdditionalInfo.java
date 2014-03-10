@@ -12,10 +12,10 @@ public class AdditionalInfo implements Serializable {
 	private String query;
 	private String result;
 	private String inputParameters;
-	private boolean has_image_limit=false;
+	private boolean hasImageLimit=false;
 	private String image_parameter="";
-	private double inferior_limit=0.0;
-	private double superior_limit=0.0;
+	private double inferiorLimit=0.0;
+	private double superiorLimit=0.0;
 	private String[] images={"","",""};
 	
 	private List<QueryParameterResult> queryParametersResults;
@@ -63,23 +63,23 @@ public class AdditionalInfo implements Serializable {
 	public void setInputParameters(String inputParameters) {
 		this.inputParameters = inputParameters;
 	}
-	public boolean isHas_image_limit() {
-		return has_image_limit;
+	public boolean isHasImageLimit() {
+		return hasImageLimit;
 	}
-	public void setHas_image_limit(boolean has_image_limit) {
-		this.has_image_limit = has_image_limit;
+	public void setHas_image_limit(boolean hasImageLimit) {
+		this.hasImageLimit = hasImageLimit;
 	}
-	public double getInferior_limit() {
-		return inferior_limit;
+	public double getInferiorLimit() {
+		return inferiorLimit;
 	}
-	public void setInferior_limit(double inferior_limit) {
-		this.inferior_limit = inferior_limit;
+	public void setInferiorLimit(double inferiorLimit) {
+		this.inferiorLimit = inferiorLimit;
 	}
-	public double getSuperior_limit() {
-		return superior_limit;
+	public double getSuperiorLimit() {
+		return superiorLimit;
 	}
-	public void setSuperior_limit(double superior_limit) {
-		this.superior_limit = superior_limit;
+	public void setSuperiorLimit(double superiorLimit) {
+		this.superiorLimit = superiorLimit;
 	}
 	public String[] getImages() {
 		return images;
@@ -97,7 +97,4 @@ public class AdditionalInfo implements Serializable {
 	public static AdditionalInfo newInstance() {
 		return new AdditionalInfo();
 	}
-
-	
-	
 }

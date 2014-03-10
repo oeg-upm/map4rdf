@@ -55,10 +55,10 @@ public class GetAddInfoConfigHandler implements ActionHandler<GetAddInfoConfig, 
 				newInfo.setQuery(info.getQuery());
 				newInfo.setQueryParametersResults(info.getQueryParametersResults());
 				newInfo.setResult(result.toString());
-				newInfo.setHas_image_limit(info.isHas_image_limit());
+				newInfo.setHas_image_limit(info.isHasImageLimit());
 				newInfo.setImage_parameter(info.getImage_parameter());
-				newInfo.setInferior_limit(info.getInferior_limit());
-				newInfo.setSuperior_limit(info.getSuperior_limit());
+				newInfo.setInferiorLimit(info.getInferiorLimit());
+				newInfo.setSuperiorLimit(info.getSuperiorLimit());
 				newInfo.setImages(info.getImages());
 				toReturn.add(newInfo);
 			} catch (MalformedURLException e) {

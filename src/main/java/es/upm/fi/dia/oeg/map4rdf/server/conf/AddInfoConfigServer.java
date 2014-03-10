@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParametersNamesAddInfo;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.util.AdditionalInfo;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.util.QueryParameterResult;
 
 public class AddInfoConfigServer{
 	public List<AdditionalInfo> additionalsInfo;
+	private Logger logger = Logger.getLogger(AddInfoConfigServer.class);
 	public AddInfoConfigServer(){
 		additionalsInfo=new ArrayList<AdditionalInfo>();
 	}
@@ -32,7 +35,7 @@ public class AddInfoConfigServer{
 					info.setEndpoint(properties
 							.getProperty(ParametersNamesAddInfo.ENDPOINT_URL));
 				} else {
-					System.err.println("Empty "
+					logger.error("Empty "
 							+ ParametersNamesAddInfo.ENDPOINT_URL + " in "
 							+ file + " file.");
 					correctInfo = false;
@@ -44,7 +47,7 @@ public class AddInfoConfigServer{
 					info.setQuery(properties
 							.getProperty(ParametersNamesAddInfo.QUERY));
 				} else {
-					System.err.println("Empty " + ParametersNamesAddInfo.QUERY
+					logger.error("Empty " + ParametersNamesAddInfo.QUERY
 							+ " in " + file + " file.");
 					correctInfo = false;
 				}
@@ -54,7 +57,7 @@ public class AddInfoConfigServer{
 					String[] splitParameters = properties.getProperty(
 							ParametersNamesAddInfo.PARAMETERS_AND_LABELS).split("#");
 					if(splitParameters.length<1){
-						System.err.println("Not parameters in "+ file);
+						logger.error("Not parameters in "+ file);
 						correctInfo=false;
 					}
 					for (int j = 0; j < splitParameters.length; j++) {
@@ -64,13 +67,13 @@ public class AddInfoConfigServer{
 							result = new QueryParameterResult(parameter[0]);
 							String[] splitLabels=parameter[1].split(";");
 							if(splitLabels.length<1){
-								System.err.println("Not labels for parameter "+parameter[0]+" in "+file);
+								logger.error("Not labels for parameter "+parameter[0]+" in "+file);
 								correctInfo=false;
 							}
 							for(int k=0;k<splitLabels.length;k++){
 								String[] complexLabel=splitLabels[k].split("@");
 								if(complexLabel.length!=2){
-									System.err.println("Malformed label "+splitLabels[k]+" of parameter "
+									logger.error("Malformed label "+splitLabels[k]+" of parameter "
 											+ parameter[0] +" in "+ file);
 									correctInfo=false;
 								}else{
@@ -79,13 +82,13 @@ public class AddInfoConfigServer{
 							}
 							info.addQueryResult(result);
 						} else {
-							System.err.println("Malformed parameter: "
+							logger.error("Malformed parameter: "
 									+ splitParameters[j] + " in " + file);
 							correctInfo = false;
 						}
 					}
 				} else {
-					System.err.println("Empty "
+					logger.error("Empty "
 							+ ParametersNamesAddInfo.PARAMETERS_AND_LABELS
 							+ " in " + file + " file.");
 					correctInfo = false;
@@ -96,16 +99,16 @@ public class AddInfoConfigServer{
 					info.setInputParameters(properties
 							.getProperty(ParametersNamesAddInfo.INPUT_PARAMETERS));
 				}else{
-					System.err.println("Empty parameter "+ParametersNamesAddInfo.INPUT_PARAMETERS+" in "
+					logger.error("Empty parameter "+ParametersNamesAddInfo.INPUT_PARAMETERS+" in "
 							+ file + " file." );
 					correctInfo=false;
 				}
 				if (properties
 						.getProperty(ParametersNamesAddInfo.HAS_IMAGES_LIMIT) != null
 						&& !properties.getProperty(ParametersNamesAddInfo.HAS_IMAGES_LIMIT).isEmpty()){
-					boolean has_images_limit=Boolean.parseBoolean(properties.getProperty(ParametersNamesAddInfo.HAS_IMAGES_LIMIT));
-					boolean is_correct_images_limit=true;
-					if(has_images_limit){
+					boolean hasImagesLimit=Boolean.parseBoolean(properties.getProperty(ParametersNamesAddInfo.HAS_IMAGES_LIMIT));
+					boolean isCorrectImagesLimit=true;
+					if(hasImagesLimit){
 						if(properties
 							.getProperty(ParametersNamesAddInfo.IMAGES_LIMIT) != null
 							&& !properties.getProperty(ParametersNamesAddInfo.IMAGES_LIMIT).isEmpty()){
@@ -113,21 +116,21 @@ public class AddInfoConfigServer{
 							String[] splitImages_limit=images_limit.split(";");
 							if(splitImages_limit.length==2 && !splitImages_limit[0].isEmpty() && !splitImages_limit[1].isEmpty()){
 								try{
-									info.setInferior_limit(Double.parseDouble(splitImages_limit[0]));
-									info.setSuperior_limit(Double.parseDouble(splitImages_limit[1]));
+									info.setInferiorLimit(Double.parseDouble(splitImages_limit[0]));
+									info.setSuperiorLimit(Double.parseDouble(splitImages_limit[1]));
 								}catch (NumberFormatException e){
-									System.err.println("Error to parse parameter "+ParametersNamesAddInfo.IMAGES_LIMIT+" in "+file+" file.");
-									is_correct_images_limit=false;
+									logger.warn("Error to parse parameter "+ParametersNamesAddInfo.IMAGES_LIMIT+" in "+file+" file.");
+									isCorrectImagesLimit=false;
 								}
 							}else{
-								System.err.println("Malformed parameter "+ParametersNamesAddInfo.IMAGES_LIMIT+" in "
+								logger.warn("Malformed parameter "+ParametersNamesAddInfo.IMAGES_LIMIT+" in "
 									+ file + " file." );
-								is_correct_images_limit=false;
+								isCorrectImagesLimit=false;
 							}
 						}else{
-							System.err.println("Empty parameter "+ParametersNamesAddInfo.IMAGES_LIMIT+" in "
+							logger.warn("Empty parameter "+ParametersNamesAddInfo.IMAGES_LIMIT+" in "
 									+ file + " file." );
-							is_correct_images_limit=false;
+							isCorrectImagesLimit=false;
 						}
 						if(properties
 								.getProperty(ParametersNamesAddInfo.IMAGES) != null
@@ -136,14 +139,14 @@ public class AddInfoConfigServer{
 							if(splitImages.length==3 && !splitImages[0].isEmpty() && !splitImages[1].isEmpty() && !splitImages[2].isEmpty()){
 								info.setImages(splitImages);
 							}else{
-								System.err.println("Malformed parameter "+ParametersNamesAddInfo.IMAGES+" in "
+								logger.warn("Malformed parameter "+ParametersNamesAddInfo.IMAGES+" in "
 										+ file + " file." );
-								is_correct_images_limit=false;
+								isCorrectImagesLimit=false;
 							}
 						}else{
-							System.err.println("Empty parameter "+ParametersNamesAddInfo.IMAGES+" in "
+							logger.warn("Empty parameter "+ParametersNamesAddInfo.IMAGES+" in "
 									+ file + " file." );
-							is_correct_images_limit=false;
+							isCorrectImagesLimit=false;
 						}
 						if(properties
 								.getProperty(ParametersNamesAddInfo.IMAGES_LIMIT_PARAMETER) != null
@@ -151,23 +154,22 @@ public class AddInfoConfigServer{
 							info.setImage_parameter(properties
 								.getProperty(ParametersNamesAddInfo.IMAGES_LIMIT_PARAMETER));
 						}else{
-							System.err.println("Empty parameter "+ParametersNamesAddInfo.IMAGES_LIMIT_PARAMETER+" in "
+							logger.warn("Empty parameter "+ParametersNamesAddInfo.IMAGES_LIMIT_PARAMETER+" in "
 									+ file + " file." );
-							is_correct_images_limit=false;
+							isCorrectImagesLimit=false;
 						}
 					}
-					info.setHas_image_limit(is_correct_images_limit);
+					info.setHas_image_limit(isCorrectImagesLimit);
 				}
 				if (correctInfo) {
 					additionalsInfo.add(info);
 				} else {
-					System.err.println("Check " + file + " properties file.");
+					logger.error("Check " + file + " properties file.");
 				}
 			} catch (IOException e) {
-				System.err.println("Can't obtain the additional info file:"
+				logger.error("Can't obtain the additional info file:"
 						+ Constants.ADDITIONAL_INFO_CONFIG_FOLDER
-						+ splitInfo[i]);
-				System.err.println(e);
+						+ splitInfo[i],e);
 			}
 		}
 	}

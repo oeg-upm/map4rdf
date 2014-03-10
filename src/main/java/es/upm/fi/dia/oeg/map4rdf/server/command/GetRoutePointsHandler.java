@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
+import org.apache.log4j.Logger;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -21,13 +24,13 @@ import net.customware.gwt.dispatch.shared.ActionException;
 public class GetRoutePointsHandler implements ActionHandler<GetRoutePoints, GetRoutePointsResult> {
 	
 	private int timeoutMiliSeconds;
-	
+	private Logger logger = Logger.getLogger(GetRoutePointsHandler.class);
 	@Inject
 	public GetRoutePointsHandler(@Named(ParameterNames.ROUTES_SERVICE_TIMEOUT_MILISECONDS) String timeoutMiliseconds){
 		try{
 			this.timeoutMiliSeconds=Integer.valueOf(timeoutMiliseconds);
 		}catch (Exception e){
-			System.err.println("An error ocurred when parse to int the parameter: "+
+			logger.warn("An error ocurred when parse to int the parameter: "+
 								ParameterNames.ROUTES_SERVICE_TIMEOUT_MILISECONDS+
 								". Timeout set to default (30000 ms). Please change parameter value and"+
 								" reload the service.");

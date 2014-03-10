@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,9 +29,9 @@ import es.upm.fi.dia.oeg.map4rdf.server.cartociudad.utils.RequestMessage;
 
 public class RouteFinderCall {
 
-	String urlService = "";
-	int timeout = 0;
-
+	private String urlService = "";
+	private int timeout = 0;
+	private Logger logger= Logger.getLogger(RouteFinderCall.class);
 	public RouteFinderCall(String urlService) {
 		super();
 		this.urlService = urlService;
@@ -84,13 +85,12 @@ public class RouteFinderCall {
 			}
 
 		} catch (MalformedURLException e) {
-			System.err.println("ERROR DURING URL CREATION::: " + e.getMessage());
+			logger.error("ERROR DURING URL CREATION::: ", e);
 			return null;
 		} catch (SocketTimeoutException ste){
-			//System.err.println("SOCKECT TIMEOUT EXCEPTION::: " + ste.getMessage());
+			//logger.error("SOCKECT TIMEOUT EXCEPTION::: ",ste);
 		} catch (IOException e) {
-			System.err.println("ERROR DURING REPOSITORY COMMUNICATION::: "
-					+ e.getMessage());
+			logger.error("ERROR DURING REPOSITORY COMMUNICATION::: ", e);
 			return null;
 		} 
 		return paths;

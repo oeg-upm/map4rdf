@@ -68,19 +68,19 @@ public class AdditionalInfoExecuter {
 				if(doCallbacks.containsKey(myId) && doCallbacks.get(myId)){
 					AdditionalInfoSummary additionalInfo= new AdditionalInfoSummary(toReturn.getTransformedValues());
 					for(AdditionalInfo addiInfo:addInfoConfig.getAdditionalsInfo()){
-						if(addiInfo.isHas_image_limit()){
+						if(addiInfo.isHasImageLimit()){
 							if(toReturn.getOriginalValues().containsKey(addiInfo.getImage_parameter())){
 								try{
 									Double doLimit=Double.parseDouble(toReturn.getOriginalValues().get(addiInfo.getImage_parameter()));
-									if(doLimit<addiInfo.getInferior_limit()){
+									if(doLimit<addiInfo.getInferiorLimit()){
 										additionalInfo.setImage(addiInfo.getImages()[0]);
 										break;
 									}
-									if(doLimit>addiInfo.getSuperior_limit()){
+									if(doLimit>addiInfo.getSuperiorLimit()){
 										additionalInfo.setImage(addiInfo.getImages()[2]);
 										break;
 									}
-									if(doLimit>=addiInfo.getInferior_limit() && doLimit<=addiInfo.getSuperior_limit()){
+									if(doLimit>=addiInfo.getInferiorLimit() && doLimit<=addiInfo.getSuperiorLimit()){
 										additionalInfo.setImage(addiInfo.getImages()[1]);
 										break;
 									}

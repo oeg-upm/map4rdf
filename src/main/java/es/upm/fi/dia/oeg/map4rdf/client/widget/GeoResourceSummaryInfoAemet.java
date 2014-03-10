@@ -94,7 +94,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert(browserMessages.errorCommunication());
-				System.err.println("Fallo "+caught.getMessage());
 			}
             @Override
             public void onSuccess(ListResult<AemetObs> result) {
@@ -207,7 +206,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 			}
 		} catch (Exception e) {
 			Window.alert("Error: " + e.getMessage() + e.toString());
-			System.err.println("Error: " + e.getMessage());
 			listPanel.clear();
 			listPanel.add(new Label(text));
 		}
