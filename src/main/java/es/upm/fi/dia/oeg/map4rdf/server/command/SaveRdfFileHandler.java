@@ -49,19 +49,19 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 /**
  * @author Filip
  */
-public class SaveRdfFIleHandler implements
+public class SaveRdfFileHandler implements
 		ActionHandler<SaveRdfFile, SingletonResult<String> > {
 
 	private ServletContext servletContext;
 	private Configuration config;
-	private Logger logger = Logger.getLogger(SaveRdfFIleHandler.class);
+	private Logger logger = Logger.getLogger(SaveRdfFileHandler.class);
 	@Override
 	public Class<SaveRdfFile> getActionType() {
 		return SaveRdfFile.class;
 	}
 	
 	@Inject
-	public SaveRdfFIleHandler(GetServletContext getServletContext) {
+	public SaveRdfFileHandler(GetServletContext getServletContext) {
 		super();
 		servletContext = getServletContext.getServletContext();
 		InputStream propIn = servletContext.getResourceAsStream(Constants.CONFIGURATION_FILE);
@@ -80,6 +80,7 @@ public class SaveRdfFIleHandler implements
 		
 		File file = new File(path + action.getFileName());
     	if (file.exists()) {
+    		logger.error("When save Edited rdf file, the file exists.");
     		return new SingletonResult<String>("The file exists");
     	}else{
     		try {
@@ -88,7 +89,7 @@ public class SaveRdfFIleHandler implements
 				if(!file.createNewFile()){
 				}
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error("Can not save edited rdf file: ",e);
 				return new SingletonResult<String>("Cant create the file");
 			}
     	}	
@@ -101,7 +102,7 @@ public class SaveRdfFIleHandler implements
 	    	output.close();
 	    	
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error("Can not save edited rdf file. Buffered ERROR: ",e);
 			return new SingletonResult<String>("Buffered ERROR");
 		}
 		

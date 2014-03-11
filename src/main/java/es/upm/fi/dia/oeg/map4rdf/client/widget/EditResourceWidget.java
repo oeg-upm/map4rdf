@@ -258,7 +258,7 @@ public class EditResourceWidget extends Composite{
 			@Override
 			public void onFailure(Throwable caught) {
 				display.stopProcessing();
-				widgetFactory.getDialogBox().showError(messages.saveRDFError());
+				widgetFactory.getDialogBox().showError(messages.saveRDFError()+" Error: "+caught.getMessage());
 			}
 
 			@Override
@@ -267,7 +267,7 @@ public class EditResourceWidget extends Composite{
 				if(result.getValue()!=null && result.getValue().isEmpty()){
 					widgetFactory.getDialogBox().showDone(messages.saveRDFDone());
 				}else{
-					widgetFactory.getDialogBox().showError(messages.saveRDFError());
+					widgetFactory.getDialogBox().showError(messages.saveRDFServerError(result.getValue()));
 				}
 			}
 		});
