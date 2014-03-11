@@ -63,7 +63,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticYearsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectDescriptionsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectLabelHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetWebNMasUnoResourceHandler;
-import es.upm.fi.dia.oeg.map4rdf.server.command.SaveRdfFIleHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.SaveRdfFileHandler;
 /**
  * @author Alexander De Leon
  */
@@ -80,7 +80,7 @@ public class BrowserActionHandlerModule extends ActionHandlerModule {
 		super.bindHandler(GetSubjectDescriptions.class, GetSubjectDescriptionsHandler.class);
 		super.bindHandler(GetSubjectLabel.class,GetSubjectLabelHandler.class);
 		super.bindHandler(GetGeoResourcesAsKmlUrl.class,GetGeoResourcesAsKmlUrlHandler.class);
-		super.bindHandler(SaveRdfFile.class,SaveRdfFIleHandler.class);
+		super.bindHandler(SaveRdfFile.class,SaveRdfFileHandler.class);
 		super.bindHandler(GetConfigurationParameter.class,GetConfigurationParameterHandler.class);
 		super.bindHandler(GetRoutePoints.class,GetRoutePointsHandler.class);
 		super.bindHandler(GetBufferGeoResources.class,GetBufferGeoResourcesHandler.class);
