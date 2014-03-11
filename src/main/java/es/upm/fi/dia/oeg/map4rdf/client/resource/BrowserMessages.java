@@ -217,5 +217,18 @@ public interface BrowserMessages extends Messages {
 	String addADateFilter();
 	
 	String additionalInfo();
+	
+	String errorLoadingStatisticsDatasets();
+	
+	String moduleCantContactWithServer(String module);
+	
+	String configParameterNullOrEmpty(String configParameter);
+	
+	String configParameterMalformed(String configParameter);
+	
+	String configParameterCantBeParse(String configParamter, String type);
 
+	String travelModeDoesntExists();
+	
+	String errorGoogleDirections(String status);
 }

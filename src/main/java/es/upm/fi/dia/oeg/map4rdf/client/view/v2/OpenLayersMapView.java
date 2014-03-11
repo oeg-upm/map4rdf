@@ -40,8 +40,6 @@ import org.gwtopenmaps.openlayers.client.geometry.Polygon;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
@@ -52,6 +50,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfigurationResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParametersResult;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
@@ -87,14 +86,16 @@ public class OpenLayersMapView implements MapView {
 	private EventBus eventBus;
 	private String defaultProjection;
 	private DispatchAsync dispatchAsync;
+	private BrowserMessages browserMessages;
 	// drawing
 	private FilterAreaLayer filterAreaLayer;
 	private WidgetFactory widgetFactory;
 	
-	public OpenLayersMapView(final WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources) {
+	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
 		this.browserResources=browserResources;
 		this.eventBus=eventBus;
 		this.widgetFactory = widgetFactory;
+		this.browserMessages = browserMessages;
 		loadingWidget = widgetFactory.getLoadingWidget();
 		createUi();
 		defaultLayer = (OpenLayersMapLayer) createLayer("default");
@@ -110,7 +111,8 @@ public class OpenLayersMapView implements MapView {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				widgetFactory.getDialogBox().showError("Mapview can't contact with server. Please contact with System Admin.");
+				OpenLayersMapView.this.widgetFactory.getDialogBox().showError(
+						OpenLayersMapView.this.browserMessages.moduleCantContactWithServer("OpenLayersMapViewV2"));
 			}
 
 			@Override
@@ -226,7 +228,7 @@ public class OpenLayersMapView implements MapView {
 		boolean errors=false;
 		for(String i:getParameters){
 			if(!parameters.containsKey(i)){
-				widgetFactory.getDialogBox().showError("check "+i+" parameter in config file");
+				widgetFactory.getDialogBox().showError(browserMessages.configParameterNullOrEmpty(i));
 				errors=true;
 			}
 		}
@@ -237,22 +239,26 @@ public class OpenLayersMapView implements MapView {
 			String centerString=parameters.get(ParameterNames.MAP_DEFAULT_CENTER);
 			String[] centerStringSplit=centerString.split(",");
 			if(centerStringSplit.length!=2){
-				widgetFactory.getDialogBox().showError("Malformed "+ParameterNames.MAP_DEFAULT_CENTER+" parameter in config file. Please contact with system admin.");
+				widgetFactory.getDialogBox().showError(
+						browserMessages.configParameterMalformed(ParameterNames.MAP_DEFAULT_CENTER));
 			}
 			try{
 				DEFAULT_CENTER = new LonLat(Double.parseDouble(centerStringSplit[0]),Double.parseDouble(centerStringSplit[1]));
 			}catch(Exception e){
-				widgetFactory.getDialogBox().showError("Can't parse to double "+ParameterNames.MAP_DEFAULT_CENTER+" parameter in config file. Please contact with system admin.");
+				widgetFactory.getDialogBox().showError(
+						browserMessages.configParameterCantBeParse(ParameterNames.MAP_DEFAULT_CENTER, "double"));
 			}
 			try{
 				DEFAULT_ZOOM_LEVEL = Integer.parseInt(parameters.get(ParameterNames.MAP_ZOOM_LEVEL));
 			}catch(Exception e){
-				widgetFactory.getDialogBox().showError("Can't parse to int "+ParameterNames.MAP_ZOOM_LEVEL+" parameter in config file. Please contact with system admin.");
+				widgetFactory.getDialogBox().showError(
+						browserMessages.configParameterCantBeParse(ParameterNames.MAP_ZOOM_LEVEL, "integer"));
 			}
 			dispatchAsync.execute(new GetMapsConfiguration(), new AsyncCallback<GetMapsConfigurationResult>() {
 				@Override
 				public void onFailure(Throwable caught) {
-					widgetFactory.getDialogBox().showError("Mapview can't contact with server to obtain Maps. Please contact with System Admin.");
+					widgetFactory.getDialogBox().showError(
+							OpenLayersMapView.this.browserMessages.moduleCantContactWithServer("OpenLayersMapViewV2"));
 				}
 				@Override
 				public void onSuccess(GetMapsConfigurationResult result) {

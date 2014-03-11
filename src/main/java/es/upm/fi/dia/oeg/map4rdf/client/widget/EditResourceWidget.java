@@ -259,7 +259,6 @@ public class EditResourceWidget extends Composite{
 			public void onFailure(Throwable caught) {
 				display.stopProcessing();
 				widgetFactory.getDialogBox().showError(messages.saveRDFError());
-				//widgetFactory.getDialogBox().showError("Unexcepted error occured");
 			}
 
 			@Override
@@ -267,10 +266,8 @@ public class EditResourceWidget extends Composite{
 				display.stopProcessing();
 				if(result.getValue()!=null && result.getValue().isEmpty()){
 					widgetFactory.getDialogBox().showDone(messages.saveRDFDone());
-					//widgetFactory.getDialogBox().showError("Your changes were saved");
 				}else{
 					widgetFactory.getDialogBox().showError(messages.saveRDFError());
-					//widgetFactory.getDialogBox().showError("Unexcepted error occured");
 				}
 			}
 		});

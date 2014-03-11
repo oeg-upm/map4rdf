@@ -51,13 +51,14 @@ import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 public class StatisticsSelectionDialog extends PrettyPopup implements HasSelectionHandlers<StatisticDefinition> {
 
 	private final ListBox datasetList = new ListBox();
-	private final Button selectButton = new Button("Select");
+	private final Button selectButton;
 	private final BrowserMessages messages;
 
 	@Inject
 	public StatisticsSelectionDialog(BrowserMessages messages) {
 		super(PrettyPopupStylesheetFactory.getDefaultStylesheet(), true);
 		this.messages = messages;
+		this.selectButton = new Button(messages.select());
 		setModal(true);
 		createUi();
 	}

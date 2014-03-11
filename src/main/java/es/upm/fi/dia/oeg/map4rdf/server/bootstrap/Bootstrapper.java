@@ -2,10 +2,10 @@ package es.upm.fi.dia.oeg.map4rdf.server.bootstrap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
+
+import org.apache.log4j.Logger;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -36,7 +36,7 @@ public class Bootstrapper extends GuiceServletContextListener {
         try {
             config = new Configuration(propIn);
         } catch (IOException ex) {
-            Logger.getLogger(Bootstrapper.class.getName()).log(Level.SEVERE, null, ex);
+        	LOG.fatal(ex);
         }
 		// add config to servlet context so it can be accessed in JSPs
         servletContextEvent.getServletContext().setAttribute(Configuration.class.getName(), config);
@@ -47,7 +47,7 @@ public class Bootstrapper extends GuiceServletContextListener {
 		try {
 			facetedBrowserConfiguration = new FacetedBrowserConfiguration(facetConfigIn);
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "Unable to load faceted browser configuration file", e);
+			LOG.fatal("Unable to load faceted browser configuration file",e);
 			throw new RuntimeException(e);
 		}
 		super.contextInitialized(servletContextEvent);

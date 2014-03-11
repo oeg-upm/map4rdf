@@ -26,8 +26,6 @@ package es.upm.fi.dia.oeg.map4rdf.client;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
-
 import net.customware.gwt.presenter.client.place.PlaceChangedEvent;
 import net.customware.gwt.presenter.client.place.PlaceManager;
 import net.customware.gwt.presenter.client.place.DefaultPlaceManager;
@@ -54,14 +52,15 @@ import es.upm.fi.dia.oeg.map4rdf.client.navigation.Places;
  */
 public class Browser implements EntryPoint {
 	Injector injector = null;
-	Logger logger = Logger.getLogger(Browser.class);
 	@Override
 	public void onModuleLoad() {
 		try {
 		injector = GWT.create(Injector.class);
 		} catch (Exception e) {
 			injector = null;
-			logger.error(e);
+			Window.alert("An several exception ocurred when load the webpage. "
+					+ " Exception: "+e.getMessage() + "."
+					+ "Please contact with System Admin");
 		}
 		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus());
 		controller.addPresenter(injector.getDashboard(),Places.DASHBOARD);

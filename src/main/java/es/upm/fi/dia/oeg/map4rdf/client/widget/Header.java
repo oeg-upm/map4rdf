@@ -47,6 +47,7 @@ public class Header extends Composite {
 
 	private Widget createUi(BrowserResources resources) {
 		LayoutPanel panel = new LayoutPanel();
+		//TODO Change logo.png and add new parameter in config file that give this logo.
 		Image logo = new Image(GWT.getHostPageBaseURL() + "logo.png");
 		Image betaBadge = new Image(resources.betaBadge());
 

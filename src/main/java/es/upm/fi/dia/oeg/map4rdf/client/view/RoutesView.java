@@ -264,7 +264,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 					travelMode=travelModes.get(travelListBox.getItemText(travelListBox.getSelectedIndex()));
 					changeOptions();
 				} else {
-					widgetFactory.getDialogBox().showError("This travel mode doesn't exist.");
+					widgetFactory.getDialogBox().showError(
+							browserMessages.travelModeDoesntExists());
 				}
 			}
 		});
@@ -816,7 +817,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			dashboardPresenter.getDisplay().setMainPopup(200,150,getPopupWidget(browserMessages.requestDenied()),"Center");
 			break;
 		default:
-			widgetFactory.getDialogBox().showError("Google directions problem:"+status.toString());
+			widgetFactory.getDialogBox().showError(browserMessages.errorGoogleDirections(status.toString()));
 			break;
 		}
 		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));

@@ -113,7 +113,7 @@ public class GeoResourceSummary extends Composite {
 	public final String SUMMARY_WIDGETS_NAMES = WidgetsNames.ALL_IN_ORDER;
 	private int moveType;
 	
-	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, final WidgetFactory widgetFactory) {
+	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, WidgetFactory widgetFactory) {
 		this.messages = messages;
 		this.resources=appResources;
 		this.eventBus = eventBus;
@@ -130,7 +130,8 @@ public class GeoResourceSummary extends Composite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				widgetFactory.getDialogBox().showError("Summary widgets can't contact with server, please contact with System Admin.");
+				GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
+						GeoResourceSummary.this.messages.moduleCantContactWithServer("GeoResourceSummary"));
 				initAsync(null);
 			}
 
@@ -140,11 +141,14 @@ public class GeoResourceSummary extends Composite {
 				if(wiki!=null && !wiki.isEmpty()){
 					wikipediaParseURL=wiki;
 				}else{
-					widgetFactory.getDialogBox().showError(ParameterNames.WIKIPEDIA_PARSE_URL + " config parameter is null or empty.");
+					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
+							GeoResourceSummary.this.messages.configParameterNullOrEmpty(ParameterNames.WIKIPEDIA_PARSE_URL));
+							
 				}
 				String summaryWidgets=result.getResults().get(ParameterNames.SUMMARY_WIDGETS);
 				if(summaryWidgets==null || summaryWidgets.isEmpty()){
-					widgetFactory.getDialogBox().showError(ParameterNames.SUMMARY_WIDGETS+" config parameter is null or empty");
+					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
+							GeoResourceSummary.this.messages.configParameterNullOrEmpty(ParameterNames.SUMMARY_WIDGETS));
 					initAsync(null);
 				}else{
 					initAsync(summaryWidgets.toLowerCase());
@@ -153,13 +157,15 @@ public class GeoResourceSummary extends Composite {
 				if(twitter!=null && !twitter.isEmpty()){
 					twitterURL=twitter;
 				}else{
-					widgetFactory.getDialogBox().showError(ParameterNames.TWITTER_STATUS_URL+" config parameter is null or empty");
+					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
+							GeoResourceSummary.this.messages.configParameterNullOrEmpty(ParameterNames.TWITTER_STATUS_URL));
 				}
 				String geometryModel=result.getResults().get(ParameterNames.GEOMETRY_MODEL);
 				if(geometryModel!=null && !geometryModel.isEmpty()){
 					summary=getSummary(geometryModel);
 				}else{
-					widgetFactory.getDialogBox().showError(ParameterNames.GEOMETRY_MODEL+" config parameter is null or empty");
+					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
+							GeoResourceSummary.this.messages.configParameterNullOrEmpty(ParameterNames.GEOMETRY_MODEL));
 				}
 			}
 		});
@@ -542,9 +548,7 @@ public class GeoResourceSummary extends Composite {
 			anchor.setTarget("_blank");
 			panel.add(anchor);
 			//panel.add(new InlineHTML("<br>"));
-	
-			//ScrollPanel scroll= new ScrollPanel(new InlineHTML("<iframe src=\""+GWT.getHostPageBaseURL()+"infoWikipedia/parse?URL="+wikipediaURL+"\" style=\"width: 380px; height: 600px;\">"));
-			ScrollPanel scroll= new ScrollPanel(new InlineHTML("<iframe src=\""+wikipediaParseURL+wikipediaURL+"\" style=\"width: 260px; height:"+String.valueOf(Window.getClientHeight()-400)+"px\">"));
+			ScrollPanel scroll= new ScrollPanel(new InlineHTML("<iframe src=\""+wikipediaParseURL+wikipediaURL+"\" style=\"width: 97%; height:"+String.valueOf(Window.getClientHeight()-400)+"px\">"));
 			panel.add(scroll);
 			wikipediaResultWidget=panel;
 		}else{

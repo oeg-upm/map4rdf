@@ -47,6 +47,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.MapletEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.MyMapletEventHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapLayer;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.MapShapeStyleFactory;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
@@ -94,12 +95,14 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 	private StatisticDefinition currentStatistic;
 	private final MapLayer mapLayer;
 	private WidgetFactory widgetFactory;
+	private BrowserMessages messages;
 	//private final MapPresenter mapPresenter;
 	@Inject
-	public StatisticsPresenter(Display view, EventBus eventBus, MapPresenter mapPresenter, DispatchAsync dispatchAsync, WidgetFactory widgetFactory) {
+	public StatisticsPresenter(Display view, EventBus eventBus, MapPresenter mapPresenter, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
 		super(view, eventBus);
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
+		this.messages = messages;
 		//this.mapPresenter =  mapPresenter;
 		mapLayer = mapPresenter.getDisplay().createLayer("statistics");
 		view.setMapLayer(mapLayer);
@@ -129,7 +132,7 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 
 					@Override
 					public void onFailure(Throwable caught) {
-						widgetFactory.getDialogBox().showError("Error loading statistics datasets");
+						widgetFactory.getDialogBox().showError(messages.errorLoadingStatisticsDatasets());
 
 					}
 				});

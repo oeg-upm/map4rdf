@@ -28,7 +28,6 @@ import java.util.Map;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -36,6 +35,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapLayer;
@@ -62,8 +62,8 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 	private Map<String,List<Point>> points;
 	
 	@Inject
-	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources) {
-		super(widgetFactory, dispatchAsync,eventBus,browserResources);
+	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
+		super(widgetFactory, dispatchAsync,eventBus,browserResources,browserMessages);
 		//this.eventBus = eventBus;
 		kmlButton = createKMLButton();
 		summary = widgetFactory.createGeoResourceSummary();

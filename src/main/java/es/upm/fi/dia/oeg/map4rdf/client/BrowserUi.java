@@ -55,7 +55,7 @@ public class BrowserUi extends ResizeComposite implements AppController.Display 
 	private Widget createUi(BrowserResources resources) {
 		DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
 		panel.addNorth(new Header(resources), 88);
-		//panel.addSouth(new Footer(resources), 25);
+		//panel.addSouth(new es.upm.fi.dia.oeg.map4rdf.client.widget.Footer(resources), 25);
 		panel.add(appView);
 
 		return panel;

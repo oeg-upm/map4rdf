@@ -109,7 +109,7 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				widgetFactory.getDialogBox().showError(messages.errorCommunication()+" "+caught.getMessage());
+				widgetFactory.getDialogBox().showError(messages.errorCommunication()+" Error:"+caught.getMessage());
 			}
 
 			@Override

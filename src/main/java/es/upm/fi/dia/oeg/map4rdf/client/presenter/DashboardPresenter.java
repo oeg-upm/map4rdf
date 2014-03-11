@@ -263,7 +263,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 
 			@Override
 			public void onFailure(Throwable caught) {
-				widgetFactory.getDialogBox().showError("Dashboard can't contact with server, please contact with System Admin.");
+				widgetFactory.getDialogBox().showError(messages.moduleCantContactWithServer("DASHBOARD"));
 				getDisplay().addWestWidget(facetPresenter.getDisplay().asWidget(), messages.facets());
 				if(result != null && result.asList().size()>0) {
 					getDisplay().addWestWidget(dataToolBar, messages.overlays());					
@@ -278,7 +278,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 			public void onSuccess(GetMultipleConfigurationParametersResult values) {	
 				String stat=values.getResults().get(ParameterNames.STATISTICS_SERVICE_URL);
 				if(stat == null || stat.isEmpty()){
-					widgetFactory.getDialogBox().showError("Config parameter \""+ParameterNames.STATISTICS_SERVICE_URL+"\" is null or empty");
+					widgetFactory.getDialogBox().showError(messages.configParameterNullOrEmpty(ParameterNames.STATISTICS_SERVICE_URL));
 				}else{
 					statisticsURL=stat;
 				}

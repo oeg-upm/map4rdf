@@ -43,7 +43,7 @@ public class Footer extends Composite {
 
 	private Widget createUi() {
 		FlowPanel panel = new FlowPanel();
-		panel.add(new HTML("&copy 2010 <a href=\"http://www.oeg-upm.net\">Ontology Engineering Group</a>"));
+		panel.add(new HTML("&copy 2010-2014 <a href=\"http://www.oeg-upm.net\" target=\"_blank\">Ontology Engineering Group</a>"));
 		return panel;
 	}
 

@@ -14,7 +14,6 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetLineMove;
  */
 public class SummaryMove {
 	private Timer firtsTimer;
-	//private Timer secondTimer;
 	private int currentStep;
 	private ArrayList<Integer> widgetSteps;
 	private ParametersSummaryMove parametersSummary;
@@ -26,7 +25,6 @@ public class SummaryMove {
 		this.parametersSummary = parametersSummary;
 		this.geoResourceSummary = geoResourceSummary;
 		firtsTimer=getFirtsTimer();
-		//secondTimer=getSecondTimer();
 		currentStep=0;
 		widgetSteps=new ArrayList<Integer>(allWidgetInOrder.size());
 		for(int i=0;i<allWidgetInOrder.size();i++){
@@ -56,8 +54,6 @@ public class SummaryMove {
 			}
 			break;
 		}
-			/*DOM.setStyleAttribute(allWidgetInOrder.get(i).getElement(), "left", sizeImages);
-			DOM.setStyleAttribute(allWidgetInOrder.get(i).getElement(), "top", top+"px");*/
 	}
 	public void startMoveWidgets(){
 		widgetSteps.clear();
@@ -66,7 +62,6 @@ public class SummaryMove {
 		}
 		currentStep=0;
 		firtsTimer.cancel();
-		//secondTimer.cancel();
 		switch (parametersSummary.getMoveType()) {
 		case 1:
 			firtsTimer.scheduleRepeating(parametersSummary.getFirtsTotalTime()/parametersSummary.getSteps());
@@ -84,7 +79,6 @@ public class SummaryMove {
 	}
 	public void cancelMove(){
 		firtsTimer.cancel();
-		//secondTimer.cancel();
 	}
 	private void initializeWidgetsLineMove() {
 		widgetsLineMove= new ArrayList<WidgetLineMove>();
@@ -115,19 +109,6 @@ public class SummaryMove {
 		};
 		return toReturn;
 	}
-	/*private Timer getSecondTimer(){
-		Timer toReturn=new Timer() {
-			@Override
-			public void run() {
-				try {
-					doLastMoves();
-				} catch (Exception e) {
-					Window.alert("An exception ocurred when move widgets"+e.getMessage());
-				}
-			}
-		};
-		return toReturn;
-	}*/
 	private int calculateTopMove(int widgetIndex){
 		double angleDegrees=0.0;
 		angleDegrees=((double)(360.0/parametersSummary.getSteps()))*widgetSteps.get(widgetIndex);
@@ -154,12 +135,6 @@ public class SummaryMove {
 	
 		if(currentStep-1>=parametersSummary.getSteps()){
 			currentStep=0;
-			/*for(WidgetLineMove i:widgetsLineMove){
-				i.initWidgetLineMove(parametersSummary.getSteps()/4);
-			}
-			if(!widgetsLineMove.isEmpty()){
-				secondTimer.scheduleRepeating(parametersSummary.getSecondTotalTime()/parametersSummary.getSteps());
-			}*/
 			firtsTimer.cancel();
 		}
 	}
@@ -176,14 +151,4 @@ public class SummaryMove {
 			firtsTimer.cancel();
 		}
 	}
-	/*private void doLastMoves() throws Exception{
-		if(currentStep<=parametersSummary.getSteps()/4){
-			for(WidgetLineMove i:widgetsLineMove){
-				i.doStep(currentStep);
-			}
-			currentStep++;
-		}else{
-			secondTimer.cancel();
-		}
-	}*/
 }
