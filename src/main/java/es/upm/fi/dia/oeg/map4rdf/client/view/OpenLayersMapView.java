@@ -58,13 +58,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 	private final Image kmlButton;
 	private final GeoResourceSummary summary;
 	private final MapLayer.PopupWindow window;
-	//private final EventBus eventBus;
 	private Map<String,List<Point>> points;
 	
 	@Inject
 	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
 		super(widgetFactory, dispatchAsync,eventBus,browserResources,browserMessages);
-		//this.eventBus = eventBus;
 		kmlButton = createKMLButton();
 		summary = widgetFactory.createGeoResourceSummary();
 		window = getDefaultLayer().createPopupWindow();
@@ -110,7 +108,6 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 						summary.setGeoResource(resource, point);
 						removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 						drawGeoResource(resource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
-						//setEditLink(resource);
 						window.open(point);
 					}
 				});
@@ -125,7 +122,6 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 								window.close();
 								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, line);
-								//setEditLink(resource);
 								window.open(line.getPoints().get(0));
 							}
 						});
@@ -140,7 +136,6 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 								window.close();
 								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, polygon);
-								//setEditLink(resource);
 								window.open(polygon.getPoints().get(0));
 							}
 						});
@@ -159,7 +154,6 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 									window.close();
 									removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 									summary.setGeoResource(resource, poly);
-									//setEditLink(resource);
 									window.open(poly.getPoints().get(0));
 								}
 							});
@@ -187,17 +181,6 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 	}
 	
 	
-	/*private void setEditLink(final GeoResource resource){
-		summary.getEditLink().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				
-				EditResourceEvent editEvent = new EditResourceEvent(resource.getUri());
-				eventBus.fireEvent(editEvent);
-			}
-		});
-	}*/
 	@Override
 	public void removePolylines() {
 		

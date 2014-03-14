@@ -171,24 +171,15 @@ public class GeoResourceSummary extends Composite {
 		});
 		initWidget(createUi());
 	}
-	/*GeoResourceSummary() {
-		allWidgetInOrder=new ArrayList<Widget>();
-		summaryMove=new SummaryMove(allWidgetInOrder, parametersSummary, this);
-	}*/
 
 	public void setGeoResource(final GeoResource resource, Geometry geometry) {
 		//TODO Analyze if it is easy to implement closeProperSummary depend on configuration param.
 		openOrCloseSummary(false);
 		lastGeoResource=resource;
 		lastGeometry=geometry;
-		
 		centerPanel.clear();
 		centerPanel.add(getCenterImage());
-		//panel.remove(editLink);
-		//editLink.setText(messages.here());
-		//editLink.add
-		//panel.add(editLink);
-		
+	
 		AdditionalInfoExecuter.cancelAllCallbacks();
 		AdditionalInfoExecuter.getAdditionalInfo(dispatchAsync, resource, new InfoCallback() {
 			@Override
@@ -321,7 +312,6 @@ public class GeoResourceSummary extends Composite {
 		wikipediaWidget=widget;
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
 		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
-		//widgetsLineMove.add(new WidgetLineMove(widget, new LeftTopPosition(intSizeImages*2,0),"px"));
 		
 		widget=getSetToBuffer();
 		bufferWidget=widget;
@@ -331,7 +321,6 @@ public class GeoResourceSummary extends Composite {
 		widget=getTwitter();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
 		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
-		//widgetsLineMove.add(new WidgetLineMove(widget, new LeftTopPosition(intSizeImages*2,intSizeImages*2),"px"));
 		
 		widget=getClose();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
@@ -340,7 +329,6 @@ public class GeoResourceSummary extends Composite {
 		widget=getEdit();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
 		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
-		//widgetsLineMove.add(new WidgetLineMove(widget, new LeftTopPosition(0,intSizeImages*2),"px"));
 		
 		widget=getAddToRoutes();
 		routesWidget=widget;
@@ -350,7 +338,6 @@ public class GeoResourceSummary extends Composite {
 		widget=getRDF();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
 		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
-		//widgetsLineMove.add(new WidgetLineMove(widget, new LeftTopPosition(0,0),"px"));
 		
 		widget=getStatistics();
 		statisticsWidget=widget;
@@ -389,21 +376,6 @@ public class GeoResourceSummary extends Composite {
 		return image;
 	}
 	private Widget getWikipedia(){
-		/*wikipediaAnchor=new Anchor();
-		wikipediaAnchor.setSize(sizeImages, sizeImages);
-		Image image=new Image(resources.wikipediaIcon());
-		image.setSize(sizeImages, sizeImages);
-		wikipediaAnchor.setTitle(messages.wikipediaTitle());
-		wikipediaAnchor.getElement().appendChild(image.getElement());
-		//wikipediaAnchor.setTarget("_blank");
-		wikipediaAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				
-				revealWikipedia();
-			}
-		});
-		return wikipediaAnchor;*/
 		Image image= new Image(resources.wikipediaIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.wikipediaTitle());
@@ -504,11 +476,6 @@ public class GeoResourceSummary extends Composite {
 		});
 		return image;
 	}
-	/*private Widget getTransparent(){
-		Image image=new Image(resources.transparentImage());
-		image.setSize(sizeImages, sizeImages);
-		return image;
-	}*/
 	private Widget getTwitter(){
 		twitterAnchor=new Anchor();
 		twitterAnchor.setSize(sizeImages, sizeImages);
@@ -542,12 +509,9 @@ public class GeoResourceSummary extends Composite {
 		if(!lastGeoResource.getWikipediaURL().isEmpty()){
 			String wikipediaURL=lastGeoResource.getWikipediaURL().iterator().next();
 			VerticalPanel panel=new VerticalPanel();
-			/*panel.setWidth("100%");
-			panel.setHeight("100%");*/
 			Anchor anchor=new Anchor(messages.wikipediaTitle(), wikipediaURL);
 			anchor.setTarget("_blank");
 			panel.add(anchor);
-			//panel.add(new InlineHTML("<br>"));
 			ScrollPanel scroll= new ScrollPanel(new InlineHTML("<iframe src=\""+wikipediaParseURL+wikipediaURL+"\" style=\"width: 97%; height:"+String.valueOf(Window.getClientHeight()-400)+"px\">"));
 			panel.add(scroll);
 			wikipediaResultWidget=panel;

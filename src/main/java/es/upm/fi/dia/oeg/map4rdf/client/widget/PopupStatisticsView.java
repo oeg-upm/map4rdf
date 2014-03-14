@@ -288,15 +288,7 @@ public class PopupStatisticsView extends Composite{
 				mainPanel.add(new Label(browserMessages.statisticsEmpty()));
 			}else{
 				mainPanel.add(mainGrid);
-				/*Label label = new Label(browserMessages.loading());
-				label.setStyleName(browserResources.css().loadingWidgetLabelStyle());
-				Image icon = new Image(browserResources.loadingIcon());
-				icon.setStyleName(browserResources.css().loadingWidgetIconStyle());
-				DOM.setStyleAttribute(label.getElement(), "float", "right");
-				loadingWidget.add(icon);
-				loadingWidget.add(label);*/
 				mainPanel.add(loadingWidget);
-				//loadingWidget.setVisible(false);
 				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
 				DOM.setStyleAttribute(loadingWidget.getElement(), "position", "absolute");
 				DOM.setStyleAttribute(loadingWidget.getElement(), "top", "50%");
@@ -410,14 +402,10 @@ public class PopupStatisticsView extends Composite{
 		scroll.add(panel);
 		scroll.setSize(((int)(0.7*width))+"px", ((int)(0.7*height))+"px");
 		String tableTitle=LocaleUtil.getBestLabel(selectedStatistic);
-		//String divID="statisticsDIV";
 		int chartWidth=(int)(0.68*width);
 		int chartHeight=(int)(0.68*height);
 		String xTitle=LocaleUtil.getBestLabel(selectedDimensionX);
 		String yTitle=LocaleUtil.getBestLabel(selectedDimensionY);
-		//String[] xValues= new String[valores.size()];
-		//int[] yValues= new int[valores.size()];
-		//panel.getElement().setId(divID);
 		statisticsGrid.setWidget(0, 0, scroll);
 		drawChart(charts[selectedChart],tableTitle, panel, chartWidth, chartHeight, xTitle, yTitle, lastStatisticsValues);
 	}
@@ -622,7 +610,6 @@ public class PopupStatisticsView extends Composite{
 	}
 	private String encodeParameter(String decodedParameter){
 		String encoded=URL.encode(decodedParameter);
-		//for(int i=0;i<original.length;i++){
 		String splitParameter[]= encoded.split("#");
 		encoded="";
 		for(int j=0;j<splitParameter.length;j++){
@@ -648,7 +635,7 @@ public class PopupStatisticsView extends Composite{
 					toReturnData = data;
 				},
 				error:function control(msg,url,line){
-					//alert('A error ocurred: message='+msg.statusText+' ,url='+url+' ,line='+line+'.');
+					alert('A error ocurred: message='+msg.statusText+' ,url='+url+' ,line='+line+'.');
 				}
 			}
 		);

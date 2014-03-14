@@ -70,7 +70,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	private VerticalPanel listPanel;
 	private FlexTable additionalInfoTable;
 	private Panel mainPanel;
-	//private OpenLayersMapView display;
 	private List<AemetObs> obs;
 	private DialogBox loadingBox;
 	private int columnLimit=3;
@@ -158,7 +157,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 				int row=0;
 				int column=0;
 				final AemetObs firstObservation = obs.get(0);
-				//listPanel.add(new Label(aemetMessages.station() + " " + LocaleUtil.getBestLabel(firstObservation.getEstacion())));
 				listPanel.add(new Label(aemetMessages.timeOfObservation()+" "+firstObservation.getIntervalo().toString()));
 				FlexTable propertiesPanel=new FlexTable();
 				listPanel.add(propertiesPanel);
@@ -167,12 +165,10 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 				for (final AemetObs observation : obs) {
 					HorizontalPanel obsActual = dameUnidadMedicion(LocaleUtil.getBestLabel(observation.getPropiedad()),
 							observation.getUriObs(), Double.toString(observation.getValor()));
-					//caracteristicas.add(obsActual);
 					DOM.setElementAttribute(obsActual.getElement(), "cellpadding", "8px");
 					VerticalPanel graf = new VerticalPanel();
 					graf.setSize("35%", "100%");
 					graf.add(new Label(aemetMessages.charts()));
-					//graf.setSpacing(5);
 					Anchor dayAnchor = new Anchor(aemetMessages.day());
 					dayAnchor.addClickHandler(new ClickHandler() {
 
@@ -244,7 +240,6 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 
 			@Override
 			public void onSuccess(ListResult<AemetObs> result) {
-				//disp.stopProcessing();
 				List<AemetObs> observations = result.asList();
 				if (observations.isEmpty()) {
 					return;
@@ -302,9 +297,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 		panelAct.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		Anchor anchor;
 		Label valorWidget;
-		//panelAct.setSpacing(5);
 		if (label.contains("VV")) {
-			// return " m/s";
 			anchor = new Anchor(aemetMessages.avarageVelocityOfWind()+": ", uri, "_blank");
 			valorWidget = new Label(valor + " m/s");
 		}else if (label.contains("DV")) {

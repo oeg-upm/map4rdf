@@ -82,11 +82,6 @@ public class LayersManager {
 	}
 	private static GoogleV3 getGoogleV3(MapConfiguration map, Bounds bounds, double[] resolutions){
 		GoogleV3Options options = new GoogleV3Options();
-		/*googleOptions.setType(GoogleV3MapType.G_NORMAL_MAP);
-		googleOptions.setSphericalMercator(true);
-		googleOptions.setMaxExtent(bounds);
-		googleOptions.setNumZoomLevels(20);*/
-		//googleOptions.setMaxExtent(bounds);
 		if(map.haveGMapType()){
 			GoogleV3MapType googleType=GoogleV3MapType.valueOf(map.getgMapType().name());
 			if(googleType!=null){

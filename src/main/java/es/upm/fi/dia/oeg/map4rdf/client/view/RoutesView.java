@@ -36,14 +36,6 @@ import com.google.gwt.maps.client.services.DirectionsService;
 import com.google.gwt.maps.client.services.DirectionsStatus;
 import com.google.gwt.maps.client.services.DirectionsWaypoint;
 import com.google.gwt.maps.client.services.TravelMode;
-/*import com.google.gwt.maps.client.MapWidget;
-import com.google.gwt.maps.client.geocode.DirectionQueryOptions;
-import com.google.gwt.maps.client.geocode.DirectionResults;
-import com.google.gwt.maps.client.geocode.Directions;
-import com.google.gwt.maps.client.geocode.DirectionsCallback;
-import com.google.gwt.maps.client.geocode.DirectionsPanel;
-import com.google.gwt.maps.client.geocode.Waypoint;
-import com.google.gwt.maps.client.geom.LatLng;*/
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -171,11 +163,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 
 	private Widget createUi() {
 		panel = new FlowPanel();
-		//panel.setSize("100%", "100%");
-		/*pointsPanel = new FlowPanel();
-		gridPointsPanel= new Grid(rows,columns);
-		pointsPanel.add(gridPointsPanel);
-		panel.add(pointsPanel);*/
 		addPointMessage=new InlineHTML("<p>"+browserMessages.messageAddRoutePoint()+"</p>");
 		panel.add(addPointMessage);
 		routesWidget = new RoutesWidget("99%",minPixelHeightOfRoutesWidget+"px", browserResources);
@@ -189,10 +176,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		routesWidget.setWidget(1, 1,searchTextBox1);
 		routesWidget.setWidget(1, 2,addButton1);
 		gridSearchTextAndAddButton= new Grid(1, 3);
-		/*gridSearchTextAndAddButton.setWidget(0, 0, searchTextBox);
-		gridSearchTextAndAddButton.setWidget(0, 1, addButton);*/
 		panel.add(gridSearchTextAndAddButton);
-		//panel.add(new InlineHTML("<br>"));
 		traceRoute=new Button(browserMessages.buttonTraceRoute(), new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -201,9 +185,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		});
 		DOM.setStyleAttribute(traceRoute.getElement(), "position", "absolute");
 		DOM.setStyleAttribute(traceRoute.getElement(), "right", "20px");
-		//panel.add(traceRoute);
 		Grid optionsGrid=initializeOptionsGrid();
-		//panel.add(optionsGrid);
 		optionsDisPanel=new DisclosurePanel(browserMessages.moreOptions());
 		optionsDisPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 			@Override
@@ -342,7 +324,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		};
 		searchTextBox = new TextBox();
 		searchTextBox.setSize("170px", "20px");
-		/*searchTextBox.setStyleName(browserResources.css().searchBox());*/
 		searchTextBox.addKeyPressHandler(keyPressHandler);
 		keyPressHandler=new KeyPressHandler() {
 			@Override
@@ -432,10 +413,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				List<GeoResource> listGeoResource = new ArrayList<GeoResource>();
 				List<Point> points = result.getPoints();
 				if(points.isEmpty()){
-					//widgetFactory.getDialogBox().showError(browserMessages.errorNotRouteTo());
-					/*for(GeoResourceGeometry geoRG : route){
-						points.addAll(geoRG.getGeometry().getPoints());
-					}*/
 					executeGoogleDirections();
 				}else{
 					Geometry geometry = new PolyLineBean(null, points);
@@ -473,18 +450,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 	}
 
 	private void removePoint(ClickHandler handler){
-		/*if(routeDescriptionWidget!=null){
-			//geoprocessingPresenterDisplay.removeWidget(routeDescriptionWidget);
-			resultsPresenter.removeWidget(routeDescriptionWidget);
-			routeDescriptionWidget=null;
-		}*/
 		route.remove(relationHandler.get(handler).getGeoResourceGeometry());
-		/*GeoResource resource=relationHandler.get(handler).getGeoResourceGeometry().getResource();
-		if(changedPoints.containsKey(resource)){
-			mapPresenter.changeStylePointGeoResource(resource,new DrawPointStyle(changedPoints.get(resource)));
-		}*/
 		int row=relationHandler.get(handler).getRow();
-		//gridPointsPanel.removeRow(row);
 		if(rows<=2){
 			gridSearchTextAndAddButton.clear();
 			if(row==0){
@@ -552,11 +519,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			resources.add(route.get(0).getResource());
 			mapPresenter.drawGeoResouces(resources, new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+number)));
 		}
-		/*if(route.size()>=2){
-			traceRoute();
-		} else {
-			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.GREEN));
-		}*/
 	}
 	private void addGeoResource(GeoResource resource, Geometry geometry,RoutesAddGeoResourceType type){
 		switch (type) {
@@ -568,7 +530,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 						isSearchFree[lastTypeOpen]=false;
 						rows++;
 						if(rows==2){
-							//A�adir el serachBox0 en otro panel;
 							gridSearchTextAndAddButton.setWidget(0, 0, new Image(GWT.getModuleBaseURL()+new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+2)).getImageURL()));
 							gridSearchTextAndAddButton.setWidget(0, 1, searchTextBox);
 							gridSearchTextAndAddButton.setWidget(0, 2, addButton);
@@ -594,7 +555,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 						isSearchFree[lastTypeOpen]=false;
 						rows++;
 						if(rows==2){
-							//A�adir el serachBox0 en otro panel;
 							gridSearchTextAndAddButton.setWidget(0, 0, new Image(GWT.getModuleBaseURL()+new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+2)).getImageURL()));
 							gridSearchTextAndAddButton.setWidget(0, 1, searchTextBox);
 							gridSearchTextAndAddButton.setWidget(0, 2, addButton);
@@ -630,15 +590,11 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				}
 				rows++;
 				if(rows==2){
-					//Añadir el searchBox0 en otro panel;
 					gridSearchTextAndAddButton.setWidget(0, 0, new Image(GWT.getModuleBaseURL()+new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+2)).getImageURL()));
 					gridSearchTextAndAddButton.setWidget(0, 1, searchTextBox);
 					gridSearchTextAndAddButton.setWidget(0, 2, addButton);
 				}
 			}
-			/*addGeoResourceInRow(resource, geometry, rows);
-			rows++;*/
-			//Aqui abria que meter el punto en el primer cuadrado libre y si estan todos ocupados agregar uno nuevo y agregar el 0;
 			break;
 		}
 		resizeRoutesWidget();
@@ -653,7 +609,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			route.add(geoResourceGeometry);
 		}
-		//route.set(row, geoResourceGeometry);
 		String label=LocaleUtil.getBestLabel(resource);
 		FlowPanel anchorContainer=new FlowPanel();
 		Anchor anchor = new Anchor(label, resource.getUri());
@@ -663,7 +618,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		DOM.setStyleAttribute(anchorContainer.getElement(), "wordWrap", "break-word");
 		DOM.setStyleAttribute(anchorContainer.getElement(), "textAlign", "center");
 		DOM.setStyleAttribute(anchor.getElement(), "textAlign","center");
-		//routesWidget.resizeRows(rows+1);
 		char leter=DrawPointStyle.getMinLeter();
 		if(row<DrawPointStyle.getLeterSize()){
 			leter=(char)(DrawPointStyle.getMinLeter()+row);
@@ -671,10 +625,6 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			leter=DrawPointStyle.getMaxLeter();
 		}
 		DrawPointStyle style= new DrawPointStyle(leter);
-		/*DrawPointStyle.Style changedStyle=mapPresenter.changeStylePointGeoResource(resource,style);
-		if(changedStyle!=null && changedStyle!=style.getStyle()){
-			changedPoints.put(resource, changedStyle);
-		}*/
 		List<GeoResource> list= new ArrayList<GeoResource>();
 		list.add(resource);
 		mapPresenter.drawGeoResouces(list, style);

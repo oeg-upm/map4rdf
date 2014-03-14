@@ -136,17 +136,11 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 		label = new Label();
 
 		panel.add(label);
-		//panel.setWidgetTopHeight(label, 0, Unit.PX, 22, Unit.PX);
-		
-		
+				
 		selectionsPanel = new FlowPanel();
 		scrollPanel = new ScrollPanel();
 		scrollPanel.setWidget(selectionsPanel);
-		/*selectionsPanel.setHeight("100%");
-		scrollPanel.setHeight("100%");*/
 		panel.add(scrollPanel);
-
-		//panel.setWidgetTopHeight(scrollPanel, 22, Unit.PX, 100, Unit.PX);
 
 		panel.forceLayout();
 
@@ -156,11 +150,6 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 	@Override
 	public void setHeight(String height) {
 		super.setHeight(height);
-		/*selectionsPanel.setHeight(height);
-		String pixelsNumber = height.split("%")[0];
-		Integer scrolPanelHeight = new Integer(pixelsNumber);
-		panel.setHeight(new Integer(scrolPanelHeight+1).toString()+"%");
-		panel.setWidgetTopHeight(scrollPanel, 22, Unit.PX, super.getOffsetHeight()-22, Unit.PX);*/
 		DOM.setStyleAttribute(scrollPanel.getElement(), "position", "absolute");
 		DOM.setStyleAttribute(scrollPanel.getElement(), "top", "22px");
 	}

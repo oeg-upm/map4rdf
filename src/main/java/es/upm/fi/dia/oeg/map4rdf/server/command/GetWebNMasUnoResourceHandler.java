@@ -142,7 +142,6 @@ public class GetWebNMasUnoResourceHandler
 							dateGuia);
 					guides.put(uriGuide, g);
 				}
-				// resource.addGuide(g);
 				WebNMasUnoImage image = null;
 				if (solution.contains("uriImage")
 						&& solution.contains("pnameImage")) {
@@ -426,22 +425,14 @@ public class GetWebNMasUnoResourceHandler
 		// GUIDE: title, description, rights, creator, RDF
 		query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#title> ?tit}");
 		query.append("OPTIONAL{?reference <http://webenemasuno.linkeddata.es/ontology/OPMO/subtitle> ?sub}");
-		// query.append("OPTIONAL{?reference <http://purl.org/dc/terms/rightsHolder> ?rights}");
-		// query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#has_creator> ?cr}");
 		// IMAGE-VIDEO: title, description, rights, creator, RDF
-		// query.append("OPTIONAL{?reference <http://webenemasuno.linkeddata.es/ontology/MPEG7/rightsHolder> ?rights."
-		// + "?rights <http://www.w3.org/2000/01/rdf-schema#label> ?lr}.");
 		query.append("OPTIONAL{?reference <http://metadata.net/mpeg7/mpeg7.owl#title> ?tI."
 				+ "?tI <http://www.w3.org/2000/01/rdf-schema#label> ?lt}.");
 		query.append("OPTIONAL{?reference <http://metadata.net/mpeg7/mpeg7.owl#abstract> ?a."
 				+ "?a <http://www.w3.org/2000/01/rdf-schema#label> ?la}.");
 		// POST: blog link
-		query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#has_container> ?blog}.");// title
-																							// ya
-																							// viene
-																							// de
-																							// guide
-
+		query.append("OPTIONAL{?reference <http://rdfs.org/sioc/ns#has_container> ?blog}.");
+		// title ya viene de guide
 		// next Version
 		query.append("OPTIONAL{?b <http://openprovenance.org/model/opmo#cause> <"
 				+ uri + ">.");

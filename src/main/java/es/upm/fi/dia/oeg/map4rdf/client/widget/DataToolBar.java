@@ -27,7 +27,6 @@ package es.upm.fi.dia.oeg.map4rdf.client.widget;
 import name.alexdeleon.lib.gwtblocks.client.event.ToggleEvent;
 import name.alexdeleon.lib.gwtblocks.client.event.ToggleHandler;
 import name.alexdeleon.lib.gwtblocks.client.widget.togglebutton.ToggleButton;
-//import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -42,7 +41,6 @@ import com.google.inject.Inject;
 import es.upm.fi.dia.oeg.map4rdf.client.event.MapletActivatedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.MapletDeactivatedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.stats.StatisticsMaplet;
-//import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 
@@ -59,28 +57,19 @@ public class DataToolBar extends Composite {
 
 	}
 
-	//private Image statsButton;
 	private final Stylesheet stylesheet;
-	//private final MapPresenter.Display mapView;
-	//private final DispatchAsync dispatchAsync;
 	private final BrowserMessages messages;
 	private final EventBus eventBus;
 
 	@Inject
-	public DataToolBar(BrowserResources resources,/* MapPresenter.Display mapView, DispatchAsync dispatchAsync,*/
+	public DataToolBar(BrowserResources resources,
 			BrowserMessages messages, EventBus eventBus) {
 		this.eventBus = eventBus;
-		//this.mapView = mapView;
-		//this.dispatchAsync = dispatchAsync;
 		this.messages = messages;
 		stylesheet = resources.css();
 		initWidget(createUi(resources));
 
 	}
-
-	/*private void showSelectionDialog() {
-
-	}*/
 
 	private Widget createUi(BrowserResources resources) {
 		FlowPanel panel = new FlowPanel();

@@ -43,7 +43,6 @@ public class RoutesDescriptionWidget extends Composite{
 	private FlowPanel routesNumbers;
 	private ArrayList<Widget> allRoutesNumbers;
 	private Widget lastNumberChange;
-	//private ListBox routesBox;
 	public RoutesDescriptionWidget(JsArray<DirectionsRoute> routes,List<GeoResourceGeometry> geoResources,RouteSelectedCallback callback,BrowserMessages browserMessages){
 		this.routes=routes;
 		this.geoResources=geoResources;
@@ -54,15 +53,12 @@ public class RoutesDescriptionWidget extends Composite{
 		initWidget(createUi());
 	}
 	private Widget createUi() {
-		/*Grid grid=new Grid(2,1);*/
 		AbsolutePanel panel=new AbsolutePanel();
 		scrollPanel=new ScrollPanel();
 		scrollPanel.setSize("100%", "90%");
 		initializeRouteSelect();
 		panel.add(routesSelect);
 		panel.add(scrollPanel);
-		/*grid.setWidget(0, 0, routesBox);
-		grid.setWidget(1, 0, scrollPanel);*/
 		for(int i=0;i<routes.length();i++){
 			addRouteSelect(i+1);
 			FlowPanel flowPanel= new FlowPanel();
@@ -118,9 +114,7 @@ public class RoutesDescriptionWidget extends Composite{
 		}
 		char leter=(char)(DrawPointStyle.getMinLeter()+point);
 		panel.add(new Image(GWT.getModuleBaseURL()+new DrawPointStyle(leter).getImageURL()));
-		//flowPanel.add(new Anchor(routes.get(0).getStartGeocode().getAddress()));
 		GeoResourceGeometry resource=geoResources.get(point);
-		/*flowPanel.add(new Label(" "));*/
 		panel.add(getAnchor(resource.getResource(), resource.getGeometry()));
 	}
 	private void initializeRouteSelect(){

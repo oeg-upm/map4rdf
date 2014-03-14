@@ -109,7 +109,6 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 			}
 			
 		});
-		//addStyleName(resources.css().facets());
 	}
 
 

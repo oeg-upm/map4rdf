@@ -20,11 +20,6 @@ public class AemetResource extends GeoResource {
 		// for serialization
 	}
 
-	/*public AemetResource(String uri) {
-		super(uri);
-		obs = new ArrayList<AemetObs>();
-	}*/
-
 	public AemetResource(String uri, Geometry geometry) {
 		super(uri, geometry);
 		obs = new ArrayList<AemetObs>();

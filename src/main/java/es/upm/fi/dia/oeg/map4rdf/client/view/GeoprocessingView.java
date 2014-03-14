@@ -53,13 +53,7 @@ public class GeoprocessingView  extends ResizeComposite implements Geoprocessing
 		
 	}
 	private Widget createUi(String widgets) {
-		//Grid grid = new Grid(4,1);
-		//panel.setSize("98%", "100%");
-		//panel= new VerticalPanel();
 		panel = new TabLayoutPanel(22, Unit.PX);
-		//Label label = new Label(browserMessages.routes());
-		//label.setStyleName(browserResoruces.css().geoprocessingLabel());
-		//panel.add(label);
 		if(widgets!=null){
 			if(widgets.contains(WidgetsNames.ROUTES)){
 				panel.add(routesPresenter.getDisplay().asWidget(),browserMessages.routes());
@@ -69,13 +63,7 @@ public class GeoprocessingView  extends ResizeComposite implements Geoprocessing
 				panel.add(bufferPresenter.getDisplay().asWidget(),browserMessages.buffer());
 				panel.selectTab(bufferPresenter.getDisplay().asWidget());
 			}
-			//panel.showWidget(routesPresenter.getDisplay().asWidget());
-			
 		}
-		//grid.setWidget(0, 0, label);
-		//DOM.setStyleAttribute(label.getElement(), "textAlign", "center");
-		//grid.setWidget(1,0,routesPresenter.getDisplay().asWidget());
-		//return grid;
 		return panel;
 	}
 	@Override
@@ -117,15 +105,5 @@ public class GeoprocessingView  extends ResizeComposite implements Geoprocessing
 		panel.onResize();
 		routesPresenter.getDisplay().resize();
 	}
-	/*@Override
-	public void removeWidget(Widget widget) {
-		
-		panel.remove(widget);
-	}
-	@Override
-	public void addWidget(Widget widget, String header) {
-		
-		panel.add(widget, header);
-	}*/
 
 }

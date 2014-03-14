@@ -31,9 +31,6 @@ import java.io.Serializable;
  */
 public class SubjectDescription implements Serializable {
 
-	//private String predicate;
-	//private String object;
-	
 	private static final long serialVersionUID = -3237870929730173801L;
 	private BasicRDFInformation predicate;
 	private BasicRDFInformation object;

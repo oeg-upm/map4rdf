@@ -38,7 +38,6 @@ public class WidgetFactory {
 	private final BrowserResources resources;
 	private final EventBus eventBus;
 	private final DispatchAsync dispatchAsync;
-	//private boolean wikipediaAvailable;
 	private static LoadingWidget loadingWidget;
 
 	@Inject

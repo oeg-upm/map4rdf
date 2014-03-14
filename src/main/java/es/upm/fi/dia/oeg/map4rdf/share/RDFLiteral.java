@@ -52,7 +52,6 @@ public class RDFLiteral implements BasicRDFInformation{
 
 	@Override
 	public void setText(String text) {
-		//this.lexicalForm = text;
 		this.fullName = text;
 	}
 

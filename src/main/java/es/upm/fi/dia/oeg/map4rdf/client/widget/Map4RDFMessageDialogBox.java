@@ -51,9 +51,6 @@ public class Map4RDFMessageDialogBox extends DialogBox {
 		mainLabel = new Label(label);
 
 		VerticalPanel panel = new VerticalPanel();
-		/*panel.setHeight("140");
-		panel.setWidth("300");*/
-		//setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
 		panel.setSpacing(10);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		HorizontalPanel messagePanel= new HorizontalPanel();
@@ -77,31 +74,22 @@ public class Map4RDFMessageDialogBox extends DialogBox {
 	@Override
 	public void hide(){
 		super.hide();
-		/*imagePanel.clear();
-		mainLabel.setText("");*/
 	}
 	public void show(String text){
 		imagePanel.clear();
 		mainLabel.setText(text);
 		super.center();
-		//modifyPosition();
 	}
 	public void showDone(String text){
 		imagePanel.clear();
 		imagePanel.add(new Image(doneImage));
 		mainLabel.setText(text);
 		super.center();
-		//modifyPosition();
 	}
 	public void showError(String text){
 		imagePanel.clear();
 		imagePanel.add(new Image(errorImage));
 		mainLabel.setText(text);
 		super.center();
-		//modifyPosition();
-		
 	}
-	/*private void modifyPosition(){
-		setPopupPosition(Window.getClientWidth()/2-this.getOffsetWidth()/2, Window.getClientHeight()/2-this.getOffsetHeight()/2);
-	}*/
 }

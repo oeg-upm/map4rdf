@@ -16,7 +16,6 @@ public class DescriptionTreeItem {
 	private Grid grid;
 	private TextBox predicate;
 	private TextBox object; 
-	//@TODO restracture it
 	private DescriptionTreeItem parent = null; //the value means that the parent is a root  
 	private SubjectDescription subjectDescriptionThis;
 	private Integer depth = 1;

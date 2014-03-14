@@ -102,7 +102,6 @@ public class PopupGeoprocessingView extends Composite{
 		this.searchBox.setWidth(String.valueOf((int)(0.8*width))+"px");
 		InlineHTML inline=new InlineHTML("<a>"+browserMessages.searchAResource()+"</a>");
 		this.mainPanel.add(closeButton);
-		//this.mainPanel.setWidgetPosition(closeButton, (int)(width*0.93), 1);
 		DOM.setStyleAttribute(closeButton.getElement(), "position", "absolute");
 		DOM.setStyleAttribute(closeButton.getElement(), "top", "1px");
 		DOM.setStyleAttribute(closeButton.getElement(), "left", "");

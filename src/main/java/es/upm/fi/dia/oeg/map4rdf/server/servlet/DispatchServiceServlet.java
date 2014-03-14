@@ -65,7 +65,6 @@ public class DispatchServiceServlet extends net.customware.gwt.dispatch.server.s
 	static SerializationPolicy loadSerializationPolicy(HttpServlet servlet, HttpServletRequest request,
 			String moduleBaseURL, String strongName) {
 		// The serialization policy path depends only by contraxt path
-		//String contextPath = request.getContextPath();
 
 		SerializationPolicy serializationPolicy = null;
 

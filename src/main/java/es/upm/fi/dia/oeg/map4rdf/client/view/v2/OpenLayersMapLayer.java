@@ -81,7 +81,6 @@ public class OpenLayersMapLayer implements MapLayer,
 	private final BrowserResources browserResources;
 	private List<VectorFeature> polylines;
 	private java.util.Map<DrawPointStyle.Style, List<VectorFeature>> points;
-	//private java.util.Map<VectorFeature, org.gwtopenmaps.openlayers.client.geometry.Point> allPoints;
 
 	public OpenLayersMapLayer(OpenLayersMapView owner, Map map, String name,
 			BrowserResources browserResources) {
@@ -90,7 +89,6 @@ public class OpenLayersMapLayer implements MapLayer,
 		this.browserResources = browserResources;
 		polylines = new ArrayList<VectorFeature>();
 		VectorOptions vectorOptions = new VectorOptions();
-		// VectorOptions vectorBckgOptions = new VectorOptions();
 
 		vectorLayer = new Vector(name + "_vectors", vectorOptions);
 		vectorLayer.setDisplayInLayerSwitcher(false);
@@ -100,7 +98,6 @@ public class OpenLayersMapLayer implements MapLayer,
 		for (DrawPointStyle.Style i : DrawPointStyle.Style.values()) {
 			points.put(i, new ArrayList<VectorFeature>());
 		}
-		//allPoints = new HashMap<VectorFeature, org.gwtopenmaps.openlayers.client.geometry.Point>();
 	}
 
 	@Override
@@ -213,8 +210,6 @@ public class OpenLayersMapLayer implements MapLayer,
 		return new PopupWindow() {
 			private final FlowPanel panel = new FlowPanel();
 			private Popup popup;
-			/*private int width=316;
-			private int height=378;*/
 			private int width=106;
 			private int height=106;
 			MapZoomListener zoomListener;
@@ -261,13 +256,11 @@ public class OpenLayersMapLayer implements MapLayer,
 				popup = new Popup("exclusive-mapresources-popup",
 						popupPosition, new Size(width, height),
 						DOM.getInnerHTML(panel.getElement()), false);
-				//popup.setBorder("1px solid #424242");
 
 				map.addPopupExclusive(popup);
 				popupPanel = new FlowPanel();
 				popupPanel.setSize(width+"px", height+"px");
 				popupPanel.add(panel);
-				//popupPanel.setStyleName(browserResources.css().popup());
 
 				owner.getContainer().add(popupPanel);
 				if(getPopupLeft()!=null && getPopupLeft()!="" && getPopupTop()!=null && getPopupTop()!=""){
@@ -338,7 +331,6 @@ public class OpenLayersMapLayer implements MapLayer,
 		}
 		features.clear();
 		removePolylines();
-		//allPoints.clear();
 		for (List<VectorFeature> i : points.values()) {
 			i.clear();
 		}
@@ -434,12 +426,9 @@ public class OpenLayersMapLayer implements MapLayer,
 			} else {
 				points.get(DrawPointStyle.getDefaultStyle()).add(feature);
 			}
-			//allPoints.put(feature,
-						//	(org.gwtopenmaps.openlayers.client.geometry.Point) geometry);
 		}
 		vectorLayer.addFeature(feature);
 		features.add(feature);
-		//vectorLayer.drawFeature(feature, style);
 		return new FeatureHasClickHandlerWrapper(featureId);
 	}
 
@@ -464,16 +453,9 @@ public class OpenLayersMapLayer implements MapLayer,
 			org.gwtopenmaps.openlayers.client.geometry.Point olPoint,
 			DrawPointStyle pointStyle) {
 		Style style = new Style();
-		/*
-		 * switch (pointStyle) { case BLUE:
-		 * style.setExternalGraphic(GWT.getModuleBaseURL() + MARKER_BLUE_ICON);
-		 * break; default: style.setExternalGraphic(GWT.getModuleBaseURL() +
-		 * MARKER_RED_ICON); break; }
-		 */
 		style.setExternalGraphic(GWT.getModuleBaseURL()
 				+ pointStyle.getImageURL());
 		style.setGraphicOffset(pointStyle.getDesplaceOffsetX(), pointStyle.getDesplaceOffsetY());
-		// style.setGraphicSize(24, 21);
 		style.setGraphicSize(pointStyle.getWidth(), pointStyle.getHeight());
 		style.setFillOpacity(1);
 		style.setCursor("pointer");
@@ -502,8 +484,6 @@ public class OpenLayersMapLayer implements MapLayer,
 
 	@Override
 	public void onFeatureUnselected(FeatureUnselectedEvent eventObject) {
-		//getMapView().closeWindow();
-		
 		//Disabled because the new GUI do auto close without click on the image of last resource.
 		
 		/*List<ClickHandler> clickHandlers = handlers.get(eventObject
@@ -528,13 +508,11 @@ public class OpenLayersMapLayer implements MapLayer,
 		if (pointStyle != null) {
 			for (VectorFeature i : points.get(pointStyle.getStyle())) {
 				removeFeature(i);
-				//allPoints.remove(i);
 			}
 			points.get(pointStyle.getStyle()).clear();
 		} else {
 			for (VectorFeature i : points.get(DrawPointStyle.getDefaultStyle())) {
 				removeFeature(i);
-				//allPoints.remove(i);
 			}
 			points.get(DrawPointStyle.getDefaultStyle()).clear();
 		}

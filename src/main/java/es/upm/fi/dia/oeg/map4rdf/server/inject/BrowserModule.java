@@ -63,9 +63,9 @@ public class BrowserModule extends AbstractModule {
 			return new AemetDaoImpl(endpointUri);
 		case WEBNMASUNO:
 			return new WebNMasUnoImpl(endpointUri);
+		default:
+			// make compiler happys
+			return null;
 		}
-		// make compiler happy
-		return null;
-
 	}
 }

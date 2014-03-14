@@ -82,7 +82,6 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 	private String createGetMaxDate(String uri) {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT (max(?dt) AS ?date)");
-		//StringBuilder query = new StringBuilder("SELECT ?dt) ");
 		query.append("WHERE { ");
 		query.append("?obs <http://purl.oclc.org/NET/ssnx/ssn#observedBy> <"+uri+"> . ");
 		query.append("?obs <http://aemet.linkeddata.es/ontology/observedInInterval> ?inter . ");
@@ -93,8 +92,6 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 		return query.toString();
 	}
 	private ListResult<AemetObs> getDatosObservacion(String uri, String date) throws DaoException {
-		// throw new UnsupportedOperationException("Not supported yet.");
-		// Date d = new Date();
 		List<AemetObs> obs=new ArrayList<AemetObs>();
 		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri, createGetObs(100, uri, date)); // cogemos
 																												// las
@@ -125,10 +122,6 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 			mes = solution2.getLiteral("mes").getInt();
 			anno = solution2.getLiteral("anno").getInt();
 			AemetIntervalo intervalo = new AemetIntervalo(anno, mes, dia, h, min);
-			/*
-			 * AemetObs observ = new AemetObs(idObs, nombreEstacion, dato, q,
-			 * prop, "", intervalo);
-			 */
 			
 			Resource	station = new Resource(sttionUri);
 			station.addLabel("", nombreEstacion);
@@ -137,7 +130,6 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 			propR.addLabel("", propLabel);
 			AemetObs observ = new AemetObs(idObs, station, dato, q, propR, "", intervalo);
 			obs.add(observ);
-			//(aemetR).addObs(observ);
 		}
 
 		return new ListResult<AemetObs>(obs);

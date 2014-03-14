@@ -6,9 +6,6 @@ import java.util.List;
 
 public class WebNMasUnoGuide extends WebNMasUnoResource implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 630125676546727117L;
 	private String title;
 	private String url;

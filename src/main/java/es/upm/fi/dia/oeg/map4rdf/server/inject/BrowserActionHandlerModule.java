@@ -51,7 +51,6 @@ import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceOverlaysHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetBufferGeoResourcesHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetAddInfoConfigHandler;
-//import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesAsKmlUrlHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetConfigurationParameterHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesAsKmlUrlHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesHandler;

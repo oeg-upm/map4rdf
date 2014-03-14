@@ -16,7 +16,6 @@ public class RoutesPresenter extends ControlPresenter<RoutesPresenter.Display> {
 		void setDashboardPresenter(DashboardPresenter dashboardPresenter);
 		void setGeoprocessingDisplay(GeoprocessingPresenter.Display geoprocessingPresenterDisplay);
 		void resize();
-		//void addGeoResource(GeoResource resource, Geometry geometry);
 	}
 
 	@Override

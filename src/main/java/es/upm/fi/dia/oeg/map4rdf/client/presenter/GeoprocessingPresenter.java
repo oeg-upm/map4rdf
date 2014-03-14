@@ -15,9 +15,8 @@ public class GeoprocessingPresenter extends ControlPresenter<GeoprocessingPresen
 	}
 
 	public interface Display extends WidgetDisplay{
+		//TODO REMOVE THIS setDashboardPresenter and add event.
 		void setDashboardPresenter(DashboardPresenter dashboardPresenter);
-		/*void addWidget(Widget widget,String header);
-		void removeWidget(Widget widget);*/
 		void doSelectedView(Widget widget);
 		int getContentHeight();
 		int getContentWidth();

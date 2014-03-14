@@ -122,7 +122,6 @@ public class Browser implements EntryPoint {
 				timer.schedule(2000);
 			}
 		}
-        //History.addValueChangeHandler(injector.getDashboard());
         placeManager.fireCurrentPlace();
 
 	}

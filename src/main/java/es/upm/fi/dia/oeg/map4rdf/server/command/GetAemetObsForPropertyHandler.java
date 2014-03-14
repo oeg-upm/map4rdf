@@ -83,7 +83,6 @@ public class GetAemetObsForPropertyHandler implements ActionHandler<GetAemetObsF
 			QuerySolution solution2 = queryResult2.next();
 			String idObs = solution2.getResource("obs").getURI();
 			String nombreEstacion = stationUri;
-			//String prop = propertyUri;
 			double dato = solution2.getLiteral("dato").getDouble();
 			String q = "No disponible";
 			if (solution2.contains("q")) {
@@ -96,10 +95,6 @@ public class GetAemetObsForPropertyHandler implements ActionHandler<GetAemetObsF
 			mes = solution2.getLiteral("mes").getInt();
 			anno = solution2.getLiteral("anno").getInt();
 			AemetIntervalo intervalo = new AemetIntervalo(anno, mes, dia, h, min);
-			/*
-			 * AemetObs observ = new AemetObs(idObs, nombreEstacion, dato, q,
-			 * prop, "", intervalo);
-			 */
 			Resource estation = new Resource(stationUri);
 			estation.addLabel("", nombreEstacion);
 

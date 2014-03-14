@@ -312,13 +312,6 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 
     @Override
     protected void onRevealDisplay() {
-        //mapPresenter.clear();
-        //resultsPresenter.clear();
-        //facetPresenter.clear();
-        //filtersPresenter.clear();
-        //mapPresenter.clearDrawing();
-        //loadResources(mapPresenter.getVisibleBox(), null);
-        //getDisplay().clear();
     }
 
     /* --------------- helper methods --- */

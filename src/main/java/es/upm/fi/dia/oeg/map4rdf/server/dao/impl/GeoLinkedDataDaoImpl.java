@@ -131,7 +131,6 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					LOG.error(e);
 				}
 			}
-			//result.put("null", new GeoResource("Un punto del EPSG:23030", new PointBean("Centrada", 423099.45795635181,4456995.0407910971, "EPSG:23030")));
 			return new ArrayList<GeoResource>(result.values());
 		} catch (Exception e) {
 			throw new DaoException("Unable to execute SPARQL query", e);
@@ -497,27 +496,6 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		
 		return query.toString();
 	}
-
-	/*private String createGetResourcesFallbackQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints,
-			Integer limit) {
-		StringBuilder query = new StringBuilder("SELECT distinct ?r ?label ");
-		query.append("WHERE { ");
-		query.append("?r <" + Geo.lat + ">  _:lat. ");
-		query.append("?r <" + Geo.lng + "> _:lng . ");
-		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
-		if (constraints != null) {
-			for (FacetConstraint constraint : constraints) {
-				query.append("{ ?r <" + constraint.getFacetId() + "> <" + constraint.getFacetValueId() + ">. } UNION");
-			}
-			query.delete(query.length() - 5, query.length());
-		}
-		
-		query.append("}");
-		if (limit != null) {
-			query.append(" LIMIT " + limit);
-		}
-		return query.toString();
-	}*/
 
 	private String createGetStatisticsQuery(BoundingBox boundingBox, StatisticDefinition statisticDefinition) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?stat ?statValue ?geo ?lat ?lng ");

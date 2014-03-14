@@ -27,7 +27,6 @@ public class RoutesWidget extends ResizeComposite{
 	private Widget createUi() {
 		panel = new LayoutPanel();
 		panel.setSize(width, height);
-		//panel.setStyleName(browserResources.css().searchPanel());
 		gridPanel = new Grid(0, 3);
 		gridPanel.setSize("100%", "100%");
 		

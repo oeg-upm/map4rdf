@@ -165,8 +165,7 @@ public class OpenLayersMapView implements MapView {
 		BoundingBox box =  OpenLayersAdapter.getBoundingBox(map.getExtent());
 		box.transform(map.getProjection(), defaultProjection);
 		return box;
-		// why??
-		// return OpenLayersAdapter.getBoundingBox(map.getExtent());
+		//If you want to do not use ViewBoundingBox, return null.
 	}
 
 	@Override
@@ -277,8 +276,6 @@ public class OpenLayersMapView implements MapView {
 		if(points.size()>=2){
 			map.zoomToExtent(getBoundsOfPoints(points));
 		}
-		//map.zoomToExtent(bound);
-		//new Bounds(lowerLeftX, lowerLeftY, upperRightX, upperRightY);
 	}
 	private Bounds getBoundsOfPoints(List<Point> points){
 		Bounds bounds;
@@ -328,8 +325,6 @@ public class OpenLayersMapView implements MapView {
 		//buliding maps
 		map.setOptions(options);
 		//building layers
-		/*GoogleV3 googleLayer = LayersManager.getGoogleLayer(bounds);
-		OSM openStreetMapsLayer = LayersManager.getOpenStreetMapsLayer(bounds);*/
 		map.addLayers(LayersManager.getLayers(maps, bounds, resolutions));
 		LonLat lonlat=new LonLat(DEFAULT_CENTER.lon(), DEFAULT_CENTER.lat());
 		lonlat.transform(defaultProjection, map.getProjection());
@@ -355,14 +350,9 @@ public class OpenLayersMapView implements MapView {
 		options.setUnits("degrees");
 		options.setMaxExtent(new Bounds(-180, -90, 180, 90));
 		options.setMinExtent(new Bounds(-1, -1, 1, 1));
-		//options.setNumZoomLevels(5);
 		//buliding maps
 		map.setOptions(options);
 		//building layers
-		/*WMS cartociudadLayer = LayersManager.getCartociudadLayer(resolutions);
-		WMS otalexLayer = LayersManager.newIDEE(resolutions);
-		//WMS olLayer = LayersManager.getOpenLayersFlatLayer();
-		//WMS olBasicLayer = LayersManager.getOpenLayersFlatBasicLayer();*/
 		map.addLayers(LayersManager.getLayers(maps, bounds, resolutions));
 		LonLat lonlat=new LonLat(DEFAULT_CENTER.lon(), DEFAULT_CENTER.lat());
 		lonlat.transform(defaultProjection, map.getProjection());

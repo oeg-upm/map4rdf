@@ -96,14 +96,12 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 	private final MapLayer mapLayer;
 	private WidgetFactory widgetFactory;
 	private BrowserMessages messages;
-	//private final MapPresenter mapPresenter;
 	@Inject
 	public StatisticsPresenter(Display view, EventBus eventBus, MapPresenter mapPresenter, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
 		super(view, eventBus);
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
 		this.messages = messages;
-		//this.mapPresenter =  mapPresenter;
 		mapLayer = mapPresenter.getDisplay().createLayer("statistics");
 		view.setMapLayer(mapLayer);
 		eventBus.addHandler(AreaFilterChangedEvent.getType() ,this);

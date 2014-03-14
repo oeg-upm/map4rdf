@@ -8,7 +8,6 @@ public class AemetObs implements Serializable {
 
 	private static final long serialVersionUID = -977389897535645824L;
 	
-	// private String idObs;
 	private String uriObs;
 	private Resource estacion;
 	private double valor;

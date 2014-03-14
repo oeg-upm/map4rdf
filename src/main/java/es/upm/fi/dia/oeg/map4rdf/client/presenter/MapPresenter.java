@@ -64,7 +64,6 @@ import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
-//import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 /**
@@ -75,7 +74,6 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 
 	private Set<FacetConstraint> facetConstraints;
 	private final DispatchAsync dispatchAsync;
-	//private StatisticDefinition statisticDefinition;
 	private WidgetFactory widgetFactory;
 	
 	public interface Display extends WidgetDisplay, MapView {
@@ -142,7 +140,6 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 	}
 
 	public void clear() {
-		//getDisplay().clear();
 		//For remove only default(facets) points
 		//This dont remove polylines of routes and other special points.
 		getDisplay().removePointsStyle(null);

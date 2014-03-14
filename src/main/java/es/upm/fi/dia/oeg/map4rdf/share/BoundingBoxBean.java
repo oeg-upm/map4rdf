@@ -52,8 +52,6 @@ public class BoundingBoxBean implements BoundingBox, Serializable {
 		
 		this.top = topRight;
 		this.bottom = bottomLeft;
-		/*this.left = bottomLeft;
-		this.right = topRight;*/
 		this.left=new TwoDimentionalCoordinateBean(bottomLeft.getX(),topRight.getY());
 		this.right=new TwoDimentionalCoordinateBean(topRight.getX(),bottomLeft.getY());
 	}

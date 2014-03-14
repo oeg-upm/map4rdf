@@ -48,10 +48,8 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 	private final StackLayoutPanel leftPanel;
 	private final LayoutPanel mapPanel;
 	private final ScrollPanel mainPopupPanel;
-	//private BrowserResources resources;
 	@Inject
 	public DashboardView(BrowserResources resources) {
-		//this.resources=resources;
 		mapPanel = new LayoutPanel();
 		splitPanel = new SplitLayoutPanel();
 		leftPanel = new StackLayoutPanel(Unit.EM);
@@ -132,22 +130,6 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
 			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "15px");
 			widget.setSize(width-3+"px", height-3+"px");
-			/*DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "");
-			DOM.removeElementAttribute(mainPopupPanel.getElement(),"top");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "");
-			DOM.removeElementAttribute(mainPopupPanel.getElement(),"left");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "right", "");
-			DOM.removeElementAttribute(mainPopupPanel.getElement(),"right");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "bottom", "");
-			DOM.removeElementAttribute(mainPopupPanel.getElement(),"bottom");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "50%");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "50%");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "marginTop", (-(height/2)-2)+"px");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "marginLeft",(-(width/2)-2)+"px");
-			DOM.setElementAttribute(mainPopupPanel.getElement(), "align", "center");*/
-			/*DOM.setStyleAttribute(widget.getParent().getElement(), "width", "99%");
-			DOM.setStyleAttribute(widget.getParent().getElement(), "height", "99%");*/
 		}
 	}
 	

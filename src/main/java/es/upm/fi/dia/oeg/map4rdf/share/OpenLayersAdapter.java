@@ -61,7 +61,6 @@ public class OpenLayersAdapter {
 	
 	public static BoundingBox getBoudingBox(Polygon p) {
 
-		//int i = p.getComponents().length;
 		double[][] dimTable = p.getComponents()[0].getCoordinateArray();
 		if (dimTable.length != 5) {
 			return null;

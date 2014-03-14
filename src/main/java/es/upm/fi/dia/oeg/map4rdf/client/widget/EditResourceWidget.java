@@ -51,7 +51,6 @@ public class EditResourceWidget extends Composite{
 	private String subjectLabel;
 	private DispatchAsync dispatchAsync;
 	private BrowserMessages messages;
-	//private FlowPanel panel;	
 	private Display display;
 	private EventBus eventBus;
 	private SafeHtml emptyHtml;

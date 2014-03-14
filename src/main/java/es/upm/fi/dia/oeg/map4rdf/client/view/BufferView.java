@@ -58,7 +58,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	private BrowserResources browserResources;
 	private BrowserMessages browserMessages;
 	private WidgetFactory widgetFactory;
-	//private Grid mainGrid;
 	private Anchor anchorResource;
 	private FlowPanel panelAnchorResource;
 	private TextBox searchTextBox;
@@ -92,7 +91,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	private Widget createUi() {
 		
 		ScrollPanel mainPanel = new ScrollPanel();
-		//mainPanel.setWidth("160px");
 		VerticalPanel panel=new VerticalPanel();
 		panel.setWidth("140px");
 		Label mainLabel = new Label(browserMessages.bufferIntro());
@@ -156,7 +154,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		panelAnchorResource= new FlowPanel();
 		panelAnchorResource.add(anchorResource);
 		panelAnchorResource.setWidth("142px");
-		//panelAnchorResource.setSize("142px", "42px");
 		panelAnchorResource.setStyleName(browserResources.css().searchPanel());
 		removeResourceGrid.setWidget(0, 0, center);
 		removeResourceGrid.setWidget(1, 0, panelAnchorResource);
@@ -250,7 +247,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				}
 			});
 		}
-		//mapPresenter.drawGeoResouces(resources, pointStyle);
 	}
 	private void generateWidgetResults(List<GeoResource> results){
 		FlowPanel flowPanel=new FlowPanel();
@@ -318,8 +314,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		String label=LocaleUtil.getBestLabel(resource);
 		anchorResource.setText(label);
 		anchorResource.setHref(resource.getUri());
-		/*anchorResource.setTarget("_blank");
-		panelAnchorResource.setHeight(anchorResource.getOffsetHeight()+"px");*/
 		this.resource=resource;
 		this.geometry=geometry;
 		resourcePanel.clear();

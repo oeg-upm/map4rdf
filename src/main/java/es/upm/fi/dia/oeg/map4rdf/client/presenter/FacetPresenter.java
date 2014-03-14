@@ -130,13 +130,9 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 	@Override
 	protected void onRevealDisplay() {
-		
 		if (getDisplay().isEmpty()) {
 			loadFacets();
 		}
-		 //else {
-			//	eventBus.fireEvent(new FacetConstraintsChangedEvent(constraints));
-			//}
 	}
 	
 }

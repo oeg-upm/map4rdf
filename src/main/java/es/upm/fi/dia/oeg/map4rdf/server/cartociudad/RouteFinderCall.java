@@ -88,7 +88,7 @@ public class RouteFinderCall {
 			logger.error("ERROR DURING URL CREATION::: ", e);
 			return null;
 		} catch (SocketTimeoutException ste){
-			//logger.error("SOCKECT TIMEOUT EXCEPTION::: ",ste);
+			logger.error("SOCKECT TIMEOUT EXCEPTION::: ",ste);
 		} catch (IOException e) {
 			logger.error("ERROR DURING REPOSITORY COMMUNICATION::: ", e);
 			return null;

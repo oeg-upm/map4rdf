@@ -56,13 +56,8 @@ public class AdditionalInfoExecuter {
 			@Override
 			public void onSuccess(SingletonResult<GetAddInfoConfigResult> result) {
 				addInfoConfig=result.getValue();
-				//Map<String,String> toReturn = new HashMap<String, String>();
 				AdditionalInfoReturn toReturn=new AdditionalInfoReturn();
 				for(AdditionalInfo addiInfo:addInfoConfig.getAdditionalsInfo()){
-					/*toReturn.put("Endpoint:",addiInfo.getEndpoint());
-					toReturn.put("Query:", addiInfo.getQuery());
-					toReturn.put("Parameters:", addiInfo.getQueryParametersResults().toString());
-					toReturn.put("Result", addiInfo.getResult());*/
 					toReturn=analizeJSON(addiInfo, toReturn);
 				}
 				if(doCallbacks.containsKey(myId) && doCallbacks.get(myId)){
@@ -119,8 +114,6 @@ public class AdditionalInfoExecuter {
 									&& valor.get(res.getUri()).isObject().get("value")!=null
 									&& valor.get(res.getUri()).isObject().get("value").isString()!=null){
 								String anadir=valor.get(res.getUri()).isObject().get("value").isString().toString().replace("\"", "");
-								
-								//x= punto.get("valueX").isObject().get("value").isString().toString().replace("\"", "");
 								if(!infoReturn.getOriginalValues().containsKey(res.getParameter())){
 									infoReturn.getOriginalValues().put(res.getParameter(), anadir);
 								}
