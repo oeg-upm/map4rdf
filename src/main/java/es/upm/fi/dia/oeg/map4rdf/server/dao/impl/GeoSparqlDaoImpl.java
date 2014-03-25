@@ -498,9 +498,6 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				query.append("} UNION");
 			}
 			query.delete(query.length() - 5, query.length());
-			for (FacetConstraint constraint : constraints) {
-				query.append(" OPTIONAL{ ?r <" + constraint.getFacetId() + "> ?facetType. }.");
-			}
 		}
 		//filters
 		if (boundingBox!=null) {
