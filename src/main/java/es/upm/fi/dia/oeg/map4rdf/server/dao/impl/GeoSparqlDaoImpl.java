@@ -215,10 +215,12 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	public List<Facet> getFacets(String predicateUri, BoundingBox boundingBox) throws DaoException {
 		Map<String, Facet> result = new HashMap<String, Facet>();
 		StringBuilder queryBuffer = new StringBuilder();
+		queryBuffer.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		queryBuffer.append("select distinct ?class ?label where { ");
-		queryBuffer.append("?x <" + Geo.geometry + "> ?g. ");
+		queryBuffer.append("?x geosparql:hasGeometry ?g. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
-		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }}");
+		queryBuffer.append("optional {?class <<" + RDFS.label + "> ?label . }");
+		queryBuffer.append("}");
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
 
 		try {
@@ -479,15 +481,15 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
+		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?geoType ?seeAlso ?facetID ?facetValueID ");
 		query.append("WHERE { ");
-		query.append("?r <" + Geo.geometry + ">  ?geo. ");
 		/*query.append("?r <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlgml.");
 		query.append("?geosparqlgml <http://www.opengis.net/ont/geosparql/asGML>  ?gml.");*/
-		query.append("?r <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlwkt.");
-		query.append("?geosparqlwkt <http://www.opengis.net/ont/geosparql/asWKT>  ?wkt.");
+		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
 		query.append("?geosparqlwkt <"+RDF.type+"> ?geoType.");
-		query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
+		//query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
 		if (constraints != null) {
@@ -500,9 +502,9 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			query.delete(query.length() - 5, query.length());
 		}
 		//filters
-		if (boundingBox!=null) {
+		/*if (boundingBox!=null) {
 			query = super.addBoundingBoxFilter(query, boundingBox);
-		}
+		}*/
 		query.append("}");
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
