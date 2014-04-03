@@ -43,12 +43,14 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
  */
 public class GeoUtils {
 	private static final Logger LOG = Logger.getLogger(es.upm.fi.dia.oeg.map4rdf.server.util.GeoUtils.class);
+	//If you modify this enum remember to modify validWKTTypes String and transformWKTtoOEG method.
 	private static enum WKTTypes{Point, LineString, Polygon}
+	private static String validWKTTypes="{Point, LineString, Polygon}";
 	public static double getDistance(TwoDimentionalCoordinate point1, TwoDimentionalCoordinate point2) {
 		return Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2));
 	}
-	public static List<Geometry> getWKTGeometries(String uri ,String GMLText, String WKTText){
-		String crs=TwoDimentionalCoordinateBean.getDefaultProjection();
+	public static List<Geometry> getWKTGeometries(String uri ,String GMLText, String WKTText,String projection){
+		String crs=projection;
 		/*if(GMLText.contains("srsName")){
 			String parseText=GMLText.substring(GMLText.indexOf("srsName"), GMLText.indexOf(" ", GMLText.indexOf("srsName")));
 			parseText=parseText.replace(" ", "");
@@ -67,14 +69,14 @@ public class GeoUtils {
 		String realWKTText="";
 		int firtsIndex=-1;
 		for(WKTTypes i: WKTTypes.values()){
-			int index=WKTText.indexOf(i.toString());
+			int index=WKTText.toLowerCase().indexOf(i.toString().toLowerCase());
 			if(index>=0 && (index<firtsIndex || firtsIndex==-1)){
 				firtsIndex=index;
 			}
 		}
 		
 		if(firtsIndex==-1){
-			printWKTError(uri,"Not found valid WKTType. Valid types are:"+WKTTypes.values(), WKTText);
+			printWKTError(uri,"Not found valid WKTType. Valid types are:"+validWKTTypes, WKTText);
 			return null;
 		}
 		realWKTText=WKTText.substring(firtsIndex, WKTText.length());
@@ -105,8 +107,8 @@ public class GeoUtils {
 		return transforWKTtoOEG(uri, realWKTText, crs);
 	}
 	private static List<Geometry> transforWKTtoOEG(String uri,String realWKTText,String crs){
-		if(realWKTText.contains(WKTTypes.Point.toString())){
-			String stringPoints=realWKTText.replace(WKTTypes.Point.toString(), "");
+		if(realWKTText.toLowerCase().contains(WKTTypes.Point.toString().toLowerCase())){
+			String stringPoints=realWKTText.toLowerCase().replace(WKTTypes.Point.toString().toLowerCase(), "");
 			List<TwoDimentionalCoordinate> points=extractTwoDimentionalCoordinate(uri, crs, stringPoints);
 			if(!points.isEmpty()){
 				List<Geometry> geometries= new ArrayList<Geometry>();
@@ -117,8 +119,8 @@ public class GeoUtils {
 			}
 			return null;
 		}
-		if(realWKTText.contains(WKTTypes.LineString.toString())){
-			String stringLineString=realWKTText.replace(WKTTypes.LineString.toString(), "");
+		if(realWKTText.toLowerCase().contains(WKTTypes.LineString.toString().toLowerCase())){
+			String stringLineString=realWKTText.toLowerCase().replace(WKTTypes.LineString.toString().toLowerCase(), "");
 			stringLineString=stringLineString.replaceAll(" +", " ");;
 			stringLineString=stringLineString.replace(')', 'z');
 			stringLineString=stringLineString.replaceAll("z ,", "z,");
@@ -138,8 +140,8 @@ public class GeoUtils {
 			return geometries;
 			
 		}
-		if(realWKTText.contains(WKTTypes.Polygon.toString())){
-			String stringLineString=realWKTText.replace(WKTTypes.Polygon.toString(), "");
+		if(realWKTText.toLowerCase().contains(WKTTypes.Polygon.toString().toLowerCase())){
+			String stringLineString=realWKTText.toLowerCase().replace(WKTTypes.Polygon.toString().toLowerCase(), "");
 			stringLineString=stringLineString.replaceAll(" +", " ");;
 			stringLineString=stringLineString.replace(')', 'z');
 			stringLineString=stringLineString.replaceAll("z ,", "z,");
