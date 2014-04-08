@@ -63,7 +63,6 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 import es.upm.fi.dia.oeg.map4rdf.share.PolygonBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
-import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Year;
 
@@ -488,6 +487,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
+		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
 		query.append("WHERE { ");
 		/*query.append("?r <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlgml.");
@@ -508,9 +508,9 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			query.delete(query.length() - 5, query.length());
 		}
 		//filters
-		/*if (boundingBox!=null) {
-			query = super.addBoundingBoxFilter(query, boundingBox);
-		}*/
+		if (boundingBox!=null) {
+			query = addGeoSparqlBoundingBoxFilter(query, boundingBox);
+		}
 		query.append("}");
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
@@ -555,6 +555,18 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("}");
 		return query.toString();
 	}
-
-	
+	private StringBuilder addGeoSparqlBoundingBoxFilter(StringBuilder originalQuery, BoundingBox boundingBox) {
+		StringBuilder query= new StringBuilder(originalQuery.toString());
+		query.append("?r geosparql:hasGeometry  ?geosparqlwkttocompare.");
+		query.append("?geosparqlwkttocompare geosparql:asWKT  ?wkttocompare.");
+		query.append(" FILTER(");
+		query.append("strdf:intersects(\"POLYGON((");
+		query.append(boundingBox.getTop().getX()+" "+boundingBox.getTop().getY()+", ");
+		query.append(boundingBox.getRight().getX()+" "+boundingBox.getRight().getY()+", ");
+		query.append(boundingBox.getBottom().getX()+" "+boundingBox.getBottom().getY()+", ");
+		query.append(boundingBox.getLeft().getX()+" "+boundingBox.getLeft().getY()+", ");
+		query.append(boundingBox.getTop().getX()+" "+boundingBox.getTop().getY());
+		query.append("))\"^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
+		return query;
+	}
 }
