@@ -39,28 +39,18 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.server.util.GeoUtils;
-import es.upm.fi.dia.oeg.map4rdf.server.vocabulary.Geo;
-import es.upm.fi.dia.oeg.map4rdf.server.vocabulary.GeoLinkedDataEsOwlVocabulary;
-import es.upm.fi.dia.oeg.map4rdf.server.vocabulary.Scovo;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.Facet;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResourceOverlay;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
-import es.upm.fi.dia.oeg.map4rdf.share.Point;
-import es.upm.fi.dia.oeg.map4rdf.share.PointBean;
-import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
-import es.upm.fi.dia.oeg.map4rdf.share.PolyLineBean;
-import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
-import es.upm.fi.dia.oeg.map4rdf.share.PolygonBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
@@ -92,7 +82,6 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
-		System.out.println("Llaman a obtener recursos");
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
@@ -104,6 +93,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String uri = solution.getResource("r").getURI();
 					String geoUri = solution.getResource("geosparqlwkt").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
+					//TODO: Remove this if when we can obtain crs in endpoint.
 					if(wkt.toLowerCase().contains("crs84")){
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
@@ -165,19 +155,32 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			while (queryResult.hasNext()) {
 				QuerySolution solution = queryResult.next();
 				try {
-					String geoUri = solution.getResource("geo").getURI();
-					String geoTypeUri = solution.getResource("geoType").getURI();
-					if (resource == null) {
-						resource = new GeoResource(uri, getGeometry(geoUri, geoTypeUri));
-					} else if (!resource.hasGeometry(geoUri)) {
-						resource.addGeometry(getGeometry(geoUri, geoTypeUri));
-					}
-					if (solution.contains("label")) {
-						Literal labelLiteral = solution.getLiteral("label");
-						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
+					String geoUri = solution.getResource("geosparql").getURI();
+					String wkt = solution.getLiteral("wkt").getString();
+					//TODO: Remove this "if" when we can obtain crs in endpoint.
+					if(wkt.toLowerCase().contains("crs84")){
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,TwoDimentionalCoordinateBean.getDefaultProjection());
+						if(!geometries.isEmpty()){
+							resource = new GeoResource(uri, geometries.get(0));
+							for(int i=1;i<geometries.size();i++){
+								resource.addGeometry(geometries.get(i));
+							}
+						}
+						if (solution.contains("label")) {
+							Literal labelLiteral = solution.getLiteral("label");
+							resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
+						}
+						if(solution.contains("seeAlso")){
+							String seeAlso = solution.getResource("seeAlso").getURI();
+							if(seeAlso.toString().toLowerCase().contains("wikipedia")){
+								resource.addWikipediaURL(seeAlso);
+							}
+						}
 					}
 				} catch (NumberFormatException e) {
-					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
+					LOG.warn("Invalid Latitud or Longitud value: ",e);
+				} catch (Exception e) {
+					LOG.fatal("Unexpected error ocurred: ",e);
 				}
 			}
 			return resource;
@@ -191,29 +194,8 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	@Override
 	public List<GeoResourceOverlay> getGeoResourceOverlays(StatisticDefinition statisticDefinition,
 			BoundingBox boundingBox, Set<FacetConstraint> constraints) throws DaoException {
-
-		List<GeoResourceOverlay> result = new ArrayList<GeoResourceOverlay>();
-
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
-				createGetStatisticsQuery(boundingBox, statisticDefinition));
-
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-				String uri = solution.getResource("r").getURI();
-				GeoResource resource = getGeoResource(uri);
-				String statUri = solution.getResource("stat").getURI();
-				double statValue = solution.getLiteral("statValue").getDouble();
-				GeoResourceOverlay overlay = new GeoResourceOverlay(statUri, resource, statValue);
-				result.add(overlay);
-			}
-			return result;
-		} catch (Exception e) {
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
+		//Nothing to do
+		return new ArrayList<GeoResourceOverlay>();
 	}
 
 	@Override
@@ -254,241 +236,32 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		}
 	}
 
-	public Geometry getGeometry(String geoUri, String geoType) throws DaoException {
-		if (geoType.equals(Geo.Point.getURI())) {
-			return getPoint(geoUri);
-		}
-		if (geoType.equals(GeoLinkedDataEsOwlVocabulary.Curva.getURI())) {
-			return getPolyline(geoUri);
-		}
-		if (geoType.equals(GeoLinkedDataEsOwlVocabulary.Poligono.getURI())) {
-			return getPolygon(geoUri);
-		}
-		return null;
-	}
-
-	public PolyLine getPolyline(String uri) throws DaoException {
-		List<Point> points = getGeometryPoints(uri);
-		return points.isEmpty() ? null : new PolyLineBean(uri, points);
-	}
-
-	public Polygon getPolygon(String uri) throws DaoException {
-		List<Point> points = getGeometryPoints(uri);
-		return points.isEmpty() ? null : new PolygonBean(uri, points);
-	}
-
-	public List<Point> getGeometryPoints(String uri) throws DaoException {
-		List<Point> points = new ArrayList<Point>();
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, createGetGeometryPointsQuery(uri));
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-				try {
-					String pointUri = solution.getResource("p").getURI();
-					points.add(getPoint(pointUri));
-				} catch (NumberFormatException e) {
-					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
-				}
-			}
-		} catch (Exception e) {
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
-		return points;
-	}
-
-	public Point getPoint(String uri) throws DaoException {
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, createGetPointQuery(uri));
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-				try {
-					if(solution.contains("lat") 
-							&& !solution.getLiteral("lat").getString().equals("") 
-							&& solution.contains("lng") 
-							&& !solution.getLiteral("lng").getString().equals("")){
-						double lat = solution.getLiteral("lat").getDouble();
-						double lng = solution.getLiteral("lng").getDouble();
-						return new PointBean(uri, lng, lat);
-					}
-					if(solution.contains("coordX")
-							&& !solution.getLiteral("coordX").getString().equals("")
-							&& solution.contains("coordY")
-							&& !solution.getLiteral("coordY").getString().equals("")
-							&& solution.contains("crs")
-							&& !solution.getLiteral("crs").getString().equals("")){
-						double lat = solution.getLiteral("coordY").getDouble();
-						double lng = solution.getLiteral("coordX").getDouble();
-						String crs = solution.getLiteral("crs").getString();
-						return new PointBean(uri, lng, lat,crs);
-					}
-				} catch (NumberFormatException e) {
-					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
-				}
-			}
-		} catch (Exception e) {
-			LOG.error(e);
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
-		return null;
-	}
-
 	@Override
 	public List<Year> getYears(String datasetUri) throws DaoException {
-		List<Year> years = new ArrayList<Year>();
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, createGetYearsQuery(datasetUri));
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-				try {
-					String yearUri = solution.getResource("yearUri").getURI();
-					int yearVal = solution.getLiteral("yearVal").getInt();
-					years.add(new Year(yearUri, yearVal));
-				} catch (NumberFormatException e) {
-					LOG.warn("Invalid literal value: " + e.getMessage());
-				}
-			}
-			return years;
-		} catch (Exception e) {
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
+		//Nothing to do.
+		return new ArrayList<Year>();
 	}
 
 	@Override
 	public List<Resource> getStatisticDatasets() throws DaoException {
-		Map<String, Resource> result = new HashMap<String, Resource>();
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, createGetStatisticDatasetsQuery());
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-
-				String uri = solution.getResource("uri").getURI();
-				Resource resource = result.get(uri);
-				if (resource == null) {
-					resource = new Resource(uri);
-					result.put(uri, resource);
-				}
-				if (solution.contains("label")) {
-					Literal labelLiteral = solution.getLiteral("label");
-					resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
-				}
-
-			}
-			return new ArrayList<Resource>(result.values());
-		} catch (Exception e) {
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
+		//Nothing to do.
+		return new ArrayList<Resource>();
 	}
 	@Override
 	public List<GeoResource> getNextPoints(BoundingBox boundingBox, int max) throws DaoException {
-		
-		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
-
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
-				createGetNextPointsQuery(boundingBox, max));
-
-		try {
-			ResultSet queryResult = execution.execSelect();
-			while (queryResult.hasNext()) {
-				QuerySolution solution = queryResult.next();
-				try {
-					String uri = solution.getResource("r").getURI();
-					String geoUri = solution.getResource("geo").getURI();
-					String geoTypeUri = solution.getResource("geoType").getURI();
-					GeoResource resource = result.get(uri);
-					if (resource == null) {
-						resource = new GeoResource(uri, getGeometry(geoUri, geoTypeUri));
-						result.put(uri, resource);
-					} else if (!resource.hasGeometry(geoUri)) {
-						resource.addGeometry(getGeometry(geoUri, geoTypeUri));
-					}
-					if (solution.contains("label")) {
-						Literal labelLiteral = solution.getLiteral("label");
-						resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
-					}
-				} catch (NumberFormatException e) {
-					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
-				}
-			}
-			return new ArrayList<GeoResource>(result.values());
-		} catch (Exception e) {
-			throw new DaoException("Unable to execute SPARQL query", e);
-		} finally {
-			execution.close();
-		}
-	}
-	private String createGetNextPointsQuery(BoundingBox boundingBox, int max){
-		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?label ?geo ?geoType ?lat ?lng ");
-		query.append("WHERE { ");
-		query.append("?r <" + Geo.geometry + ">  ?geo. ");
-		query.append("?geo <" + RDF.type + "> ?geoType . ");
-		query.append("?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".");
-		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
-		//filters
-		if (boundingBox!=null) {
-			query = super.addBoundingBoxFilter(query, boundingBox);
-		}
-		query.append("}");
-		if (max >0) {
-			query.append(" LIMIT " + max);
-		}
-		return query.toString();
-	}
-
-	private String createGetStatisticDatasetsQuery() {
-		StringBuilder query = new StringBuilder("SELECT DISTINCT ?uri ?label WHERE { ");
-		query.append("?uri <" + RDF.type + ">  <" + Scovo.Dataset + "> . ");
-		query.append("OPTIONAL { ?uri <" + RDFS.label + "> ?label } .");
-		query.append("}");
-		return query.toString();
-	}
-
-	private String createGetYearsQuery(String datasetUri) {
-		StringBuilder query = new StringBuilder("SELECT DISTINCT ?yearUri ?yearVal WHERE { ");
-		query.append("_:stat <" + Scovo.dataset + ">  <" + datasetUri + "> . ");
-		query.append("_:stat <" + Scovo.dimension + ">  ?yearUri . ");
-		query.append("?yearUri <" + RDF.type + ">  <" + GeoLinkedDataEsOwlVocabulary.Anyo + "> . ");
-		query.append("?yearUri <" + RDF.value + ">  ?yearVal . ");
-		query.append("}");
-		return query.toString();
-	}
-
-	private String createGetGeometryPointsQuery(String uri) {
-		StringBuilder query = new StringBuilder("SELECT ?p WHERE { ");
-		query.append("<" + uri + "> <" + GeoLinkedDataEsOwlVocabulary.formadoPor + ">  ?p . ");
-		query.append("?p <" + RDF.type + ">  <" + Geo.Point + "> . ");
-		query.append("?p <" + GeoLinkedDataEsOwlVocabulary.orden + ">  ?o . ");
-		query.append("} ORDER BY ASC(?o)");
-		return query.toString();
-	}
-
-	private String createGetPointQuery(String uri) {
-		StringBuilder query = new StringBuilder("PREFIX geo-oeg: <http://www.oeg-upm.net/ontologies/geo#> ");
-		query.append("SELECT ?lat ?lng ?coordX ?coordY ?crs WHERE { ");
-		query.append("{<" + uri + "> <" + Geo.lat + ">  ?lat ; ");
-		query.append("<" + Geo.lng + "> ?lng . }");
-		query.append(" UNION ");
-		query.append("{<" + uri + "> " +"geo-oeg:coordX ?coordX; geo-oeg:coordY ?coordY; geo-oeg:crs ?crs }");
-		query.append("}");
-		return query.toString();
+		return getGeoResources(boundingBox, null,max);
 	}
 	
+		
 	private String createGetResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
-		query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+		if(constraints!=null && constraints.isEmpty()){
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+		}else{
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ");
+		}
 		query.append("WHERE { ");
 		/*query.append("?r <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlgml.");
 		query.append("?geosparqlgml <http://www.opengis.net/ont/geosparql/asGML>  ?gml.");*/
@@ -519,39 +292,14 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		return query.toString();
 	}
 
-	private String createGetStatisticsQuery(BoundingBox boundingBox, StatisticDefinition statisticDefinition) {
-		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?r ?stat ?statValue ?geo ?lat ?lng ");
-		query.append("WHERE { ");
-		query.append("?stat <" + Scovo.dimension + "> ?r. ");
-		query.append("?r <" + Geo.geometry + "> _:geo. ");
-		query.append("?r <" + Geo.geometry + ">  ?geo. ");
-		query.append("?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".");
-		query.append("?stat <" + Scovo.dataset + "> <" + statisticDefinition.getDataset() + "> .");
-		for (String dimension : statisticDefinition.getDimensions()) {
-			query.append("?stat <" + Scovo.dimension + "> <" + dimension + ">. ");
-		}
-		query.append("?stat <" + RDF.value + "> ?statValue. ");
-
-		//filters
-		if (boundingBox!=null) {
-			query = addBoundingBoxFilter(query, boundingBox);
-		}
-		
-		query.append("} LIMIT 1000");
-		return query.toString();
-	}
-
 	private String createGetResourceQuery(String uri) {
-		StringBuilder query = new StringBuilder("SELECT ?label ?geo ?geoType ?geosparqlgml  ?gml  ?geosparqlwkt  ?wkt ");
+		StringBuilder query = new StringBuilder("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
+		query.append("SELECT ?label ?geosparql ?wkt ?seeAlso ");
 		query.append("WHERE { ");
-		query.append("<" + uri + "> <" + Geo.geometry + ">  ?geo. ");
-		query.append("?geo <" + RDF.type + "> ?geoType . ");
+		query.append("<" + uri + "> geosparql:hasGeometry ?geosparql. ");
+		query.append("?geosparql geosparql:asWKT ?wkt.");
 		query.append("OPTIONAL { <" + uri + "> <" + RDFS.label + "> ?label } .");
-		query.append("?geo <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlgml.");
-		query.append("?geosparqlgml <http://www.opengis.net/ont/geosparql/asGML>  ?gml.");
-		query.append("?geo <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlwkt.");
-		query.append("?geosparqlwkt <http://www.opengis.net/ont/geosparql/asWKT>  ?wkt.");
-		query.append("geosparqlwkt <"+RDF.type+"> ?geoType.");
+		query.append("OPTIONAL { <" + uri + "> <" + RDFS.seeAlso + "> ?seeAlso}. ");
 		query.append("}");
 		return query.toString();
 	}
