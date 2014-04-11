@@ -38,8 +38,11 @@ public interface BoundingBox {
 	TwoDimentionalCoordinate getLeft();
 	TwoDimentionalCoordinate getRight();
 	
+	//Can only be accessed in client mode
 	void transform(String from, String to);
 
+	String getProjection();
+	
 	TwoDimentionalCoordinate getCenter();
 
 }

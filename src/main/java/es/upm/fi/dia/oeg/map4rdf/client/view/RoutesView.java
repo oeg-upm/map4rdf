@@ -385,7 +385,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			for(Point point:geoRG.getGeometry().getPoints()){
 				LonLat openPoint= OpenLayersAdapter.getLatLng(point);
 				openPoint.transform(point.getProjection(), "EPSG:4326");
-				TwoDimentionalCoordinate twoCoor=OpenLayersAdapter.getTwoDimentionalCoordinate(openPoint);
+				TwoDimentionalCoordinate twoCoor=OpenLayersAdapter.getTwoDimentionalCoordinate(openPoint,"EPSG:4326");
 				points.add(new PointBean(point.getUri(), twoCoor.getX(),twoCoor.getY(),"EPSG:4326"));
 			}
 		}

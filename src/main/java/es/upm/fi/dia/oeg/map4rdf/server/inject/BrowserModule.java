@@ -49,20 +49,21 @@ public class BrowserModule extends AbstractModule {
 
 	@Provides
 	Map4rdfDao provideDao(@Named(ParameterNames.GEOMETRY_MODEL) Constants.GeometryModel model,
-			@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
+			@Named(ParameterNames.ENDPOINT_URL) String endpointUri,
+			@Named(ParameterNames.DEFAULT_PROJECTION) String defaultProjection) {
 		switch (model) {
 		case OEG:
-			return new GeoLinkedDataDaoImpl(endpointUri);
+			return new GeoLinkedDataDaoImpl(endpointUri,defaultProjection);
 		case DBPEDIA:
-			return new DbPediaDaoImpl(endpointUri);
+			return new DbPediaDaoImpl(endpointUri,defaultProjection);
 		case VCARD:
-			return new VCardDaoImpl(endpointUri);
+			return new VCardDaoImpl(endpointUri,defaultProjection);
 		case GEOSPARQL:
-			return new GeoSparqlDaoImpl(endpointUri);
+			return new GeoSparqlDaoImpl(endpointUri,defaultProjection);
 		case AEMET:
-			return new AemetDaoImpl(endpointUri);
+			return new AemetDaoImpl(endpointUri,defaultProjection);
 		case WEBNMASUNO:
-			return new WebNMasUnoImpl(endpointUri);
+			return new WebNMasUnoImpl(endpointUri,defaultProjection);
 		default:
 			// make compiler happys
 			return null;

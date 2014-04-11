@@ -34,7 +34,6 @@ import es.upm.fi.dia.oeg.map4rdf.server.conf.FacetedBrowserConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.MapsConfigurationServer;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.ParameterDefaults;
-import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
@@ -76,7 +75,6 @@ public class BrowserConfigModule extends AbstractModule {
 		if (config.getConfigurationParamValue(ParameterNames.DEFAULT_PROJECTION)!=null){
 			bindConstant().annotatedWith(Names.named(ParameterNames.DEFAULT_PROJECTION)).to(
 				config.getConfigurationParamValue(ParameterNames.DEFAULT_PROJECTION));
-			TwoDimentionalCoordinateBean.setDefaultProjection(config.getConfigurationParamValue(ParameterNames.DEFAULT_PROJECTION));
 		}
 		if(config.getConfigurationParamValue(ParameterNames.ADDITIONAL_INFO)!=null
 				&& !config.getConfigurationParamValue(ParameterNames.ADDITIONAL_INFO).isEmpty()){

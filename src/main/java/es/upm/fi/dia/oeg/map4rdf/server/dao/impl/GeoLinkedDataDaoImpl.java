@@ -72,8 +72,8 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	private static final Logger LOG = Logger.getLogger(GeoLinkedDataDaoImpl.class);
 	
 	@Inject
-	public GeoLinkedDataDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
-		super(endpointUri);
+	public GeoLinkedDataDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,String defaultProjection) {
+		super(endpointUri,defaultProjection);
 	}
 
 	@Override
@@ -295,7 +295,7 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							&& !solution.getLiteral("lng").getString().equals("")){
 						double lat = solution.getLiteral("lat").getDouble();
 						double lng = solution.getLiteral("lng").getDouble();
-						return new PointBean(uri, lng, lat);
+						return new PointBean(uri, lng, lat,defaultProjection);
 					}
 					if(solution.contains("coordX")
 							&& !solution.getLiteral("coordX").getString().equals("")

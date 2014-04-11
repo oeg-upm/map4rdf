@@ -2,24 +2,24 @@ package es.upm.fi.dia.oeg.map4rdf.client.action;
 
 
 import net.customware.gwt.dispatch.shared.Action;
-import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
+import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 public class GetBufferGeoResources implements Action<GetBufferGeoResourcesResult> {
 	private String geoResourceUri;
 	private double radiousKM;
-	private Geometry geometry;
-	public Geometry getGeometry() {
-		return geometry;
+	private TwoDimentionalCoordinate center;
+	public TwoDimentionalCoordinate getCenter() {
+		return center;
 	}
-	public void setGeometry(Geometry geometry) {
-		this.geometry = geometry;
+	public void setCenter(TwoDimentionalCoordinate center) {
+		this.center = center;
 	}
 	public GetBufferGeoResources(){
 		
 	}
-	public GetBufferGeoResources(String geoResourceUri, Geometry geometry, double radiousKM){
+	public GetBufferGeoResources(String geoResourceUri, TwoDimentionalCoordinate center, double radiousKM){
 		this.geoResourceUri=geoResourceUri;
-		this.geometry=geometry;
+		this.center=center;
 		this.radiousKM=radiousKM;
 	}
 	public String getGeoResourceUri() {

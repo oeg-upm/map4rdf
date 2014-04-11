@@ -41,9 +41,11 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.ResultsPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
+import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
+import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoprocessingType;
@@ -221,7 +223,8 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				return;
 			}
 			mapPresenter.getDisplay().startProcessing();
-			GetBufferGeoResources action= new GetBufferGeoResources(resource.getUri(), geometry, radiousKM);
+			BoundingBox boundingBox = GeoUtils.computeBoundingBox(geometry.getPoints(), "EPSG:4326");
+			GetBufferGeoResources action= new GetBufferGeoResources(resource.getUri(), boundingBox.getCenter(), radiousKM);
 			dispatchAsync.execute(action, new AsyncCallback<GetBufferGeoResourcesResult>() {
 
 				@Override

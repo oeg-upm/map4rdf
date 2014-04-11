@@ -53,7 +53,6 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResourceOverlay;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
-import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Year;
 
 /**
@@ -64,8 +63,8 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	private static final Logger LOG = Logger.getLogger(GeoSparqlDaoImpl.class);
 	
 	@Inject
-	public GeoSparqlDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
-		super(endpointUri);
+	public GeoSparqlDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,String defaultProjection) {
+		super(endpointUri,defaultProjection);
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					if(wkt.toLowerCase().contains("crs84")){
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,TwoDimentionalCoordinateBean.getDefaultProjection());
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
 						if(!geometries.isEmpty()){
 							resource = new GeoResource(uri, geometries.get(0));
 							for(int i=1;i<geometries.size();i++){
@@ -106,7 +105,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							result.put(uri, resource);
 						}
 					} else if (!resource.hasGeometry(geoUri)) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,TwoDimentionalCoordinateBean.getDefaultProjection());
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
 						if(!geometries.isEmpty()){
 							for(int i=0;i<geometries.size();i++){
 								resource.addGeometry(geometries.get(i));
@@ -159,7 +158,8 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String wkt = solution.getLiteral("wkt").getString();
 					//TODO: Remove this "if" when we can obtain crs in endpoint.
 					if(wkt.toLowerCase().contains("crs84")){
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,TwoDimentionalCoordinateBean.getDefaultProjection());
+						//TODO: Solve problem with only accept EPSG:4326
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
 						if(!geometries.isEmpty()){
 							resource = new GeoResource(uri, geometries.get(0));
 							for(int i=1;i<geometries.size();i++){

@@ -26,6 +26,8 @@ package es.upm.fi.dia.oeg.map4rdf.share;
 
 import java.io.Serializable;
 
+import org.gwtopenmaps.openlayers.client.LonLat;
+
 
 /**
  * @author Alexander De Leon
@@ -95,5 +97,14 @@ public class TwoDimentionalCoordinateBean implements TwoDimentionalCoordinate, S
 		}
 		return true;
 	}
-
+	
+	//Can only be accessed in client mode
+	public void transform(String from, String to) {
+		LonLat tmp = new LonLat(x, y);	
+		tmp.transform(from ,to);
+		x=tmp.lon();
+		y=tmp.lat();
+		this.projection=to;
+	}
+	
 }

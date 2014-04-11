@@ -114,6 +114,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
     private Widget resultWidget;
 	private List<GeoResource> listGeoResource;
 	private String statisticsURL="";
+	private String serverProjection="";
     
     
     @Inject
@@ -258,6 +259,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		List<String> parameters= new ArrayList<String>();
 		parameters.add(ParameterNames.STATISTICS_SERVICE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
+		parameters.add(ParameterNames.DEFAULT_PROJECTION);
 	    //Initialize asyn variables
 		dispatchAsync.execute(new GetMultipleConfigurationParameters(parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
@@ -281,6 +283,12 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 					widgetFactory.getDialogBox().showError(messages.configParameterNullOrEmpty(ParameterNames.STATISTICS_SERVICE_URL));
 				}else{
 					statisticsURL=stat;
+				}
+				String projection=values.getResults().get(ParameterNames.DEFAULT_PROJECTION);
+				if(projection == null || projection.isEmpty()){
+					widgetFactory.getDialogBox().showError(messages.configParameterNullOrEmpty(ParameterNames.DEFAULT_PROJECTION));
+				}else{
+					serverProjection=projection;
 				}
 				getDisplay().addWestWidget(facetPresenter.getDisplay().asWidget(), messages.facets());
 				if(result != null && result.asList().size()>0) {
@@ -373,7 +381,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
             public void onSuccess(SingletonResult<GeoResource> result) {
             	if(result.getValue()!=null){          		
             		mapPresenter.drawGeoResouces(Collections.singletonList(result.getValue()));
-                	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries()));
+                	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries(),serverProjection));
                 	mapPresenter.getDisplay().stopProcessing();
             	}else{
             		widgetFactory.getDialogBox().showError(messages.errorToLoadResourceInUrlParam());

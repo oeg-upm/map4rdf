@@ -115,9 +115,9 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		eventBus.addHandler(CloseMapMainPopupEvent.getType(), this);
 	}
 
-	public TwoDimentionalCoordinate getCurrentCenter() {
+	/*public TwoDimentionalCoordinate getCurrentCenter() {
 		return getDisplay().getCurrentCenter();
-	}
+	}*/
 
 	public BoundingBox getVisibleBox() {
 		return getDisplay().getVisibleBox();
