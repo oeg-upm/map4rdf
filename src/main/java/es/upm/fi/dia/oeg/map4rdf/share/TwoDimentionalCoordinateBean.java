@@ -36,7 +36,6 @@ public class TwoDimentionalCoordinateBean implements TwoDimentionalCoordinate, S
 	private double x;
 	private double y;
 	private String projection;
-	private static String defaultProjection;
 	TwoDimentionalCoordinateBean() {
 		// for serialization
 	}
@@ -45,22 +44,11 @@ public class TwoDimentionalCoordinateBean implements TwoDimentionalCoordinate, S
 	public Type getType() {
 		return Type.POINT;
 	}
-
-	public TwoDimentionalCoordinateBean(double x, double y) {
-		this.x = x;
-		this.y = y;
-		projection=defaultProjection;
-	}
+	
 	public TwoDimentionalCoordinateBean(double x, double y, String projection) {
 		this.x = x;
 		this.y = y;
 		this.projection=projection;
-	}
-	public static void setDefaultProjection(String projection){
-		defaultProjection=projection;
-	}
-	public static String getDefaultProjection(){
-		return defaultProjection;
 	}
 	@Override
 	public double getX() {
