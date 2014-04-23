@@ -1,7 +1,8 @@
 package es.upm.fi.dia.oeg.map4rdf.client.util;
 
 public class DrawPointStyle {
-	public enum Style {FACET, NEXT_POINTS, ROUTES, CENTER_NEXT_POINTS, SELECTED_RESOURCE}
+	public enum Style {FACET, NEXT_POINTS, ROUTES,POLYLINE_ROUTE, CENTER_NEXT_POINTS, SELECTED_RESOURCE}
+	//POLYLINE_ROUTE is a default style but is for separate route points of polyline(route).
 	private Style style;
 	private char leter;
 	private String facetHexColour="#0000FF";

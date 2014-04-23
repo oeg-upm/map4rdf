@@ -41,18 +41,18 @@ public class GetRoutePointsHandler implements ActionHandler<GetRoutePoints, GetR
 	public GetRoutePointsResult execute(GetRoutePoints action,
 			ExecutionContext context) throws ActionException {
 		List<es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point> points = new ArrayList<es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point>();
-		boolean incorrectEPSG=false;
-		for(Point point:action.getPoints()){
-			if(point.getProjection().toLowerCase().trim().equals("epsg:4326")){
-				incorrectEPSG=true;
-				break;
-			}
-		}
-		if(incorrectEPSG){
-			throw new ActionException("EPSG incorrect in some point, can't use Route service");
-		}
 		List<Point> toReturn = new ArrayList<Point>();
 		if(this.timeoutMiliSeconds!=0){
+			boolean incorrectEPSG=false;
+			for(Point point:action.getPoints()){
+				if(point.getProjection().toLowerCase().trim().equals("epsg:4326")){
+					incorrectEPSG=true;
+					break;
+				}
+			}
+			if(incorrectEPSG){
+				throw new ActionException("EPSG incorrect in some point, can't use Route service");
+			}
 			for(Point point:action.getPoints()){
 				points.add(new es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point(String.valueOf(point.getX()),String.valueOf(point.getY())));
 			}

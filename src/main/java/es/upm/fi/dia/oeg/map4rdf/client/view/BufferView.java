@@ -237,7 +237,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				@Override
 				public void onSuccess(GetBufferGeoResourcesResult result) {
 					
-					mapPresenter.drawGeoResouces(result.getListGeoResources(),pointStyle);
+					mapPresenter.drawGeoResources(result.getListGeoResources(),pointStyle);
 					mapPresenter.getDisplay().stopProcessing();
 					mapPresenter.setVisibleBox(result.getBoundingBox());
 					if(resultsBufferWidget!=null){
@@ -313,7 +313,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		List<GeoResource> geoResources=new ArrayList<GeoResource>();
 		geoResources.add(resource);
-		mapPresenter.drawGeoResouces(geoResources,new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
+		mapPresenter.drawGeoResources(geoResources,new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		String label=LocaleUtil.getBestLabel(resource);
 		anchorResource.setText(label);
 		anchorResource.setHref(resource.getUri());

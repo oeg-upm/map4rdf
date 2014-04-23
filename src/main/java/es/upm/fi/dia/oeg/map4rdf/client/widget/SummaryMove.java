@@ -18,6 +18,7 @@ public class SummaryMove {
 	private ArrayList<Integer> widgetSteps;
 	private ParametersSummaryMove parametersSummary;
 	private ArrayList<Widget> allWidgetInOrder;
+	//TODO remove geoResourceSummary of parameter and use a callback to re-positing widget.
 	private GeoResourceSummary geoResourceSummary;
 	private ArrayList<WidgetLineMove> widgetsLineMove;
 	public SummaryMove(ArrayList<Widget> allWidgetInOrder, ParametersSummaryMove parametersSummary, GeoResourceSummary geoResourceSummary){

@@ -391,7 +391,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}
 		if(route.size()<2){
 			widgetFactory.getDialogBox().showError(browserMessages.error2OrMorePoints());
-			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 			mapPresenter.getDisplay().stopProcessing();
 			return;
 		}
@@ -403,13 +403,13 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			public void onFailure(Throwable caught) {
 				
 				widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
-				mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+				mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 				mapPresenter.getDisplay().stopProcessing();
 			}
 
 			@Override
 			public void onSuccess(GetRoutePointsResult result) {
-				mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+				mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 				List<GeoResource> listGeoResource = new ArrayList<GeoResource>();
 				List<Point> points = result.getPoints();
 				if(points.isEmpty()){
@@ -419,7 +419,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 					GeoResource geoResource = new GeoResource(null,geometry);
 					listGeoResource.add(geoResource);
 					mapPresenter.getDisplay().stopProcessing();
-					mapPresenter.drawGeoResouces(listGeoResource, new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+					mapPresenter.drawGeoResources(listGeoResource, new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 					if(points.size()>=2){
 						mapPresenter.getDisplay().changeZoom(points);
 					}
@@ -494,7 +494,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		relationHandler.remove(handler);
 		rows--;
 		resizeRoutesWidget();
-		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 		if(routeDescriptionWidget!=null){
 			resultsPresenter.removeWidget(routeDescriptionWidget);
 			routeDescriptionWidget=null;
@@ -505,7 +505,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				if(i!=null){
 					List<GeoResource> resources=new ArrayList<GeoResource>();
 					resources.add(i.getResource());
-					mapPresenter.drawGeoResouces(resources, new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+route.indexOf(i))));
+					mapPresenter.drawGeoResources(resources, new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+route.indexOf(i))));
 				}
 			}
 		}else{
@@ -517,7 +517,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			}
 			List<GeoResource> resources=new ArrayList<GeoResource>();
 			resources.add(route.get(0).getResource());
-			mapPresenter.drawGeoResouces(resources, new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+number)));
+			mapPresenter.drawGeoResources(resources, new DrawPointStyle((char)(DrawPointStyle.getMinLeter()+number)));
 		}
 	}
 	private void addGeoResource(GeoResource resource, Geometry geometry,RoutesAddGeoResourceType type){
@@ -627,7 +627,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		DrawPointStyle style= new DrawPointStyle(leter);
 		List<GeoResource> list= new ArrayList<GeoResource>();
 		list.add(resource);
-		mapPresenter.drawGeoResouces(list, style);
+		mapPresenter.drawGeoResources(list, style);
 		routesWidget.setWidget(row, 0, new Image(GWT.getModuleBaseURL()+style.getImageURL()));
 		routesWidget.setWidget(row, 1, anchorContainer);
 		routesWidget.getCellFormater().setWidth(row, 1, "100%");
@@ -700,7 +700,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		DirectionsRequest request = DirectionsRequest.newInstance();
 		if(route.size()<2){
 			widgetFactory.getDialogBox().showError(browserMessages.error2OrMorePoints());
-			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+			mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 			mapPresenter.getDisplay().stopProcessing();
 			return;
 		}
@@ -770,7 +770,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			widgetFactory.getDialogBox().showError(browserMessages.errorGoogleDirections(status.toString()));
 			break;
 		}
-		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 		mapPresenter.getDisplay().stopProcessing();
 		if(routeDescriptionWidget!=null){
 			resultsPresenter.removeWidget(routeDescriptionWidget);
@@ -790,7 +790,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		mapPresenter.getDisplay().stopProcessing();		
 	}
 	private void drawSelectedRoute(DirectionsRoute directionRoute){
-		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+		mapPresenter.getDisplay().removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 		List<Point> points=new ArrayList<Point>();
 		for(int j=0;j<directionRoute.getOverview_Path().length();j++){
 			Double lat=directionRoute.getOverview_Path().get(j).getLatitude();
@@ -801,7 +801,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		GeoResource geoResource = new GeoResource(null,geometry);
 		List<GeoResource> list=new ArrayList<GeoResource>();
 		list.add(geoResource);
-		mapPresenter.drawGeoResouces(list,new DrawPointStyle(DrawPointStyle.Style.ROUTES));
+		mapPresenter.drawGeoResources(list,new DrawPointStyle(DrawPointStyle.Style.POLYLINE_ROUTE));
 		if(points.size()>=2){
 			mapPresenter.getDisplay().changeZoom(points);
 		}

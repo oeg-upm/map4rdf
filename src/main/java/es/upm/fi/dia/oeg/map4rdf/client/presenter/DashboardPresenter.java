@@ -354,7 +354,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
            		}
            		for(FacetConstraint i:constraints){
            			if(toDraw.containsKey(i.getFacetId()+i.getFacetValueId())){
-           				mapPresenter.drawGeoResouces(toDraw.get(i.getFacetId()+i.getFacetValueId()),new DrawPointStyle(i.getHexColour()));
+           				mapPresenter.drawGeoResources(toDraw.get(i.getFacetId()+i.getFacetValueId()),new DrawPointStyle(i.getHexColour()));
            			}
            		}
                	resultsPresenter.setResults(result.asList());
@@ -380,7 +380,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
             @Override
             public void onSuccess(SingletonResult<GeoResource> result) {
             	if(result.getValue()!=null){          		
-            		mapPresenter.drawGeoResouces(Collections.singletonList(result.getValue()));
+            		mapPresenter.drawGeoResources(Collections.singletonList(result.getValue()));
                 	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries(),serverProjection));
                 	mapPresenter.getDisplay().stopProcessing();
             	}else{
