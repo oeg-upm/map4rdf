@@ -115,9 +115,9 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		eventBus.addHandler(CloseMapMainPopupEvent.getType(), this);
 	}
 
-	public TwoDimentionalCoordinate getCurrentCenter() {
+	/*public TwoDimentionalCoordinate getCurrentCenter() {
 		return getDisplay().getCurrentCenter();
-	}
+	}*/
 
 	public BoundingBox getVisibleBox() {
 		return getDisplay().getVisibleBox();
@@ -127,11 +127,11 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		getDisplay().setVisibleBox(boundingBox);
 	}
 	
-	public void drawGeoResouces(List<GeoResource> resources, DrawPointStyle pointStyle) {
+	public void drawGeoResources(List<GeoResource> resources, DrawPointStyle pointStyle) {
 		getDisplay().drawGeoResouces(resources, pointStyle);
 	}
 	
-	public void drawGeoResouces(List<GeoResource> resources) {
+	public void drawGeoResources(List<GeoResource> resources) {
 		getDisplay().drawGeoResouces(resources, new DrawPointStyle());
 	}
 	

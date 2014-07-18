@@ -40,6 +40,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.conf.FacetedBrowserConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.Facet;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetGroup;
 
@@ -51,14 +52,17 @@ public class GetFacetDefinitionsHandler implements ActionHandler<GetFacetDefinit
 	private final Map4rdfDao dao;
 	private final FacetedBrowserConfiguration facetedBrowserConfiguration;
 	private final boolean automaticFacets;
+	private final String defaultProjection;
     
     
 	@Inject
 	public GetFacetDefinitionsHandler(Map4rdfDao dao, FacetedBrowserConfiguration facetedBrowserConfiguration,
-			@Named(ParameterNames.FACETS_AUTO) boolean automaticFacets) {
+			@Named(ParameterNames.FACETS_AUTO) boolean automaticFacets,
+			@Named(ParameterNames.DEFAULT_PROJECTION) String defaultProjection) {
 		this.dao = dao;
 		this.facetedBrowserConfiguration = facetedBrowserConfiguration;
 		this.automaticFacets = automaticFacets;
+		this.defaultProjection = defaultProjection;
     }
 
 	@Override
@@ -74,6 +78,11 @@ public class GetFacetDefinitionsHandler implements ActionHandler<GetFacetDefinit
 		if (automaticFacets) {
 			for (FacetGroup group : groups) {
 				try {
+					
+					if(action.getBoundingBox()!=null
+						&& !action.getBoundingBox().getProjection().toLowerCase().trim().equals(defaultProjection.toLowerCase().trim())){
+						throw new ActionException("Bounding box projection of GetFacesDefinitions (action) isn't equals to server projection");
+					}
 					for (Facet value : dao.getFacets(group.getUri(), action.getBoundingBox())) {
 						group.addFacet(value);
 					}

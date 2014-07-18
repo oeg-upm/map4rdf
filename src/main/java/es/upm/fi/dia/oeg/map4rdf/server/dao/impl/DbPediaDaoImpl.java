@@ -64,8 +64,8 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	private static final Logger LOG = Logger.getLogger(DbPediaDaoImpl.class);
 
 	@Inject
-	public DbPediaDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
-		super(endpointUri);
+	public DbPediaDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,String defaultProjection) {
+		super(endpointUri,defaultProjection);
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					double lng = solution.getLiteral("lng").getDouble();
 
 					if (resource == null) {
-						resource = new GeoResource(uri, new PointBean(uri, lng, lat));
+						resource = new GeoResource(uri, new PointBean(uri, lng, lat,defaultProjection));
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");
@@ -190,7 +190,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
-						resource = new GeoResource(uri, new PointBean(uri, lng, lat));
+						resource = new GeoResource(uri, new PointBean(uri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					}
 					if (solution.contains("label")) {
@@ -229,7 +229,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
-						resource = new GeoResource(uri, new PointBean(uri, lng, lat));
+						resource = new GeoResource(uri, new PointBean(uri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					}
 					if (solution.contains("label")) {

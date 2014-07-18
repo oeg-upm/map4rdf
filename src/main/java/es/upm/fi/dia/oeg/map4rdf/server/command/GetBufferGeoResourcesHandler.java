@@ -15,16 +15,17 @@ import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBoxBean;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
-import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 
 public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoResources, GetBufferGeoResourcesResult> {
 	private Map4rdfDao dao;
+	private String serverProjection;
 	private final double earthRadious=6356.8;
 	@Inject
-	public GetBufferGeoResourcesHandler(Map4rdfDao dao){
+	public GetBufferGeoResourcesHandler(Map4rdfDao dao,String serverProjection){
 		this.dao=dao;
+		this.serverProjection = serverProjection;
 	}
 	@Override
 	public GetBufferGeoResourcesResult execute(GetBufferGeoResources action,
@@ -33,11 +34,13 @@ public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoR
 		List<GeoResource> geoResources= new ArrayList<GeoResource>();
 		BoundingBox boundingBox=null;
 		try {
-			if(action.getGeometry().getPoints().size()<1){
-				throw new ActionException("The geometry doesn't contains points");
+			if("epsg:4326".equals(serverProjection.toLowerCase().trim())){
+				throw new ActionException("Server default projection isn't EPSG:4326, can't be used Buffer service.");
 			}
-			Point point=action.getGeometry().getPoints().iterator().next();
-			boundingBox=getBoundingBox(point.getY(),point.getX(), action.getRadiousKM());
+			if(!action.getCenter().getProjection().toLowerCase().trim().equals("epsg:4326")){
+				throw new ActionException("The center isn't in EPSG:4326 projection.");
+			}
+			boundingBox=getBoundingBox(action.getCenter().getY(),action.getCenter().getX(), action.getRadiousKM());
 			geoResources=dao.getNextPoints(boundingBox, 200);
 		} catch (DaoException e) {
 			throw new ActionException("Error with try to get nextPoints");
@@ -94,8 +97,8 @@ public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoR
 		if(right>180){
 			right=180;
 		}
-		TwoDimentionalCoordinate bottomLeft=new TwoDimentionalCoordinateBean(left, bottom);
-		TwoDimentionalCoordinate topRight=new TwoDimentionalCoordinateBean(right,top);
-		return new BoundingBoxBean(bottomLeft, topRight);
+		TwoDimentionalCoordinate bottomLeft=new TwoDimentionalCoordinateBean(left, bottom,"EPSG:4326");
+		TwoDimentionalCoordinate topRight=new TwoDimentionalCoordinateBean(right,top,"EPSG:4326");
+		return new BoundingBoxBean(bottomLeft, topRight,"EPSG:4326");
 	}
 }

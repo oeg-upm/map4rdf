@@ -31,11 +31,13 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourceOverlays;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResourceOverlay;
+import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
  * @author Alexander De Leon
@@ -44,16 +46,21 @@ public class GetGeoResourceOverlaysHandler implements
 		ActionHandler<GetGeoResourceOverlays, ListResult<GeoResourceOverlay>> {
 
 	private final Map4rdfDao dao;
-
+	private final String defaultProjection;
 	@Inject
-	public GetGeoResourceOverlaysHandler(Map4rdfDao dao) {
+	public GetGeoResourceOverlaysHandler(Map4rdfDao dao,@Named(ParameterNames.DEFAULT_PROJECTION) String defaultProjection) {
 		this.dao = dao;
+		this.defaultProjection = defaultProjection;
 	}
 
 	@Override
 	public ListResult<GeoResourceOverlay> execute(GetGeoResourceOverlays action, ExecutionContext context)
 			throws ActionException {
 		try {
+			if(action.getBoundingBox()!=null && 
+					!action.getBoundingBox().getProjection().toLowerCase().trim().equals(defaultProjection.toLowerCase().trim())){
+				throw new ActionException("Bounding box projection of GetGeoResourceOverlays (action) isn't equals to server projection");
+			}
 			List<GeoResourceOverlay> result = dao.getGeoResourceOverlays(action.getStatisticDefinition(), action
 					.getBoundingBox(), action.getFacetConstraints());
 			return new ListResult<GeoResourceOverlay>(result);

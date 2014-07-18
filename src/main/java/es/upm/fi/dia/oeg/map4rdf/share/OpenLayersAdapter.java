@@ -32,17 +32,17 @@ import org.gwtopenmaps.openlayers.client.geometry.Polygon;
 public class OpenLayersAdapter {
 
 	/* ------------- factory methods --- */
-	public static TwoDimentionalCoordinate getTwoDimentionalCoordinate(LonLat latLng) {
-		return new TwoDimentionalCoordinateBean(latLng.lon(), latLng.lat());
+	public static TwoDimentionalCoordinate getTwoDimentionalCoordinate(LonLat latLng,String toProjection) {
+		return new TwoDimentionalCoordinateBean(latLng.lon(), latLng.lat(),toProjection);
 	}
 
 	public static LonLat getLatLng(TwoDimentionalCoordinate coordinate) {
 		return new LonLat(coordinate.getX(), coordinate.getY());
 	}
 
-	public static BoundingBox getBoundingBox(Bounds bounds) {
-		return new BoundingBoxBean(new TwoDimentionalCoordinateBean(bounds.getLowerLeftX(), bounds.getLowerLeftY()),
-				new TwoDimentionalCoordinateBean(bounds.getUpperRightX(), bounds.getUpperRightY()));
+	public static BoundingBox getBoundingBox(Bounds bounds,String projection) {
+		return new BoundingBoxBean(new TwoDimentionalCoordinateBean(bounds.getLowerLeftX(), bounds.getLowerLeftY(),projection),
+				new TwoDimentionalCoordinateBean(bounds.getUpperRightX(), bounds.getUpperRightY(),projection),projection);
 	}
 
 	public static Bounds getLatLngBounds(BoundingBox boundingBox) {
@@ -59,18 +59,17 @@ public class OpenLayersAdapter {
 		return points;
 	}
 	
-	public static BoundingBox getBoudingBox(Polygon p) {
-
+	public static BoundingBox getBoudingBox(Polygon p,String fromProjection) {
 		double[][] dimTable = p.getComponents()[0].getCoordinateArray();
 		if (dimTable.length != 5) {
 			return null;
 		}
-		TwoDimentionalCoordinateBean dim1 = new TwoDimentionalCoordinateBean(dimTable[0][0],dimTable[0][1]);
-		TwoDimentionalCoordinateBean dim2 = new TwoDimentionalCoordinateBean(dimTable[1][0],dimTable[1][1]);
-		TwoDimentionalCoordinateBean dim3 = new TwoDimentionalCoordinateBean(dimTable[2][0],dimTable[2][1]);
-		TwoDimentionalCoordinateBean dim4 = new TwoDimentionalCoordinateBean(dimTable[3][0],dimTable[3][1]);
+		TwoDimentionalCoordinateBean dim1 = new TwoDimentionalCoordinateBean(dimTable[0][0],dimTable[0][1],fromProjection);
+		TwoDimentionalCoordinateBean dim2 = new TwoDimentionalCoordinateBean(dimTable[1][0],dimTable[1][1],fromProjection);
+		TwoDimentionalCoordinateBean dim3 = new TwoDimentionalCoordinateBean(dimTable[2][0],dimTable[2][1],fromProjection);
+		TwoDimentionalCoordinateBean dim4 = new TwoDimentionalCoordinateBean(dimTable[3][0],dimTable[3][1],fromProjection);
 		
-		return new BoundingBoxBean(dim1,dim2,dim3,dim4);
+		return new BoundingBoxBean(dim1,dim2,dim3,dim4,fromProjection);
 	}
 
 }

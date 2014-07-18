@@ -39,10 +39,9 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
 public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private static final Logger LOG = Logger.getLogger(AemetDaoImpl.class);
-
 	@Inject
-	public AemetDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
-		super(endpointUri);
+	public AemetDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,String defaultProjection) {
+		super(endpointUri,defaultProjection);
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					double lng = solution.getLiteral("lng").getDouble();
 
 					if (resource == null) {
-						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
+						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat,defaultProjection));
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");
@@ -164,7 +163,7 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					GeoResource resource=result.get(uri);
 					
 					if (resource == null) {
-						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
+						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					}
 					if (solution.contains("label")) {
@@ -202,7 +201,7 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					GeoResource resource=result.get(uri);
 					
 					if (resource == null) {
-						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat));
+						resource = new AemetResource(uri, new PointBean(positionUri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					}
 					if (solution.contains("label")) {

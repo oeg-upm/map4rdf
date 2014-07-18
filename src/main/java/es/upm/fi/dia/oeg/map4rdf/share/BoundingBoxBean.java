@@ -42,24 +42,46 @@ public class BoundingBoxBean implements BoundingBox, Serializable {
 	private TwoDimentionalCoordinate right;
 	private TwoDimentionalCoordinate left;
 	
+	private String projection;
+	
 	BoundingBoxBean() {
 		// for serialization
 	}
+	//Can only be accessed in client mode, except bottomLeft.projection == this.projection and 
+	// topright.projection == this.projection.
+	public BoundingBoxBean(TwoDimentionalCoordinate bottomLeft, TwoDimentionalCoordinate topRight,String projection) {
+		if(!bottomLeft.getProjection().toLowerCase().trim().equals(projection.toLowerCase().trim())){
+			//Can only be accessed in client mode because app need to transform points.
+			bottomLeft.transform(bottomLeft.getProjection(), projection);
+		}
+		if(!topRight.getProjection().toLowerCase().trim().equals(projection.toLowerCase().trim())){
+			//Can only be accessed in client mode because app need to transform points.
+			topRight.transform(topRight.getProjection(), projection);
+		}
 
-	public BoundingBoxBean(TwoDimentionalCoordinate bottomLeft, TwoDimentionalCoordinate topRight) {
+		this.projection = projection;
+		
 		this.bottomLeft = bottomLeft;
 		this.topRight = topRight;
 		
 		this.top = topRight;
 		this.bottom = bottomLeft;
-		this.left=new TwoDimentionalCoordinateBean(bottomLeft.getX(),topRight.getY());
-		this.right=new TwoDimentionalCoordinateBean(topRight.getX(),bottomLeft.getY());
+		this.left=new TwoDimentionalCoordinateBean(bottomLeft.getX(),topRight.getY(),projection);
+		this.right=new TwoDimentionalCoordinateBean(topRight.getX(),bottomLeft.getY(),projection);
 	}
-
+	/**Can only be accessed in client mode, except dim1.projection == projection 
+	 * dim2.projection == projection
+	 * dim3.projection == projection
+	 * dim4.projection == projection*/
 	public BoundingBoxBean(TwoDimentionalCoordinate dim1, TwoDimentionalCoordinate dim2, 
-								TwoDimentionalCoordinate dim3, TwoDimentionalCoordinate dim4) {
+								TwoDimentionalCoordinate dim3, TwoDimentionalCoordinate dim4,String projection) {
 		TwoDimentionalCoordinate[] cor = { dim1, dim2, dim3, dim4 };
-		
+		this.projection=projection;
+		for(TwoDimentionalCoordinate c : cor){
+			if(!c.getProjection().toLowerCase().trim().equals(projection.toLowerCase().trim())){
+				c.transform(c.getProjection(), projection);
+			}
+		}
 		//get top
 		for (TwoDimentionalCoordinate c : cor) {
 			if (this.top == null) {
@@ -118,7 +140,7 @@ public class BoundingBoxBean implements BoundingBox, Serializable {
 		//@TODO develop for four coordinates
 		if (centre == null) {
 			centre = new TwoDimentionalCoordinateBean((topRight.getX() + bottomLeft.getX()) / 2d,
-					(topRight.getY() + bottomLeft.getY()) / 2d);
+					(topRight.getY() + bottomLeft.getY()) / 2d,projection);
 		}
 		return centre;
 	}
@@ -182,39 +204,50 @@ public class BoundingBoxBean implements BoundingBox, Serializable {
 		return right;
 	}
 
+	//Only can be accessed in client mode!
 	@Override
 	public void transform(String from, String to) {
 		
 		if (this.topRight != null) {
 			LonLat tmp = new LonLat(topRight.getX(), topRight.getY());	
 			tmp.transform(from ,to);
-			this.topRight = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat());
+			this.topRight = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
 		}
 		if (this.bottomLeft != null) {
 			LonLat tmp = new LonLat(bottomLeft.getX(), bottomLeft.getY());	
 			tmp.transform(from ,to);
-			this.bottomLeft = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat());
+			this.bottomLeft = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
 		}
 		if (this.bottom !=  null) {
 			LonLat tmp = new LonLat(bottom.getX(), bottom.getY());	
 			tmp.transform(from ,to);
-			this.bottom = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat());
+			this.bottom = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
 		}
 		if (this.top != null) {
 			LonLat tmp = new LonLat(top.getX(), top.getY());	
 			tmp.transform(from ,to);
-			this.top = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat());
+			this.top = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
 		}
 		if (this.left != null) {
 			LonLat tmp = new LonLat(left.getX(), left.getY());	
 			tmp.transform(from ,to);
-			this.left = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat());
+			this.left = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
 		}
 		if (this.right != null) {
 			LonLat tmp = new LonLat(right.getX(), right.getY());	
 			tmp.transform(from ,to);
-			this.right = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat());
+			this.right = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
 		}
+		if (this.centre != null) {
+			LonLat tmp = new LonLat(centre.getX(), centre.getY());	
+			tmp.transform(from ,to);
+			this.centre = new TwoDimentionalCoordinateBean(tmp.lon(), tmp.lat(),to);
+		}
+		this.projection=to;
+	}
+	@Override
+	public String getProjection() {
+		return projection;
 	}
 
 }

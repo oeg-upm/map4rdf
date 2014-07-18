@@ -37,22 +37,24 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
  * @author Alexander De Leon
  */
 public class GeoUtils {
-
-	public static BoundingBox computeBoundingBoxFromGeometries(Collection<Geometry> geometries) {
+	//Can only be accessed in client mode
+	public static BoundingBox computeBoundingBoxFromGeometries(Collection<Geometry> geometries,String projection) {
 		HashSet<Point> points = new HashSet<Point>();
 		for (Geometry geometry : geometries) {
 			points.addAll(geometry.getPoints());
 		}
-		return computeBoundingBox(points);
+		return computeBoundingBox(points,projection);
 	}
 
-	public static BoundingBox computeBoundingBox(Collection<Point> points) {
+	//Can only be accessed in client mode
+	public static BoundingBox computeBoundingBox(Collection<Point> points,String projection) {
 		double maxX = Double.NEGATIVE_INFINITY;
 		double minX = Double.POSITIVE_INFINITY;
 		double maxY = Double.NEGATIVE_INFINITY;
 		double minY = Double.POSITIVE_INFINITY;
 
 		for (Point p : points) {
+			p.transform(p.getProjection(), projection);
 			double x = p.getX();
 			double y = p.getY();
 			if (x > maxX) {
@@ -68,8 +70,8 @@ public class GeoUtils {
 				minY = y;
 			}
 		}
-		return new BoundingBoxBean(new TwoDimentionalCoordinateBean(minX, minY), new TwoDimentionalCoordinateBean(maxX,
-				maxY));
+		return new BoundingBoxBean(new TwoDimentionalCoordinateBean(minX, minY,projection), new TwoDimentionalCoordinateBean(maxX,
+				maxY,projection),projection);
 	}
 
 }

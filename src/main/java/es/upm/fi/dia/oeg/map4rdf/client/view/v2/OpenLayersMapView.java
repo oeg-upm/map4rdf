@@ -59,7 +59,6 @@ import es.upm.fi.dia.oeg.map4rdf.share.MapConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.share.OpenLayersAdapter;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
-import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 import org.gwtopenmaps.openlayers.client.control.LayerSwitcher;
@@ -144,7 +143,7 @@ public class OpenLayersMapView implements MapView {
 
 	@Override
 	public TwoDimentionalCoordinate getCurrentCenter() {
-		return OpenLayersAdapter.getTwoDimentionalCoordinate(map.getCenter());
+		return OpenLayersAdapter.getTwoDimentionalCoordinate(map.getCenter(),map.getProjection());
 	}
 
 	@Override
@@ -156,22 +155,22 @@ public class OpenLayersMapView implements MapView {
 				Geometry g = feature.getGeometry();
 				if (g.getClassName().equals(Geometry.POLYGON_CLASS_NAME)) {
 					Polygon p = Polygon.narrowToPolygon(g.getJSObject());
-					BoundingBox b = OpenLayersAdapter.getBoudingBox(p);
-					b.transform(map.getProjection(), defaultProjection);
+					BoundingBox b = OpenLayersAdapter.getBoudingBox(p,map.getProjection());
+					b.transform(b.getProjection(), defaultProjection);
 					return b;
 				}
 			}
 		}
-		BoundingBox box =  OpenLayersAdapter.getBoundingBox(map.getExtent());
-		box.transform(map.getProjection(), defaultProjection);
+		BoundingBox box =  OpenLayersAdapter.getBoundingBox(map.getExtent(),map.getProjection());
+		box.transform(box.getProjection(), defaultProjection);
 		return box;
 		//If you want to do not use ViewBoundingBox, return null.
 	}
 
 	@Override
 	public void setVisibleBox(BoundingBox boundingBox) {
-		BoundingBox box=new BoundingBoxBean(boundingBox.getBottomLeft(), boundingBox.getTopRight());
-		box.transform(defaultProjection, map.getProjection());
+		BoundingBox box=new BoundingBoxBean(boundingBox.getBottomLeft(), boundingBox.getTopRight(),boundingBox.getProjection());
+		box.transform(box.getProjection(), map.getProjection());
 		map.zoomToExtent(OpenLayersAdapter.getLatLngBounds(box));
 	}
 
@@ -233,7 +232,6 @@ public class OpenLayersMapView implements MapView {
 		}
 		if(!errors){
 			defaultProjection=parameters.get(ParameterNames.DEFAULT_PROJECTION);
-			TwoDimentionalCoordinateBean.setDefaultProjection(defaultProjection);
 			final String spherical_mercator=parameters.get(ParameterNames.SPHERICAL_MERCATOR);
 			String centerString=parameters.get(ParameterNames.MAP_DEFAULT_CENTER);
 			String[] centerStringSplit=centerString.split(",");
