@@ -58,6 +58,9 @@ public class BrowserConfigModule extends AbstractModule {
 
 		bindConstant().annotatedWith(Names.named(ParameterNames.ENDPOINT_URL)).to(
 				config.getConfigurationParamValue(ParameterNames.ENDPOINT_URL));
+		
+		bindConstant().annotatedWith(Names.named(ParameterNames.ENDPOINT_URL_GEOSPARQL)).to(
+				config.getConfigurationParamValue(ParameterNames.ENDPOINT_URL_GEOSPARQL));
 
 		bindConstant().annotatedWith(Names.named(ParameterNames.GEOMETRY_MODEL)).to(
 				Constants.GeometryModel.valueOf(config.getConfigurationParamValue(ParameterNames.GEOMETRY_MODEL)));
