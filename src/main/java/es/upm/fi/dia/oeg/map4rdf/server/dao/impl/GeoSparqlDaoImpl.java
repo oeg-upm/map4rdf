@@ -90,6 +90,9 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if(geoSparqlEndpoint==null || geoSparqlEndpoint.isEmpty()){
 			execution = QueryExecutionFactory.sparqlService(endpointUri,
 					createGetResourcesQuery(boundingBox, constraints, max));
+		}else if (this.endpointUri == null || this.endpointUri.isEmpty()){
+			execution = QueryExecutionFactory.sparqlService(endpointUri,
+					createGetALLGeoSparqlResourcesQuery(boundingBox, constraints, max));
 		}else{
 			execution = QueryExecutionFactory.sparqlService(endpointUri,
 					createGetGeoSparqlResourcesQuery(boundingBox, constraints, max));
@@ -247,7 +250,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		return getGeoResources(boundingBox, null,max);
 	}
 	private void getOtherInfo(String resourceUri,GeoResource resource,QuerySolution solution)throws DaoException{
-		if(geoSparqlEndpoint==null || geoSparqlEndpoint.isEmpty()){
+		if(geoSparqlEndpoint==null || this.endpointUri == null || geoSparqlEndpoint.isEmpty() || this.endpointUri.isEmpty()){
 			if (solution.contains("label")) {
 				Literal labelLiteral = solution.getLiteral("label");
 				resource.addLabel(labelLiteral.getLanguage(), labelLiteral.getString());
@@ -294,6 +297,39 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("WHERE { ");
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
+		if (constraints != null) {
+			for (FacetConstraint constraint : constraints) {
+				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
+				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
+				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
+				query.append("} UNION");
+			}
+			query.delete(query.length() - 5, query.length());
+		}
+		//filters
+		if (boundingBox!=null) {
+			query = addGeoSparqlBoundingBoxFilter(query, boundingBox);
+		}
+		query.append("}");
+		if (limit != null) {
+			query.append(" LIMIT " + limit);
+		}
+		return query.toString();
+	}
+	private String createGetALLGeoSparqlResourcesQuery(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer limit) {
+		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
+		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
+		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
+		if(constraints!=null){
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+		}else{
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ");
+		}
+		query.append("WHERE { ");
+		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
+		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
+		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
 		if (constraints != null) {
 			for (FacetConstraint constraint : constraints) {
 				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");

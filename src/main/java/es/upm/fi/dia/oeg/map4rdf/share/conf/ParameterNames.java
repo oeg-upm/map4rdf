@@ -31,7 +31,7 @@ public class ParameterNames {
 
     public static final String ADMIN = "admin";
     
-	public static final String ENDPOINT_URL = "endpoint.url";
+	public static final String ENDPOINT_URL = "endpoint.url.generic";
 	
 	public static final String ENDPOINT_URL_GEOSPARQL = "endpoint.url.geosparql";
 
