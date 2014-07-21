@@ -45,7 +45,7 @@ public class GetRoutePointsHandler implements ActionHandler<GetRoutePoints, GetR
 		if(this.timeoutMiliSeconds!=0){
 			boolean incorrectEPSG=false;
 			for(Point point:action.getPoints()){
-				if(point.getProjection().toLowerCase().trim().equals("epsg:4326")){
+				if(!point.getProjection().toLowerCase().trim().equals("epsg:4326")){
 					incorrectEPSG=true;
 					break;
 				}
