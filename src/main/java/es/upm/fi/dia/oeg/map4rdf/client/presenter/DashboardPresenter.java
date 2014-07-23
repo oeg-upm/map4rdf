@@ -237,7 +237,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 			@Override
 			public void run() {
 				List<GeoResource> resources= new ArrayList<GeoResource>();
-		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto=new PointBean("", -3.645757, 40.465757,"EPSG:4326");
+		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto=new PointBean("", 678017.24, 4613322.29,"EPSG:23030");
 		    	/*es.upm.fi.dia.oeg.map4rdf.share.Point punto2=new PointBean("", -3.645757, 40.30,"EPSG:4326");
 		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto3=new PointBean("", -3.50, 40.465757,"EPSG:4326");
 		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto4=new PointBean("", -3.1, 39.465757,"EPSG:4326");
@@ -249,7 +249,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		    	*-/
 		    	resources.add(new GeoResource("http://datos.localidata.com/recurso/Provincia/Madrid/Municipio/madrid/LocalComercial/11109169L80",punto));
 		    	//resources.add(new GeoResource("www.multipoligono.com", multiPolyGeometry));
-		    	mapPresenter.drawGeoResouces(resources, new DrawPointStyle());
+		    	mapPresenter.drawGeoResources(resources, new DrawPointStyle());
 				this.cancel();
 			}
 		};

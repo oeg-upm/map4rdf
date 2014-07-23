@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
@@ -17,13 +18,14 @@ import es.upm.fi.dia.oeg.map4rdf.share.BoundingBoxBean;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
+import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoResources, GetBufferGeoResourcesResult> {
 	private Map4rdfDao dao;
 	private String serverProjection;
 	private final double earthRadious=6356.8;
 	@Inject
-	public GetBufferGeoResourcesHandler(Map4rdfDao dao,String serverProjection){
+	public GetBufferGeoResourcesHandler(Map4rdfDao dao,@Named(ParameterNames.DEFAULT_PROJECTION) String serverProjection){
 		this.dao=dao;
 		this.serverProjection = serverProjection;
 	}
