@@ -31,7 +31,9 @@ import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 
 import es.upm.fi.dia.oeg.map4rdf.client.BrowserUi;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.presenter.SelectConfigurationPresenter;
 
 /**
  * @author Alexander De Leon
@@ -39,7 +41,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
 @GinModules( { InjectorModule.class, StandardDispatchModule.class })
 public interface Injector extends Ginjector {
 	DashboardPresenter getDashboard();
-    EventBus getEventBus();
+	EventBus getEventBus();
 	BrowserUi getBrowserUi();
-       
+    SelectConfigurationPresenter getSelectConfigurationPresenter();
+    ConfIDInterface getConfigID();
 }

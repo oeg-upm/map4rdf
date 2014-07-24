@@ -30,13 +30,13 @@ package es.upm.fi.dia.oeg.map4rdf.server.conf;
  */
 public class Constants {
 
-	public static final String CONFIGURATION_FILE = "/WEB-INF/configuration.properties";
+	public static final String CONFIGURATIONS_FOLDER = "/WEB-INF/configurations/";
+	
+	public static final String GLOBAL_CONFIGURATION = "/WEB-INF/configuration.properties";
 
 	public static final String ADDITIONAL_INFO_CONFIG_FOLDER = "/WEB-INF/additional_info/";
 	
-	public static final String FACET_CONFIGURATION_FILE = "/WEB-INF/facets.ttl";
-	
-	public static final String MAPS_CONFIGURATION_FILE = "/WEB-INF/maps/maps.properties";
+	public static final String FACETS_FOLDER = "/WEB-INF/facets/";
 	
 	public static final String SPHERICAL_MAPS_FOLDER="/WEB-INF/maps/spherical_maps/";
 	

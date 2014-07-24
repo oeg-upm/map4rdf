@@ -35,17 +35,19 @@ import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 /**
  * @author Alexander De Leon
  */
-public class GetGeoResourceOverlays implements Action<ListResult<GeoResourceOverlay>> {
+public class GetGeoResourceOverlays extends MultipleConfigurationAction implements Action<ListResult<GeoResourceOverlay>> {
 
 	private StatisticDefinition statisticDefinition;
 	private BoundingBox boundingBox;
 	private Set<FacetConstraint> facetConstraints;
 
-	GetGeoResourceOverlays() {
+	private GetGeoResourceOverlays() {
 		// for serialization
+		super("");
 	}
 
-	public GetGeoResourceOverlays(BoundingBox boundingBox) {
+	public GetGeoResourceOverlays(String configID,BoundingBox boundingBox) {
+		super(configID);
 		this.boundingBox = boundingBox;
 	}
 

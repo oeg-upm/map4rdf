@@ -31,6 +31,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResources;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResourcesResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.BufferPresenter;
@@ -52,6 +53,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoprocessingType;
 
 public class BufferView extends ResizeComposite implements BufferPresenter.Display,BufferSetPointHandler{
 	private DispatchAsync dispatchAsync;
+	private final ConfIDInterface configID;
 	private MapPresenter mapPresenter;
 	private ResultsPresenter resultsPresenter;
 	private DashboardPresenter dashboardPresenter;
@@ -76,8 +78,9 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		Km,m;
 	}
 	@Inject
-	public BufferView(EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
+	public BufferView(ConfIDInterface configID, EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
 			BrowserMessages browserMessages, WidgetFactory widgetFactory){
+		this.configID = configID;
 		this.dispatchAsync = dispatchAsync;
 		this.mapPresenter=mapPresenter;
 		this.resultsPresenter=resultsPresenter;
@@ -224,14 +227,14 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 			}
 			mapPresenter.getDisplay().startProcessing();
 			BoundingBox boundingBox = GeoUtils.computeBoundingBox(geometry.getPoints(), "EPSG:4326");
-			GetBufferGeoResources action= new GetBufferGeoResources(resource.getUri(), boundingBox.getCenter(), radiousKM);
+			GetBufferGeoResources action= new GetBufferGeoResources(configID.getConfigID(),resource.getUri(), boundingBox.getCenter(), radiousKM);
 			dispatchAsync.execute(action, new AsyncCallback<GetBufferGeoResourcesResult>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
 					
 					mapPresenter.getDisplay().stopProcessing();
-					widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
+					widgetFactory.getDialogBox().showError(browserMessages.errorCommunication()+": "+caught.getMessage());
 				}
 			
 				@Override

@@ -28,6 +28,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.EditResourceCloseEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter.Display;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
@@ -36,6 +37,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 public class EditResourceWidget extends Composite{
+	
+	private final ConfIDInterface configID;
 	
     private FlowPanel mainPanel;
     private HorizontalPanel container;
@@ -56,14 +59,15 @@ public class EditResourceWidget extends Composite{
 	private SafeHtml emptyHtml;
 	private WidgetFactory widgetFactory;
 	
-	public EditResourceWidget(String resourceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus, WidgetFactory widgetFactory) {
-		this.resourceUrl=resourceUrl;
-		this.dispatchAsync=dispatchAsync;
+	public EditResourceWidget(ConfIDInterface configID,String resourceUrl, DispatchAsync dispatchAsync,Display display, BrowserResources resources, BrowserMessages messages, EventBus eventBus, WidgetFactory widgetFactory) {
+		this.configID = configID;
+		this.resourceUrl = resourceUrl;
+		this.dispatchAsync = dispatchAsync;
 		this.display = display;
-		this.resources=resources;
-		this.messages=messages;
-		this.eventBus=eventBus;
-		this.widgetFactory=widgetFactory;
+		this.resources = resources;
+		this.messages = messages;
+		this.eventBus = eventBus;
+		this.widgetFactory = widgetFactory;
 		initWidget(createUi());
 		this.setDepth();
 		this.setLabel();
@@ -121,7 +125,7 @@ public class EditResourceWidget extends Composite{
 	
 	
 	private void setDepth() {
-		dispatchAsync.execute(new GetConfigurationParameter(ParameterNames.EDIT_DEPTH), new AsyncCallback<SingletonResult<String>>() {
+		dispatchAsync.execute(new GetConfigurationParameter(configID.getConfigID(),ParameterNames.EDIT_DEPTH), new AsyncCallback<SingletonResult<String>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -135,7 +139,7 @@ public class EditResourceWidget extends Composite{
 	}
 	
 	private void setLabel() {
-		GetSubjectLabel action = new GetSubjectLabel(resourceUrl);
+		GetSubjectLabel action = new GetSubjectLabel(configID.getConfigID(),resourceUrl);
 		//collect all information
 		display.startProcessing();
 		dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>(){
@@ -154,7 +158,7 @@ public class EditResourceWidget extends Composite{
 	}
 	
 	private void fillUpContent() {
-		GetSubjectDescriptions action = new GetSubjectDescriptions(resourceUrl);
+		GetSubjectDescriptions action = new GetSubjectDescriptions(configID.getConfigID(),resourceUrl);
 		display.startProcessing();
         dispatchAsync.execute(action, new AsyncCallback<ListResult<SubjectDescription>>() {
 		@Override
@@ -182,7 +186,7 @@ public class EditResourceWidget extends Composite{
 				
 				for(DescriptionTreeItem d : descriptions)
 				if(event.getTarget().getWidget() != null && event.getTarget().getWidget().equals(d.getWidget())) {
-					GetSubjectDescriptions action = new GetSubjectDescriptions(d.getObjectText());
+					GetSubjectDescriptions action = new GetSubjectDescriptions(configID.getConfigID(),d.getObjectText());
 			        dispatchAsync.execute(action, new AsyncCallback<ListResult<SubjectDescription>>() {
 			        
 			        	@Override
@@ -252,7 +256,7 @@ public class EditResourceWidget extends Composite{
 			fileContent+=".\n";
     	}
     	display.startProcessing();
-    	dispatchAsync.execute(new SaveRdfFile(fileName, fileContent), new AsyncCallback<SingletonResult<String>>() {
+    	dispatchAsync.execute(new SaveRdfFile(configID.getConfigID(),fileName, fileContent), new AsyncCallback<SingletonResult<String>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

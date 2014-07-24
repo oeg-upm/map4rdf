@@ -33,6 +33,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.place.Place;
 public class Places {
 
 	public static final Place DASHBOARD = new Place("dashboard");
+	public static final Place SELECT_CONFIG = new Place("selectConfig");
 	//public static final Place LOGIN = new Place("login");
 	//public static final Place EDIT_RESOURCE = new Place("edit_resource");
     public static final Place DEFAULT = DASHBOARD;

@@ -39,6 +39,7 @@ import com.googlecode.gwt.charts.client.options.CurveType;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObs;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObsForProperty;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.AemetMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
@@ -61,7 +62,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 		String summaryPropertyName();
 		String summaryPropertyValue();
 	}
-
+	private final ConfIDInterface configID;
 	private AemetMessages aemetMessages;
 	private BrowserMessages browserMessages;
 	private BrowserResources browserResources;
@@ -76,7 +77,8 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	private DialogBox mainWidget;
 	private Label resoruceLabel;
 	
-	public GeoResourceSummaryInfoAemet(DispatchAsync dispatchAsync,BrowserResources browserResources,BrowserMessages browserMessages, WidgetFactory widgetFactory) {
+	public GeoResourceSummaryInfoAemet(ConfIDInterface configID, DispatchAsync dispatchAsync,BrowserResources browserResources,BrowserMessages browserMessages, WidgetFactory widgetFactory) {
+		this.configID = configID;
 		this.aemetMessages = GWT.create(AemetMessages.class);/*messages;*/
 		this.dispatchAsync = dispatchAsync;
 		this.browserMessages = browserMessages;
@@ -90,7 +92,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 		resoruceLabel.setText(LocaleUtil.getBestLabel(resource));
 		listPanel.clear();
 		listPanel.add(new Label(browserMessages.loading()));
-		GetAemetObs action = new GetAemetObs(resource.getUri());
+		GetAemetObs action = new GetAemetObs(configID.getConfigID(),resource.getUri());
 		dispatchAsync.execute(action, new AsyncCallback<ListResult<AemetObs>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -224,7 +226,9 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	}
 
 	private void createChart(final AemetObs ao, AemetIntervalo start, AemetIntervalo end,final String tittleTime) {
-		final GetAemetObsForProperty action = new GetAemetObsForProperty();
+		final GetAemetObsForProperty action = new GetAemetObsForProperty(configID.getConfigID(), 
+				ao.getEstacion().getUri(),
+				ao.getPropiedad().getUri(),start,end);
 		action.setStationUri(ao.getEstacion().getUri());
 		action.setPropertyUri(ao.getPropiedad().getUri());
 		action.setStart(start);

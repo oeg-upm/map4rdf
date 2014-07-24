@@ -28,7 +28,6 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
@@ -36,6 +35,7 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObsForProperty;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetIntervalo;
 import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
@@ -46,11 +46,11 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
  */
 public class GetAemetObsForPropertyHandler implements ActionHandler<GetAemetObsForProperty, ListResult<AemetObs>> {
 
-	private final String endpointUri;
+	private MultipleConfigurations configurations;
 
 	@Inject
-	public GetAemetObsForPropertyHandler(@Named(ParameterNames.ENDPOINT_URL)String endpointUri) {
-		this.endpointUri=endpointUri;
+	public GetAemetObsForPropertyHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
@@ -60,7 +60,12 @@ public class GetAemetObsForPropertyHandler implements ActionHandler<GetAemetObsF
 
 	@Override
 	public ListResult<AemetObs> execute(GetAemetObsForProperty action, ExecutionContext context) throws ActionException {
-		return new ListResult<AemetObs>(getObservations(action.getStationUri(), action.getPropertyUri(),
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
+		String endpoint=configurations.getConfiguration(action.getConfigID()).getConfigurationParamValue(ParameterNames.ENDPOINT_URL);
+		
+		return new ListResult<AemetObs>(getObservations(endpoint ,action.getStationUri(), action.getPropertyUri(),
 				action.getStart(), action.getEnd()));
 	}
 
@@ -69,7 +74,7 @@ public class GetAemetObsForPropertyHandler implements ActionHandler<GetAemetObsF
 			throws ActionException {
 		// nothing to do
 	}
-	public List<AemetObs> getObservations(String stationUri, String propertyUri, AemetIntervalo start, AemetIntervalo end) {
+	public List<AemetObs> getObservations(String endpointUri, String stationUri, String propertyUri, AemetIntervalo start, AemetIntervalo end) {
 		List<AemetObs> result = new ArrayList<AemetObs>();
 		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri,
 				createQueryGetObsForProperty(stationUri, propertyUri, start, end));

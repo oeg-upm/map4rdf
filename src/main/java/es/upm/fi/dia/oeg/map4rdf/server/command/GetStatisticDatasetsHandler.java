@@ -34,7 +34,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticDatasets;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 
 /**
@@ -42,18 +42,22 @@ import es.upm.fi.dia.oeg.map4rdf.share.Resource;
  */
 public class GetStatisticDatasetsHandler implements ActionHandler<GetStatisticDatasets, ListResult<Resource>> {
 
-	private final Map4rdfDao dao;
+	private MultipleConfigurations configurations;
 
 	@Inject
-	public GetStatisticDatasetsHandler(Map4rdfDao dao) {
-		this.dao = dao;
+	public GetStatisticDatasetsHandler(MultipleConfigurations configurations) {
+		this.configurations=configurations;
 	}
 
 	@Override
 	public ListResult<Resource> execute(GetStatisticDatasets action, ExecutionContext context) throws ActionException {
 		List<Resource> resources;
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
 		try {
-			resources = dao.getStatisticDatasets();
+			resources = configurations.getConfiguration(action.getConfigID())
+					.getMap4rdfDao().getStatisticDatasets();
 
 		} catch (Exception e) {
 			throw new ActionException("Data access error", e);

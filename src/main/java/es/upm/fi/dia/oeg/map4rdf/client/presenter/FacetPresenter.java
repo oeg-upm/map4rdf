@@ -35,12 +35,17 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitionsResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FacetPresenter.Display.FacetSelectionHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
+import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetGroup;
@@ -64,7 +69,7 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 		void setFacets(List<FacetGroup> facets);
 		void setFacetSelectionChangedHandler(FacetSelectionHandler handler);
 	}
-
+	private final ConfIDInterface configID;
 	private final DispatchAsync dispatchAsync;
 	private final List<FacetConstraint> constraints = new ArrayList<FacetConstraint>();
 	private WidgetFactory widgetFactory;
@@ -75,8 +80,9 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 	}
 	
 	@Inject
-	public FacetPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
+	public FacetPresenter(ConfIDInterface configID,Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
 		super(display, eventBus);
+		this.configID = configID;
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
 		this.messages = messages;
@@ -105,7 +111,7 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 	}
 
 	void loadFacets() {
-		dispatchAsync.execute(new GetFacetDefinitions(), new AsyncCallback<GetFacetDefinitionsResult>() {
+		dispatchAsync.execute(new GetFacetDefinitions(configID.getConfigID()), new AsyncCallback<GetFacetDefinitionsResult>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -130,9 +136,22 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 	@Override
 	protected void onRevealDisplay() {
-		if (getDisplay().isEmpty()) {
-			loadFacets();
+		if(configID.existsConfigID()){
+			if (getDisplay().isEmpty()) {
+				loadFacets();
+			}
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					if (getDisplay().isEmpty()) {
+						loadFacets();
+					}
+				}
+			});
 		}
+		
 	}
 	
 }

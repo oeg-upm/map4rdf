@@ -27,19 +27,20 @@ import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 /**
  * @author Alexander De Leon
  */
-public class GetAemetObsForProperty implements Action<ListResult<AemetObs>> {
+public class GetAemetObsForProperty extends MultipleConfigurationAction implements Action<ListResult<AemetObs>>{
 
 	private String stationUri;
 	private String propertyUri;
 	private AemetIntervalo start;
 	private AemetIntervalo end;
 
-	public GetAemetObsForProperty() {
+	private GetAemetObsForProperty() {
+		super("");
 		// empty
 	}
 
-	public GetAemetObsForProperty(String stationUri, String propertyUri, AemetIntervalo start, AemetIntervalo end) {
-		super();
+	public GetAemetObsForProperty(String configID,String stationUri, String propertyUri, AemetIntervalo start, AemetIntervalo end) {
+		super(configID);
 		this.stationUri = stationUri;
 		this.propertyUri = propertyUri;
 		this.start = start;

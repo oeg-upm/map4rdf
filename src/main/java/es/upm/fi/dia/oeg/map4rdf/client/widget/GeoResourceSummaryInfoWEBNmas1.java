@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FilterDateChangeEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FilterDateChangeEventHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
@@ -60,6 +61,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		String WEBNmas1CellPadding();
 	}
 	
+	private final ConfIDInterface configID;
 	private DialogBox mainWidget;
 	private BrowserMessages browserMessages;
 	private BrowserResources browserResources;
@@ -73,7 +75,8 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	private List<WebNMasUnoGuide> lastGuides;
 	private List<DateFilter> dateFilters;
 	private List<WebNMasUnoTrip> lastTrips;
-	public GeoResourceSummaryInfoWEBNmas1(DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources,BrowserMessages browserMessages){
+	public GeoResourceSummaryInfoWEBNmas1(ConfIDInterface configID,DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources,BrowserMessages browserMessages){
+		this.configID = configID;
 		this.browserMessages=browserMessages;
 		this.browserResources=browserResources;
 		this.dispatchAsync=dispatchAsync;
@@ -146,7 +149,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		lastGuides.clear();
 		lastTrips.clear();
 		mainPanel.add(new Label(browserMessages.loading()));
-		dispatchAsync.execute(new GetWebNMasUnoResource(resource.getUri()), new AsyncCallback<SingletonResult<WebNMasUnoResourceContainer>>() {
+		dispatchAsync.execute(new GetWebNMasUnoResource(configID.getConfigID(),resource.getUri()), new AsyncCallback<SingletonResult<WebNMasUnoResourceContainer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

@@ -47,10 +47,13 @@ import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParametersResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.CloseMapMainPopupEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.DashboardDoSelectedResultWidgetEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.EditResourceEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetAddEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetDoSelectedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetRemoveEvent;
@@ -76,7 +79,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.SharedGeometryModels;
  */
 public class GeoResourceSummary extends Composite {
 
-	
+	private final ConfIDInterface configID;
 	private BrowserMessages messages;
 	private BrowserResources resources;
 	private WidgetFactory widgetFactory;
@@ -113,7 +116,8 @@ public class GeoResourceSummary extends Composite {
 	public final String SUMMARY_WIDGETS_NAMES = WidgetsNames.ALL_IN_ORDER;
 	private int moveType;
 	
-	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, WidgetFactory widgetFactory) {
+	public GeoResourceSummary(ConfIDInterface configID,DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, WidgetFactory widgetFactory) {
+		this.configID = configID;
 		this.messages = messages;
 		this.resources=appResources;
 		this.eventBus = eventBus;
@@ -121,12 +125,27 @@ public class GeoResourceSummary extends Composite {
 		allWidgetsWithName=new HashMap<String, Widget>();
 		allWidgetInOrder=new ArrayList<Widget>();
 		this.dispatchAsync=dispatchAsync;
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+		
+		initWidget(createUi());
+	}
+	private void initAsync(){
 		List<String> parameters= new ArrayList<String>();
 		parameters.add(ParameterNames.WIKIPEDIA_PARSE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
 		parameters.add(ParameterNames.TWITTER_STATUS_URL);
 		parameters.add(ParameterNames.GEOMETRY_MODEL);
-		dispatchAsync.execute(new GetMultipleConfigurationParameters(parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
+		dispatchAsync.execute(new GetMultipleConfigurationParameters(configID.getConfigID(),parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -169,9 +188,7 @@ public class GeoResourceSummary extends Composite {
 				}
 			}
 		});
-		initWidget(createUi());
 	}
-
 	public void setGeoResource(final GeoResource resource, Geometry geometry) {
 		//TODO Analyze if it is easy to implement closeProperSummary depend on configuration param.
 		openOrCloseSummary(false);
@@ -181,7 +198,7 @@ public class GeoResourceSummary extends Composite {
 		centerPanel.add(getCenterImage());
 	
 		AdditionalInfoExecuter.cancelAllCallbacks();
-		AdditionalInfoExecuter.getAdditionalInfo(dispatchAsync, resource, new InfoCallback() {
+		AdditionalInfoExecuter.getAdditionalInfo(configID.getConfigID(), dispatchAsync, resource, new InfoCallback() {
 			@Override
 			public void success(AdditionalInfoSummary additionalInfo) {
 				summary.clearAdditionalInfo();
@@ -419,10 +436,10 @@ public class GeoResourceSummary extends Composite {
 	}
 	private GeoResourceSummaryInfo getSummary(String geometryModel){
 		if(SharedGeometryModels.AEMET.equalsIgnoreCase(geometryModel)){
-			return new GeoResourceSummaryInfoAemet(dispatchAsync, resources, messages, widgetFactory);
+			return new GeoResourceSummaryInfoAemet(configID,dispatchAsync, resources, messages, widgetFactory);
 		}
 		if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(geometryModel)){
-			return new GeoResourceSummaryInfoWEBNmas1(dispatchAsync,eventBus, resources, messages);
+			return new GeoResourceSummaryInfoWEBNmas1(configID,dispatchAsync,eventBus, resources, messages);
 		}
 		return new GeoResourceSummaryInfoDefault(messages, resources);
 	}

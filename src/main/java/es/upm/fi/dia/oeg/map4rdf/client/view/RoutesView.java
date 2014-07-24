@@ -11,6 +11,7 @@ import org.gwtopenmaps.openlayers.client.LonLat;
 
 
 
+
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 
@@ -59,6 +60,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePoints;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePointsResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.RoutesAddPointEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.RoutesAddPointHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
@@ -89,6 +91,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 
 public class RoutesView extends ResizeComposite implements RoutesPresenter.Display, RoutesAddPointHandler{
+	
+	private final ConfIDInterface configID;
 	private DispatchAsync dispatchAsync;
 	private EventBus eventBus;
 	private MapPresenter mapPresenter;
@@ -128,8 +132,9 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 	private List<Widget> disableWidgetsIfNoDriving;
 	
 	@Inject
-	public RoutesView(EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
+	public RoutesView(ConfIDInterface configID, EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
 			BrowserMessages browserMessages, WidgetFactory widgetFactory) {
+		this.configID = configID;
 		this.dispatchAsync = dispatchAsync;
 		this.eventBus=eventBus;
 		this.mapPresenter = mapPresenter;
@@ -396,7 +401,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			return;
 		}
 		mapPresenter.getDisplay().startProcessing();
-		GetRoutePoints action = new GetRoutePoints(points);
+		GetRoutePoints action = new GetRoutePoints(configID.getConfigID(),points);
 		dispatchAsync.execute(action, new AsyncCallback<GetRoutePointsResult>() {
 
 			@Override

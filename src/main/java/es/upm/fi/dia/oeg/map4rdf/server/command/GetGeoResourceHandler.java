@@ -32,8 +32,8 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 
 /**
@@ -41,11 +41,11 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
  */
 public class GetGeoResourceHandler implements ActionHandler<GetGeoResource, SingletonResult<GeoResource>> {
 
-	private final Map4rdfDao dao;
+	private MultipleConfigurations configurations;
    
 	@Inject
-	public GetGeoResourceHandler(Map4rdfDao dao) {
-		this.dao = dao;
+	public GetGeoResourceHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
@@ -54,8 +54,11 @@ public class GetGeoResourceHandler implements ActionHandler<GetGeoResource, Sing
 		if (uri == null || uri.length() == 0) {
 			throw new ActionException("Invalid URI: " + uri);
 		}
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
 		try {
-			GeoResource resource = dao.getGeoResource(uri);
+			GeoResource resource = configurations.getConfiguration(action.getConfigID()).getMap4rdfDao().getGeoResource(uri);
 			return new SingletonResult<GeoResource>(resource);
 		} catch (DaoException e) {
 			throw new ActionException("Data access error", e);

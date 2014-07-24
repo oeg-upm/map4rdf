@@ -4,15 +4,17 @@ package es.upm.fi.dia.oeg.map4rdf.client.action;
 import net.customware.gwt.dispatch.shared.Action;
 import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 
-public class GetAemetObs implements Action<ListResult<AemetObs>>{
+public class GetAemetObs extends MultipleConfigurationAction implements Action<ListResult<AemetObs>>{
 
 		private String uri;
 
-		GetAemetObs() {
+		private GetAemetObs() {
 			// for serilization
+			super("");
 		}
 
-		public GetAemetObs(String uri) {
+		public GetAemetObs(String configID,String uri) {
+			super(configID);
 			this.uri = uri;
 		}
 

@@ -11,8 +11,10 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResources;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResourcesResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoSparqlDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBoxBean;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
@@ -21,13 +23,11 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoResources, GetBufferGeoResourcesResult> {
-	private Map4rdfDao dao;
-	private String serverProjection;
+	private MultipleConfigurations configurations;
 	private final double earthRadious=6356.8;
 	@Inject
-	public GetBufferGeoResourcesHandler(Map4rdfDao dao,@Named(ParameterNames.DEFAULT_PROJECTION) String serverProjection){
-		this.dao=dao;
-		this.serverProjection = serverProjection;
+	public GetBufferGeoResourcesHandler(MultipleConfigurations configurations){
+		this.configurations=configurations;
 	}
 	@Override
 	public GetBufferGeoResourcesResult execute(GetBufferGeoResources action,
@@ -36,14 +36,18 @@ public class GetBufferGeoResourcesHandler implements ActionHandler<GetBufferGeoR
 		List<GeoResource> geoResources= new ArrayList<GeoResource>();
 		BoundingBox boundingBox=null;
 		try {
-			if("epsg:4326".equals(serverProjection.toLowerCase().trim())){
-				throw new ActionException("Server default projection isn't EPSG:4326, can't be used Buffer service.");
-			}
 			if(!action.getCenter().getProjection().toLowerCase().trim().equals("epsg:4326")){
 				throw new ActionException("The center isn't in EPSG:4326 projection.");
 			}
+			if(!configurations.existsConfiguration(action.getConfigID())){
+				throw new ActionException("Bad Config ID");
+			}
+			String serverProjection= configurations.getConfiguration(action.getConfigID()).getConfigurationParamValue(ParameterNames.DEFAULT_PROJECTION);
+			if(!"epsg:4326".equals(serverProjection.toLowerCase().trim())){
+				throw new ActionException("Server default projection isn't EPSG:4326, can't be used Buffer service.");
+			}
 			boundingBox=getBoundingBox(action.getCenter().getY(),action.getCenter().getX(), action.getRadiousKM());
-			geoResources=dao.getNextPoints(boundingBox, 200);
+			geoResources=configurations.getConfiguration(action.getConfigID()).getMap4rdfDao().getNextPoints(boundingBox, 200);
 		} catch (DaoException e) {
 			throw new ActionException("Error with try to get nextPoints");
 		}

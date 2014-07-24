@@ -30,17 +30,19 @@ import net.customware.gwt.dispatch.shared.Action;
 /**
  * @author Filip
  */
-public class SaveRdfFile implements Serializable, Action<SingletonResult<String>> {
+public class SaveRdfFile extends MultipleConfigurationAction implements Serializable, Action<SingletonResult<String>> {
 
 	private static final long serialVersionUID = 7947658047319654699L;
 	private String name;
 	private String content;
 
-	public SaveRdfFile() {
-		//serialization
+	private SaveRdfFile() {
+		super("");
+		//For serialization
 	}
 
-	public SaveRdfFile(String name, String content) {
+	public SaveRdfFile(String configID, String name, String content) {
+		super(configID);
 		this.name = name;
 		this.content=content;
 	}

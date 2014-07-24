@@ -4,7 +4,7 @@ package es.upm.fi.dia.oeg.map4rdf.client.action;
 import net.customware.gwt.dispatch.shared.Action;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
-public class GetBufferGeoResources implements Action<GetBufferGeoResourcesResult> {
+public class GetBufferGeoResources extends MultipleConfigurationAction implements Action<GetBufferGeoResourcesResult> {
 	private String geoResourceUri;
 	private double radiousKM;
 	private TwoDimentionalCoordinate center;
@@ -14,10 +14,12 @@ public class GetBufferGeoResources implements Action<GetBufferGeoResourcesResult
 	public void setCenter(TwoDimentionalCoordinate center) {
 		this.center = center;
 	}
-	public GetBufferGeoResources(){
-		
+	private GetBufferGeoResources(){
+		super("");
+		//For serialization
 	}
-	public GetBufferGeoResources(String geoResourceUri, TwoDimentionalCoordinate center, double radiousKM){
+	public GetBufferGeoResources(String configID, String geoResourceUri, TwoDimentionalCoordinate center, double radiousKM){
+		super(configID);
 		this.geoResourceUri=geoResourceUri;
 		this.center=center;
 		this.radiousKM=radiousKM;

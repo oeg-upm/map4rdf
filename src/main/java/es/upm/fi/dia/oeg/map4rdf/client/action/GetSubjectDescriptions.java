@@ -31,16 +31,18 @@ import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 /**
  * @author Filip
  */
-public class GetSubjectDescriptions implements Serializable, Action<ListResult<SubjectDescription>> {
+public class GetSubjectDescriptions extends MultipleConfigurationAction implements Serializable, Action<ListResult<SubjectDescription>> {
 
 	private static final long serialVersionUID = -4185001264506959562L;
 	private String subject;
 
-	public GetSubjectDescriptions() {
-		//serialization
+	private GetSubjectDescriptions() {
+		super("");
+		//For serialization
 	}
 
-	public GetSubjectDescriptions(String subject) {
+	public GetSubjectDescriptions(String configID,String subject) {
+		super(configID);
 		this.subject = subject;
 	}
 	/**

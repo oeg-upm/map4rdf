@@ -16,7 +16,6 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
@@ -25,6 +24,7 @@ import com.ibm.icu.util.Calendar;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance;
 import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance.TripProvenanceType;
@@ -40,12 +40,11 @@ public class GetWebNMasUnoResourceHandler
 		implements
 		ActionHandler<GetWebNMasUnoResource, SingletonResult<WebNMasUnoResourceContainer>> {
 
-	private String endpointUri;
+	private MultipleConfigurations configurations;
 	private Logger logger = Logger.getLogger(GetWebNMasUnoResourceHandler.class);
 	@Inject
-	public GetWebNMasUnoResourceHandler(
-			@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
-		this.endpointUri = endpointUri;
+	public GetWebNMasUnoResourceHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
@@ -56,7 +55,15 @@ public class GetWebNMasUnoResourceHandler
 		if (uri == null || uri.length() == 0) {
 			throw new ActionException("Invalid URI: " + uri);
 		}
-		WebNMasUnoResourceContainer resource = getDatosGuiasViajes(uri);
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
+		String endpointUri=configurations.getConfiguration(action.getConfigID())
+				.getConfigurationParamValue(ParameterNames.ENDPOINT_URL);
+		if(endpointUri==null || endpointUri.isEmpty()){
+			throw new ActionException("Bad endpoint URL in config file");
+		}
+		WebNMasUnoResourceContainer resource = getDatosGuiasViajes(endpointUri,uri);
 		return new SingletonResult<WebNMasUnoResourceContainer>(resource);
 	}
 
@@ -73,13 +80,13 @@ public class GetWebNMasUnoResourceHandler
 
 	}
 
-	private WebNMasUnoResourceContainer getDatosGuiasViajes(String uri) {
+	private WebNMasUnoResourceContainer getDatosGuiasViajes(String endpointUri,String uri) {
 		WebNMasUnoResourceContainer resource = new WebNMasUnoResourceContainer();
-		List<WebNMasUnoGuide> guides = getGuides(100, uri);
+		List<WebNMasUnoGuide> guides = getGuides(endpointUri,100, uri);
 		if (guides != null && !guides.isEmpty()) {
 			resource.addAllGuides(guides);
 		}
-		List<WebNMasUnoTrip> trips = getTrips(100, uri);
+		List<WebNMasUnoTrip> trips = getTrips(endpointUri,100, uri);
 		if (trips != null && !trips.isEmpty()) {
 			resource.addAllTrips(trips);
 		}
@@ -87,7 +94,7 @@ public class GetWebNMasUnoResourceHandler
 
 	}
 
-	private List<WebNMasUnoGuide> getGuides(int i, String uri) {
+	private List<WebNMasUnoGuide> getGuides(String endpointUri, int i, String uri) {
 		/*
 		 * TODO modify this method, wait for Ocorcho to change the model. The
 		 * images are property in endpoint. The application does not need to get
@@ -203,7 +210,7 @@ public class GetWebNMasUnoResourceHandler
 		return new ArrayList<WebNMasUnoGuide>(guides.values());
 	}
 
-	private List<WebNMasUnoTrip> getTrips(int i, String uri) {
+	private List<WebNMasUnoTrip> getTrips(String endpointUri, int i, String uri) {
 		// viaje
 		QueryExecution exec = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetTripsQuery(i, uri));
@@ -238,7 +245,7 @@ public class GetWebNMasUnoResourceHandler
 				addOtherTripsVariables(t, solution);
 				if (!tripsMaps.containsKey(uriTrip)) {
 					tripsMaps.put(uriTrip, t);
-					addProvenanceTrip(uriTrip, t);
+					addProvenanceTrip(endpointUri,uriTrip, t);
 				}
 			}
 		}
@@ -277,7 +284,7 @@ public class GetWebNMasUnoResourceHandler
 			trip.setDistanceMore((solution.getLiteral("prH").getLexicalForm()));
 		}
 	}
-	private void addProvenanceTrip(String uriTrip, WebNMasUnoTrip trip){
+	private void addProvenanceTrip(String endpointUri,String uriTrip, WebNMasUnoTrip trip){
 		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetTripProvenance(1000, uriTrip));
 		ResultSet queryResult2 = exec2.execSelect();

@@ -52,6 +52,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameter
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticDatasets;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.DashboardDoSelectedResultWidgetEvent;
@@ -64,6 +65,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.LoadResourceEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.LoadResourceEventHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.StatisticsSummaryEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.StatisticsSummaryEventHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
@@ -101,6 +104,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
         void closeMainPopup();
         void doSelectedWestWidget(Widget widget);
     }
+    private final ConfIDInterface configID;
     private final ResultsPresenter resultsPresenter;
     private final MapPresenter mapPresenter;
     private final FacetPresenter facetPresenter;
@@ -118,10 +122,11 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
     
     
     @Inject
-    public DashboardPresenter(Display display, EventBus eventBus, FacetPresenter facetPresenter,
+    public DashboardPresenter(ConfIDInterface configID, Display display, EventBus eventBus, FacetPresenter facetPresenter,
             MapPresenter mapPresenter, FiltersPresenter filtersPresenter, ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync,
             DataToolBar dataToolBar,WidgetFactory widgetFactory, BrowserMessages messages, BrowserResources resources, GeoprocessingPresenter geoprocessingPresenter) {
         super(display, eventBus);
+        this.configID = configID;
         this.messages = messages;
         this.resources = resources;
         this.mapPresenter = mapPresenter;
@@ -193,7 +198,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		int height = mapPresenter.getDisplay().asWidget().getOffsetHeight();
 		int width = mapPresenter.getDisplay().asWidget().getOffsetWidth();
 		es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter.Display d = mapPresenter.getDisplay();
-		getDisplay().setMainPopup(width, height, new EditResourceWidget(editResourceEvent.getUrl(),dispatchAsync,d,resources,messages,eventBus,widgetFactory),"");
+		getDisplay().setMainPopup(width, height, new EditResourceWidget(configID,editResourceEvent.getUrl(),dispatchAsync,d,resources,messages,eventBus,widgetFactory),"");
 	}
 
 	@Override
@@ -218,8 +223,20 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 	@Override
     protected void onBind() {
         // attach children
-        
-    	GetStatisticDatasets action = new GetStatisticDatasets();
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+    }
+	private void initAsync(){
+		GetStatisticDatasets action = new GetStatisticDatasets(configID.getConfigID());
     	dispatchAsync.execute(action,new AsyncCallback<ListResult<Resource>>() {
 
 			@Override
@@ -254,14 +271,14 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 			}
 		};
 		timer.schedule(8000);*/
-    }
+	}
 	private void initWidgets(final ListResult<Resource> result){
 		List<String> parameters= new ArrayList<String>();
 		parameters.add(ParameterNames.STATISTICS_SERVICE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
 		parameters.add(ParameterNames.DEFAULT_PROJECTION);
 	    //Initialize asyn variables
-		dispatchAsync.execute(new GetMultipleConfigurationParameters(parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
+		dispatchAsync.execute(new GetMultipleConfigurationParameters(configID.getConfigID(),parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -324,7 +341,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 
     /* --------------- helper methods --- */
     void loadResources(BoundingBox boundingBox, final Set<FacetConstraint> constraints) {
-   		GetGeoResources action = new GetGeoResources(boundingBox);
+   		GetGeoResources action = new GetGeoResources(configID.getConfigID(),boundingBox);
    		if (constraints != null) {
        		action.setFacetConstraints(constraints);
        	}
@@ -367,7 +384,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
     }
 
     void loadResource(String uri) {
-        GetGeoResource action = new GetGeoResource(uri);
+        GetGeoResource action = new GetGeoResource(configID.getConfigID(),uri);
         mapPresenter.getDisplay().startProcessing();
         dispatchAsync.execute(action, new AsyncCallback<SingletonResult<GeoResource>>() {
 

@@ -26,6 +26,8 @@ package es.upm.fi.dia.oeg.map4rdf.server.conf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -53,7 +55,16 @@ public class Configuration {
 	}
 
 	public boolean containsConfigurationParam(String param) {
-		return properties.contains(param);
+		return properties.getProperty(param)!=null && !properties.getProperty(param).isEmpty();
 	}
-
+	
+	public List<String> getKeys(){
+		List<String> keys= new ArrayList<String>();
+		for(Object i:properties.keySet()){
+			if(i instanceof String){
+				keys.add((String)i);
+			}
+		}
+		return keys;
+	}
 }

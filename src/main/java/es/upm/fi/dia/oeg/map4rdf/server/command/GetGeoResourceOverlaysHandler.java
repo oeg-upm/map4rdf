@@ -31,11 +31,10 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourceOverlays;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResourceOverlay;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
@@ -45,23 +44,27 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 public class GetGeoResourceOverlaysHandler implements
 		ActionHandler<GetGeoResourceOverlays, ListResult<GeoResourceOverlay>> {
 
-	private final Map4rdfDao dao;
-	private final String defaultProjection;
+	private MultipleConfigurations configurations;
+
 	@Inject
-	public GetGeoResourceOverlaysHandler(Map4rdfDao dao,@Named(ParameterNames.DEFAULT_PROJECTION) String defaultProjection) {
-		this.dao = dao;
-		this.defaultProjection = defaultProjection;
+	public GetGeoResourceOverlaysHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
 	public ListResult<GeoResourceOverlay> execute(GetGeoResourceOverlays action, ExecutionContext context)
 			throws ActionException {
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
 		try {
-			if(action.getBoundingBox()!=null && 
+			String defaultProjection = configurations.getConfiguration(action.getConfigID()).getConfigurationParamValue(ParameterNames.DEFAULT_PROJECTION);
+			if(action.getBoundingBox()!=null &&
 					!action.getBoundingBox().getProjection().toLowerCase().trim().equals(defaultProjection.toLowerCase().trim())){
-				throw new ActionException("Bounding box projection of GetGeoResourceOverlays (action) isn't equals to server projection");
+					throw new ActionException("Bounding box projection of GetGeoResourceOverlays (action) isn't equals to server projection");
 			}
-			List<GeoResourceOverlay> result = dao.getGeoResourceOverlays(action.getStatisticDefinition(), action
+			List<GeoResourceOverlay> result = configurations.getConfiguration(action.getConfigID())
+					.getMap4rdfDao().getGeoResourceOverlays(action.getStatisticDefinition(), action
 					.getBoundingBox(), action.getFacetConstraints());
 			return new ListResult<GeoResourceOverlay>(result);
 		} catch (Exception e) {

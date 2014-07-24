@@ -34,7 +34,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticYears;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.Year;
 
 /**
@@ -42,21 +42,25 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
  */
 public class GetStatisticYearsHandler implements ActionHandler<GetStatisticYears, ListResult<Year>> {
 
-	private final Map4rdfDao dao;
+	private MultipleConfigurations configurations;
 
 	@Inject
-	public GetStatisticYearsHandler(Map4rdfDao dao) {
-		this.dao = dao;
+	public GetStatisticYearsHandler(MultipleConfigurations configurations) {
+		this.configurations=configurations;
 	}
 
 	@Override
 	public ListResult<Year> execute(GetStatisticYears action, ExecutionContext context) throws ActionException {
 		List<Year> resources;
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
 		try {
 			if (action.getStatisticType() == null) {
 				throw new ActionException("Need to specify the statistic type");
 			} else {
-				resources = dao.getYears(action.getStatisticType());
+				resources = configurations.getConfiguration(action.getConfigID())
+						.getMap4rdfDao().getYears(action.getStatisticType());
 			}
 
 		} catch (Exception e) {

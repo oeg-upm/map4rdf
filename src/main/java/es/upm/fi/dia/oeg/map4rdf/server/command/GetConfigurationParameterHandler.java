@@ -24,12 +24,6 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.command;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletContext;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
@@ -38,19 +32,15 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
-import es.upm.fi.dia.oeg.map4rdf.server.bootstrap.Bootstrapper;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 
 /**
  * @author Filip
  */
 public class GetConfigurationParameterHandler implements
 		ActionHandler<GetConfigurationParameter, SingletonResult<String> > {
-
-	private ServletContext servletContext;
-	private Configuration config;
+	
+	private MultipleConfigurations configurations;
 	
 	@Override
 	public Class<GetConfigurationParameter> getActionType() {
@@ -58,23 +48,17 @@ public class GetConfigurationParameterHandler implements
 	}
 	
 	@Inject
-	public GetConfigurationParameterHandler(GetServletContext getServletContext) {
-		super();
-		servletContext = getServletContext.getServletContext();
-		InputStream propIn = servletContext.getResourceAsStream(Constants.CONFIGURATION_FILE);
-        try {
-            config = new Configuration(propIn);
-        } catch (IOException ex) {
-            Logger.getLogger(Bootstrapper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-		
+	public GetConfigurationParameterHandler(MultipleConfigurations configurations) {
+		this.configurations=configurations;
 	}
 
 	@Override
 	public SingletonResult<String> execute(GetConfigurationParameter action,
 			ExecutionContext context) throws ActionException {
-		
-		String result = config.getConfigurationParamValue(action.getName());		
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad config ID");
+		}
+		String result = configurations.getConfiguration(action.getConfigID()).getConfigurationParamValue(action.getName());		
 		return new SingletonResult<String>(result);
 	}
 

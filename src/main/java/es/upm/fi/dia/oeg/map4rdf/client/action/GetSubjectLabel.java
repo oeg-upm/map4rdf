@@ -30,16 +30,18 @@ import net.customware.gwt.dispatch.shared.Action;
 /**
  * @author Filip
  */
-public class GetSubjectLabel implements Serializable, Action<SingletonResult<String>> {
+public class GetSubjectLabel extends MultipleConfigurationAction implements Serializable, Action<SingletonResult<String>> {
 
 	private static final long serialVersionUID = 1522086591680070708L;
 	private String label;
 
-	public GetSubjectLabel() {
-		//serialization
+	private GetSubjectLabel() {
+		super("");
+		//For serialization
 	}
 
-	public GetSubjectLabel(String label) {
+	public GetSubjectLabel(String configID,String label) {
+		super(configID);
 		this.label = label;
 	}
 	/**

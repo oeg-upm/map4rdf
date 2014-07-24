@@ -47,6 +47,7 @@ import com.google.inject.Singleton;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearHandler;
@@ -73,6 +74,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 public class MapPresenter extends ControlPresenter<MapPresenter.Display> implements FacetConstraintsChangedHandler, AreaFilterModeChangeHandler, AreaFilterClearHandler, CloseMapMainPopupHandler, FacetReloadHandler {
 
 	private Set<FacetConstraint> facetConstraints;
+	private final ConfIDInterface configID;
 	private final DispatchAsync dispatchAsync;
 	private WidgetFactory widgetFactory;
 	
@@ -104,10 +106,11 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 	}
 
 	@Inject
-	public MapPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory) {
+	public MapPresenter(ConfIDInterface configID,Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory) {
 		super(display, eventBus);
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
+		this.configID = configID;
 		eventBus.addHandler(FacetReloadEvent.getType(), this);
 		eventBus.addHandler(FacetConstraintsChangedEvent.getType(), this);
 		eventBus.addHandler(AreaFilterModeChangeEvent.getType(), this);
@@ -169,7 +172,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		getDisplay().getKmlButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				GetGeoResourcesAsKmlUrl action = new GetGeoResourcesAsKmlUrl(getVisibleBox());
+				GetGeoResourcesAsKmlUrl action = new GetGeoResourcesAsKmlUrl(configID.getConfigID(),getVisibleBox());
 				action.setFacetConstraints(facetConstraints);
 				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
 					@Override

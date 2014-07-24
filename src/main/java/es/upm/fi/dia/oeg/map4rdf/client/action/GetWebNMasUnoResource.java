@@ -30,15 +30,17 @@ import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
 /**
  * @author Alexander De Leon
  */
-public class GetWebNMasUnoResource implements Action<SingletonResult<WebNMasUnoResourceContainer>> {
+public class GetWebNMasUnoResource extends MultipleConfigurationAction implements Action<SingletonResult<WebNMasUnoResourceContainer>> {
 
 	private String uri;
 
-	GetWebNMasUnoResource() {
+	private GetWebNMasUnoResource() {
+		super("");
 		// for serilization
 	}
 
-	public GetWebNMasUnoResource(String uri) {
+	public GetWebNMasUnoResource(String configID,String uri) {
+		super(configID);
 		this.uri = uri;
 	}
 

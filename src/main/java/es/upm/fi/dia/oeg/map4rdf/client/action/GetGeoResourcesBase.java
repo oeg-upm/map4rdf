@@ -33,17 +33,19 @@ import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 /**
  * @author Alexander De Leon
  */
-public class GetGeoResourcesBase implements Serializable {
+public class GetGeoResourcesBase extends MultipleConfigurationAction implements Serializable {
 
 	private static final long serialVersionUID = 1996952130908817348L;
 	private BoundingBox boundingBox;
 	private Set<FacetConstraint> facetConstraints;
 
-	GetGeoResourcesBase() {
+	private GetGeoResourcesBase() {
 		// for serialization
+		super("");
 	}
 
-	public GetGeoResourcesBase(BoundingBox boundingBox) {
+	public GetGeoResourcesBase(String configID, BoundingBox boundingBox) {
+		super(configID);
 		this.boundingBox = boundingBox;
 	}
 

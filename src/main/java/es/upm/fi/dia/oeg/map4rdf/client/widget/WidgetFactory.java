@@ -26,6 +26,7 @@ import name.alexdeleon.lib.gwtblocks.client.widget.loading.LoadingWidget;
 
 import com.google.inject.Inject;
 
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 
@@ -33,7 +34,8 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
  * @author Alexander De Leon
  */
 public class WidgetFactory {
-
+	
+	private final ConfIDInterface configID;
 	private final BrowserMessages messages;
 	private final BrowserResources resources;
 	private final EventBus eventBus;
@@ -41,7 +43,8 @@ public class WidgetFactory {
 	private static LoadingWidget loadingWidget;
 
 	@Inject
-	public WidgetFactory(EventBus eventBus,BrowserMessages messages, BrowserResources resources, DispatchAsync dispatchAsync) {
+	public WidgetFactory(ConfIDInterface configID,EventBus eventBus,BrowserMessages messages, BrowserResources resources, DispatchAsync dispatchAsync) {
+		this.configID = configID;
 		this.messages = messages;
 		this.resources = resources;
 		this.eventBus = eventBus;
@@ -49,7 +52,7 @@ public class WidgetFactory {
 	}
 
 	public GeoResourceSummary createGeoResourceSummary() {
-		return new GeoResourceSummary(dispatchAsync,eventBus, messages, resources,this);
+		return new GeoResourceSummary(configID,dispatchAsync,eventBus, messages, resources,this);
 	}
 
 	public Timeline createTimeline() {

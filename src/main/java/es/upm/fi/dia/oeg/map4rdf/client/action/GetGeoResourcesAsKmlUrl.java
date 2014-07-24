@@ -33,12 +33,13 @@ public class GetGeoResourcesAsKmlUrl extends GetGeoResourcesBase implements Acti
 
 	private static final long serialVersionUID = -2487905598341429230L;
 
-	GetGeoResourcesAsKmlUrl() {
+	private GetGeoResourcesAsKmlUrl() {
 		// for serialization
+		super("",null);
 	}
 
-	public GetGeoResourcesAsKmlUrl(BoundingBox boundingBox) {
-		super(boundingBox);
+	public GetGeoResourcesAsKmlUrl(String configID,BoundingBox boundingBox) {
+		super(configID,boundingBox);
 	}
 
 }

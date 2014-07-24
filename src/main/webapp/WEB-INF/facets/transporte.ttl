@@ -1,0 +1,32 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix map4rdf: <http://code.google.com/p/map4rdf/wiki/ontology#> .
+
+ 
+
+_:rdfTypeFacet
+       a map4rdf:FacetGroup;
+       map4rdf:facetPredicate rdf:type;
+       rdfs:label "Type"@en;
+       rdfs:label "Tipo"@es;
+       map4rdf:facet <http://idi.fundacionctic.org/cruzar/turismo#Restaurante>;    
+       map4rdf:facet <http://transporte.linkeddata.es/ontology/BikeStation>;
+       map4rdf:facet <http://transporte.linkeddata.es/ontology/BikeSystem>;
+.
+
+<http://idi.fundacionctic.org/cruzar/turismo#Restaurante>
+       rdfs:label "Restaurant"@en;
+       rdfs:label "Restaurante"@es;
+.
+
+<http://transporte.linkeddata.es/ontology/BikeStation>
+       rdfs:label "Bike station"@en;
+       rdfs:label "Estación de bicicletas"@es;
+.
+
+<http://transporte.linkeddata.es/ontology/BikeSystem>
+       rdfs:label "Bicycle sharing system"@en;
+       rdfs:label "Sistema de bicicletas compartidas"@es;
+.

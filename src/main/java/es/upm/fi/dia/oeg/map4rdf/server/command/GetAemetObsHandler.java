@@ -10,7 +10,6 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
@@ -18,6 +17,7 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObs;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetIntervalo;
@@ -30,21 +30,28 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
  */
 public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult<AemetObs>> {
 
-	private final String endpointUri;
+	private MultipleConfigurations configurations;
 	private Logger logger = Logger.getLogger(GetAemetObsHandler.class);
 	@Inject
-	public GetAemetObsHandler(@Named(ParameterNames.ENDPOINT_URL)String endpointUri) {
-		this.endpointUri=endpointUri;
+	public GetAemetObsHandler(MultipleConfigurations configurations) {
+		this.configurations=configurations;
 	}
 
 	@Override
 	public ListResult<AemetObs> execute(GetAemetObs action, ExecutionContext context) throws ActionException {
 		String uri = action.getUri();
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
+		String endpointUri = configurations.getConfiguration(action.getConfigID()).getConfigurationParamValue(ParameterNames.ENDPOINT_URL);
 		if (uri == null || uri.length() == 0) {
 			throw new ActionException("Invalid URI: " + uri);
 		}
+		if(endpointUri==null || endpointUri.isEmpty()){
+			throw new ActionException("Invalid EndpointURL in configID: "+action.getConfigID());
+		}
 		try {
-			return getDatosObservacion(uri);
+			return getDatosObservacion(endpointUri,uri);
 		} catch (Exception e) {
 			logger.error(e);
 			throw new ActionException("Data access error", e);	
@@ -63,21 +70,20 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 
 	}
 	
-	private ListResult<AemetObs> getDatosObservacion(String uri) throws Exception {
+	private ListResult<AemetObs> getDatosObservacion(String endpointUri,String uri) throws Exception {
 		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri, createGetMaxDate(uri)); // cogemos
 		ResultSet queryResult2 = exec2.execSelect();
 		String date = null;
 		while (queryResult2.hasNext()) {
 			QuerySolution sol = queryResult2.next();
-                        if(sol.contains("date")){
-                            date = sol.getLiteral("date").getString();
-                        }
-
+			if(sol.contains("date")){
+				date = sol.getLiteral("date").getString();
+			}
 		}
 		if (date == null) {
 			return null;
 		}
-		return getDatosObservacion(uri, date);
+		return getDatosObservacion(endpointUri,uri, date);
 	}
 	private String createGetMaxDate(String uri) {
 		StringBuilder query = new StringBuilder();
@@ -91,7 +97,7 @@ public class GetAemetObsHandler implements ActionHandler<GetAemetObs, ListResult
 
 		return query.toString();
 	}
-	private ListResult<AemetObs> getDatosObservacion(String uri, String date) throws DaoException {
+	private ListResult<AemetObs> getDatosObservacion(String endpointUri,String uri, String date) throws DaoException {
 		List<AemetObs> obs=new ArrayList<AemetObs>();
 		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri, createGetObs(100, uri, date)); // cogemos
 																												// las

@@ -6,17 +6,19 @@ import java.util.List;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class GetMultipleConfigurationParameters implements Serializable,Action<GetMultipleConfigurationParametersResult> {
+public class GetMultipleConfigurationParameters extends MultipleConfigurationAction implements Serializable,Action<GetMultipleConfigurationParametersResult> {
 
 	private static final long serialVersionUID = 8699605548911102161L;
 	
 	private List<String> parameters=new ArrayList<String>();
 
-	GetMultipleConfigurationParameters() {
-		//serialization
+	private GetMultipleConfigurationParameters() {
+		super("");
+		//For serialization
 	}
 
-	public GetMultipleConfigurationParameters(List<String> parameters) {
+	public GetMultipleConfigurationParameters(String configID,List<String> parameters) {
+		super(configID);
 		this.parameters.addAll(parameters);
 	}
 	

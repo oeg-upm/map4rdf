@@ -14,7 +14,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.MapsParametersNames;
 public class MapsConfigurationServer {
 	private ArrayList<MapConfiguration> mapsConfiguration=new ArrayList<MapConfiguration>();
 	private Logger logger = Logger.getLogger(MapsConfigurationServer.class);
-	public MapsConfigurationServer(GetServletContext getServletContext,String sphericalMercator){
+	public MapsConfigurationServer(GetServletContext getServletContext,String sphericalMercator,Configuration config,String configFile){
 		String[] mapsFiles=null;
 		String mapsFolder=null;
 		String mapsPropertieName=null;
@@ -25,20 +25,19 @@ public class MapsConfigurationServer {
 			mapsPropertieName=MapsParametersNames.FLAT_MAPS;
 			mapsFolder=Constants.FLAT_MAPS_FOLDER;
 		}
-		Properties properties = new Properties();
 		try {
-			properties.load(getServletContext.getServletContext().getResourceAsStream(Constants.MAPS_CONFIGURATION_FILE));
-			String mapsValue=properties.getProperty(mapsPropertieName);
+			String mapsValue=config.getConfigurationParamValue(mapsPropertieName);
 			if(mapsValue!=null && !mapsValue.isEmpty()){
 				mapsFiles=mapsValue.split(";");
 			}else{
-				logger.error("Property "+mapsPropertieName+" is null or empty in "+Constants.MAPS_CONFIGURATION_FILE);
+				logger.error("Property "+mapsPropertieName+" is null or empty in config file: "+configFile);
 				return;
 			}
 		} catch (Exception e) {
-			logger.error("Can't obtain maps configuration file: "+Constants.MAPS_CONFIGURATION_FILE,e);
+			logger.error("Can't obtain maps properties in configuration file: "+configFile,e);
 		}
 		if(mapsFiles==null || mapsFiles.length==0){
+			logger.warn("Not found maps in maps property of config file: "+configFile);
 			return;
 		}
 		for(int i=0;i<mapsFiles.length;i++){

@@ -34,46 +34,49 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 
 /**
  * @author Filip
  */
 public class GetSubjectLabelHandler implements
 		ActionHandler<GetSubjectLabel, SingletonResult<String>> {
-	
-	private final Map4rdfDao dao;
+
+	private MultipleConfigurations configurations;
 	private Logger logger = Logger.getLogger(GetSubjectLabelHandler.class);
-	
+
 	@Override
 	public Class<GetSubjectLabel> getActionType() {
 		return GetSubjectLabel.class;
 	}
-	
+
 	@Inject
-	public GetSubjectLabelHandler(Map4rdfDao dao) {
-		this.dao = dao;
+	public GetSubjectLabelHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
 	public SingletonResult<String> execute(GetSubjectLabel action,
 			ExecutionContext context) throws ActionException {
-	
-			String label;
-			try {
-				label = dao.getLabel(action.getSubjectLabel());
-			} catch (DaoException e) {
-				logger.error(e);
-				return new SingletonResult<String>("");
-			}
-			return new SingletonResult<String>(label);
+		if (!configurations.existsConfiguration(action.getConfigID())) {
+			throw new ActionException("Bad Config ID");
+		}
+		String label;
+		try {
+			label = configurations.getConfiguration(action.getConfigID())
+					.getMap4rdfDao().getLabel(action.getSubjectLabel());
+		} catch (DaoException e) {
+			logger.error(e);
+			return new SingletonResult<String>("");
+		}
+		return new SingletonResult<String>(label);
 	}
 
 	@Override
 	public void rollback(GetSubjectLabel action,
-			SingletonResult<String> result,
-			ExecutionContext context) throws ActionException {
-		
+			SingletonResult<String> result, ExecutionContext context)
+			throws ActionException {
+
 	}
 }

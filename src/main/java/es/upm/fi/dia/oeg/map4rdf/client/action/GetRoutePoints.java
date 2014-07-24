@@ -6,12 +6,13 @@ import es.upm.fi.dia.oeg.map4rdf.share.Point;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class GetRoutePoints implements Action<GetRoutePointsResult>{
+public class GetRoutePoints extends MultipleConfigurationAction implements Action<GetRoutePointsResult>{
 	private List<Point> points;
-	public GetRoutePoints(){
-		
+	private GetRoutePoints(){
+		super("");
 	}
-	public GetRoutePoints(List<Point> points){
+	public GetRoutePoints(String configID,List<Point> points){
+		super(configID);
 		this.points = points;
 	}
 	public List<Point> getPoints() {

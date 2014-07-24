@@ -52,13 +52,18 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FilterDateChangeEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FiltersPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
+import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter.DateFilterType;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.DatePickerWithYearSelector;
@@ -79,6 +84,8 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	private final BrowserMessages messages;
 	private final BrowserResources resources;
 	private final EventBus eventBus;
+	private final DispatchAsync dispatchAsync;
+	private ConfIDInterface configID;
 	private WidgetFactory widgetFactory;
 	
 	private FlowPanel panel;
@@ -89,15 +96,31 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	
 	
 	@Inject
-	public FiltersView(BrowserMessages messages, BrowserResources resources,DispatchAsync dispatchAsync, EventBus eventBus,
+	public FiltersView(ConfIDInterface configID,BrowserMessages messages, BrowserResources resources,DispatchAsync dispatchAsync, EventBus eventBus,
 			WidgetFactory widgetFactory) {
 		this.resources = resources;
 		this.messages = messages;
 		this.eventBus = eventBus;
 		this.widgetFactory = widgetFactory;
+		this.dispatchAsync = dispatchAsync;
+		this.configID = configID;
 		this.dateFilters = new ArrayList<DateFilter>();
 		initWidget(createUi());
-		dispatchAsync.execute(new GetConfigurationParameter(ParameterNames.GEOMETRY_MODEL), new AsyncCallback<SingletonResult<String>>() {
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+		
+	}
+	private void initAsync(){
+		dispatchAsync.execute(new GetConfigurationParameter(configID.getConfigID(),ParameterNames.GEOMETRY_MODEL), new AsyncCallback<SingletonResult<String>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 			}
@@ -110,7 +133,6 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 			
 		});
 	}
-
 
 	/* ------------- Display API -- */
 	@Override

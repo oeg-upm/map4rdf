@@ -49,7 +49,10 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfigurationResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParametersResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
@@ -89,8 +92,10 @@ public class OpenLayersMapView implements MapView {
 	// drawing
 	private FilterAreaLayer filterAreaLayer;
 	private WidgetFactory widgetFactory;
+	private final ConfIDInterface configID;
 	
-	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
+	public OpenLayersMapView(ConfIDInterface configID,WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
+		this.configID = configID;
 		this.browserResources=browserResources;
 		this.eventBus=eventBus;
 		this.widgetFactory = widgetFactory;
@@ -100,12 +105,27 @@ public class OpenLayersMapView implements MapView {
 		defaultLayer = (OpenLayersMapLayer) createLayer("default");
 		addNotice();
 		filterAreaLayer = new FilterAreaLayer(map);
+		this.dispatchAsync=dispatchAsync;
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+		
+		
+	}
+	private void initAsync(){
 		List<String> toGet=new ArrayList<String>();
 		for(String i:getParameters){
 			toGet.add(i);
 		}
-		GetMultipleConfigurationParameters action = new GetMultipleConfigurationParameters(toGet);
-		this.dispatchAsync=dispatchAsync;
+		GetMultipleConfigurationParameters action = new GetMultipleConfigurationParameters(configID.getConfigID(),toGet);
 		dispatchAsync.execute(action, new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
 			@Override
@@ -120,7 +140,6 @@ public class OpenLayersMapView implements MapView {
 			}
 		
 		});
-		
 	}
 
 	private void addNotice() {
@@ -251,7 +270,7 @@ public class OpenLayersMapView implements MapView {
 				widgetFactory.getDialogBox().showError(
 						browserMessages.configParameterCantBeParse(ParameterNames.MAP_ZOOM_LEVEL, "integer"));
 			}
-			dispatchAsync.execute(new GetMapsConfiguration(), new AsyncCallback<GetMapsConfigurationResult>() {
+			dispatchAsync.execute(new GetMapsConfiguration(configID.getConfigID()), new AsyncCallback<GetMapsConfigurationResult>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					widgetFactory.getDialogBox().showError(

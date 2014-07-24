@@ -30,15 +30,17 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
 /**
  * @author Alexander De Leon
  */
-public class GetStatisticYears implements Action<ListResult<Year>> {
+public class GetStatisticYears extends MultipleConfigurationAction implements Action<ListResult<Year>> {
 
 	private String statisticType;
 
-	GetStatisticYears() {
+	private GetStatisticYears() {
+		super("");
 		// for serialization
 	}
 
-	public GetStatisticYears(String statisticType) {
+	public GetStatisticYears(String configID,String statisticType) {
+		super(configID);
 		this.statisticType = statisticType;
 	}
 

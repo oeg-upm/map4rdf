@@ -46,8 +46,8 @@ import de.micromata.opengis.kml.v_2_2_0.LineString;
 import de.micromata.opengis.kml.v_2_2_0.MultiGeometry;
 import de.micromata.opengis.kml.v_2_2_0.Placemark;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
@@ -63,18 +63,19 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 @Singleton
 public class KmlService extends HttpServlet {
 	private static final long serialVersionUID = 4451922424233735357L;
-	private final Map4rdfDao dao;
-
+	private MultipleConfigurations configurations;
+	//TODO Repair KML service with multiple configurations
 	@Inject
-	public KmlService(Map4rdfDao dao) {
-		this.dao = dao;
+	public KmlService(MultipleConfigurations configurations) {
+		this.configurations = configurations;;
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Set<FacetConstraint> constraints = getFacetConstraints(req);
 		try {
-			List<GeoResource> resources = dao.getGeoResources(null, constraints);
+			List<GeoResource> resources = configurations.getConfiguration("geolinkeddata")
+					.getMap4rdfDao().getGeoResources(null, constraints);
 			resp.setContentType("application/vnd.google-earth.kml+xml");
 			writeKml(resources, resp.getOutputStream());
 		} catch (DaoException e) {
