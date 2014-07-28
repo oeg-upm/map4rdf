@@ -32,6 +32,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
  */
 public class GetWebNMasUnoResource extends MultipleConfigurationAction implements Action<SingletonResult<WebNMasUnoResourceContainer>> {
 
+	private static final long serialVersionUID = -3999056428106064245L;
+	
 	private String uri;
 
 	private GetWebNMasUnoResource() {

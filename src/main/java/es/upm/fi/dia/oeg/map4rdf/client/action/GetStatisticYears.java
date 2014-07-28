@@ -32,6 +32,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.Year;
  */
 public class GetStatisticYears extends MultipleConfigurationAction implements Action<ListResult<Year>> {
 
+	private static final long serialVersionUID = 256808331708556211L;
+	
 	private String statisticType;
 
 	private GetStatisticYears() {

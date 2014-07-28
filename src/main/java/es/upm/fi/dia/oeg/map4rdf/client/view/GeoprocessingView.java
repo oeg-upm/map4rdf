@@ -9,10 +9,8 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
-import es.upm.fi.dia.oeg.map4rdf.client.action.MultipleConfigurationAction;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
@@ -22,7 +20,6 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.GeoprocessingPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.RoutesPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
-import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 

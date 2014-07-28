@@ -29,6 +29,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
  */
 public class GetAemetObsForProperty extends MultipleConfigurationAction implements Action<ListResult<AemetObs>>{
 
+	private static final long serialVersionUID = -4687548997686160039L;
+	
 	private String stationUri;
 	private String propertyUri;
 	private AemetIntervalo start;

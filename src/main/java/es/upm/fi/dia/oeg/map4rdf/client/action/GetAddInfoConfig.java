@@ -6,6 +6,9 @@ import net.customware.gwt.dispatch.shared.Action;
 
 
 public class GetAddInfoConfig extends MultipleConfigurationAction implements Action<SingletonResult<GetAddInfoConfigResult>>{
+	
+	private static final long serialVersionUID = 724086590101872113L;
+	
 	private GeoResource resource;
 	public GetAddInfoConfig(String configID, GeoResource resource){
 		super(configID);

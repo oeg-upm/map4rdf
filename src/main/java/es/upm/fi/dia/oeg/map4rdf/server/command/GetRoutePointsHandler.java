@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePoints;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePointsResult;

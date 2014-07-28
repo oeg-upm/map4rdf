@@ -55,6 +55,7 @@ public class GeoUtils {
 	public static double getDistance(TwoDimentionalCoordinate point1, TwoDimentionalCoordinate point2) {
 		return Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2));
 	}
+	//TODO remove unused comments
 	public static List<Geometry> getWKTGeometries(String uri ,String GMLText, String WKTText,String projection){
 		String crs=projection;
 		/*if(GMLText.contains("srsName")){

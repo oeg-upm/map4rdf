@@ -5,6 +5,9 @@ import net.customware.gwt.dispatch.shared.Action;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 public class GetBufferGeoResources extends MultipleConfigurationAction implements Action<GetBufferGeoResourcesResult> {
+
+	private static final long serialVersionUID = -6391683491297262424L;
+	
 	private String geoResourceUri;
 	private double radiousKM;
 	private TwoDimentionalCoordinate center;

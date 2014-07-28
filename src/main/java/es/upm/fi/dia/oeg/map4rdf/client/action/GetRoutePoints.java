@@ -7,6 +7,9 @@ import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import net.customware.gwt.dispatch.shared.Action;
 
 public class GetRoutePoints extends MultipleConfigurationAction implements Action<GetRoutePointsResult>{
+	
+	private static final long serialVersionUID = -6151756973778517421L;
+	
 	private List<Point> points;
 	private GetRoutePoints(){
 		super("");

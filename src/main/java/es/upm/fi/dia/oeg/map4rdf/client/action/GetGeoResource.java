@@ -32,6 +32,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
  */
 public class GetGeoResource extends MultipleConfigurationAction implements Action<SingletonResult<GeoResource>> {
 
+	private static final long serialVersionUID = -9119017333394987893L;
+	
 	private String uri;
 
 	private GetGeoResource() {

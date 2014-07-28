@@ -6,6 +6,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetObs;
 
 public class GetAemetObs extends MultipleConfigurationAction implements Action<ListResult<AemetObs>>{
 
+		private static final long serialVersionUID = 1182571218686724089L;
+		
 		private String uri;
 
 		private GetAemetObs() {

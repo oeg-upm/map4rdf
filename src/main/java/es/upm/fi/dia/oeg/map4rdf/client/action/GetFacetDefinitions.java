@@ -32,6 +32,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
  */
 public class GetFacetDefinitions extends MultipleConfigurationAction implements Action<GetFacetDefinitionsResult> {
 	
+	private static final long serialVersionUID = 7287563280517659717L;
+
 	private GetFacetDefinitions() {
 		super("");
 		//For serialization

@@ -37,6 +37,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
  */
 public class GetGeoResourceOverlays extends MultipleConfigurationAction implements Action<ListResult<GeoResourceOverlay>> {
 
+	private static final long serialVersionUID = 6539500668313542591L;
+	
 	private StatisticDefinition statisticDefinition;
 	private BoundingBox boundingBox;
 	private Set<FacetConstraint> facetConstraints;
