@@ -1,9 +1,8 @@
 package es.upm.fi.dia.oeg.map4rdf.share.conf.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gwt.dev.util.collect.HashMap;
 
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 
@@ -19,7 +18,7 @@ public class ConfigurationDescription extends Resource implements Serializable{
 		this.descriptions = new HashMap<String,String>();
 	}
 
-	public Map<String, String> getDescription() {
+	public Map<String, String> getDescriptions() {
 		return descriptions;
 	}
 
