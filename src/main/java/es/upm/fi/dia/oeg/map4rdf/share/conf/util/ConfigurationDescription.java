@@ -13,6 +13,11 @@ public class ConfigurationDescription extends Resource implements Serializable{
 	private Map<String,String> descriptions = new HashMap<String,String>();
 	private String image = "";
 
+	private ConfigurationDescription(){
+		super("");
+		//For serialization
+	}
+	
 	public ConfigurationDescription(String id){
 		super(id);
 		this.descriptions = new HashMap<String,String>();
