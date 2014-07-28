@@ -54,6 +54,10 @@ public class ConfigurationContainer {
 		return configuration.getConfigurationParamValue(parameter);
 	}
 	
+	public boolean containsConfigurationParam(String param) {
+		return configuration.containsConfigurationParam(param);
+	}
+	
 	public AddInfoConfigServer getAddInfoConfigServer() {
 		return addInfoConfigServer;
 	}
