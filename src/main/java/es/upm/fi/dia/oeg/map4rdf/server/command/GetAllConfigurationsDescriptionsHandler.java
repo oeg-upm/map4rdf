@@ -41,6 +41,7 @@ public class GetAllConfigurationsDescriptionsHandler implements ActionHandler<Ge
 			addDescriptions(toAdd);	
 			addLabels(toAdd);
 			addImage(toAdd);
+			toReturn.add(toAdd);
 		}
 		return new GetAllConfigurationsDescriptionResult(toReturn);
 	}
