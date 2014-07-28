@@ -61,7 +61,7 @@ public class GetAllConfigurationsDescriptionsHandler implements ActionHandler<Ge
 				for(String eachDescription:splitDescriptions){
 					String[] splitDescription = eachDescription.split("@");
 					if(splitDescription.length == 2){
-						configDescription.addLabel(splitDescription[0], splitDescription[1]);
+						configDescription.addLabel(splitDescription[1], splitDescription[0]);
 					}else if(splitDescription.length == 1){
 						configDescription.addLabel("", eachDescription);
 					}else{
