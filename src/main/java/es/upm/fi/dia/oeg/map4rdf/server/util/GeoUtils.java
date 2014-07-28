@@ -228,13 +228,10 @@ public class GeoUtils {
 			toReturnX=targetPoint.getX();
 			toReturnY=targetPoint.getY();
 		} catch (NoSuchAuthorityCodeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TransformException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -273,7 +270,6 @@ public class GeoUtils {
 	}
 	private static List<Geometry> transformGeoToolsGeometryToOEG(String uri, String WKTText, String projection,
 			com.vividsolutions.jts.geom.Geometry geometry) {
-		// TODO Auto-generated method stub
 		List<Geometry> geometrias = new ArrayList<Geometry>();
 		switch (geometry.getGeometryType().toLowerCase()) {
 		case "multipolygon":

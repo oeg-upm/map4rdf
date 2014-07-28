@@ -41,7 +41,6 @@ public class GetFacetDefinitions extends MultipleConfigurationAction implements 
 	
 	public GetFacetDefinitions(String configID) {
 		super(configID);
-		// TODO Auto-generated constructor stub
 	}
 
 	private BoundingBox boundingBox;
