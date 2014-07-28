@@ -30,5 +30,7 @@ package es.upm.fi.dia.oeg.map4rdf.server.conf;
 public class ParameterDefaults {
 
 	public static final boolean FACETS_AUTO_DEFAULT = true;
+	
+	public static final String LOGO_IMG_SRC = "default.png";
 
 }

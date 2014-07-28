@@ -24,31 +24,78 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.widget;
 
+import net.customware.gwt.dispatch.client.DispatchAsync;
+import net.customware.gwt.presenter.client.EventBus;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigLogotype;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigLogotypeResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 
 /**
  * @author Alexander De Leon
  */
 public class Header extends Composite {
-
-	public Header(BrowserResources resources) {
+	
+	private Image logo;
+	private DispatchAsync dispatchAsync;
+	private ConfIDInterface configID;
+	private WidgetFactory widgetFactory;
+	private BrowserMessages browserMessages;
+	
+	public Header(BrowserResources resources, BrowserMessages messages, ConfIDInterface configID, DispatchAsync dispatchAsync, EventBus eventBus, WidgetFactory widgetFactory) {
+		this.dispatchAsync = dispatchAsync;
+		this.configID = configID;
+		this.widgetFactory = widgetFactory;
+		this.browserMessages = messages;
 		initWidget(createUi(resources));
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
 		addStyleName(resources.css().header());
 	}
+	private void initAsync(){
+		dispatchAsync.execute(new GetConfigLogotype(configID.getConfigID()),new AsyncCallback<GetConfigLogotypeResult>() {
 
+			@Override
+			public void onFailure(Throwable caught) {
+				widgetFactory.getDialogBox().showError(browserMessages.errorCommunication()+": "+caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(GetConfigLogotypeResult result) {
+				RootPanel.get().remove(logo);
+				logo = new Image(GWT.getHostPageBaseURL() + result.getLogo());
+				RootPanel.get().add(logo);
+				RootPanel.get().setWidgetPosition(logo, 4, 0);
+				DOM.setStyleAttribute(logo.getElement(), "zIndex", "3");
+			}
+		});
+	}
 	private Widget createUi(BrowserResources resources) {
 		LayoutPanel panel = new LayoutPanel();
 		//TODO Change logo.png and add new parameter in config file that give this logo.
-		Image logo = new Image(GWT.getHostPageBaseURL() + "logo.png");
+		logo = new Image(GWT.getHostPageBaseURL() + "logo.png");
 		Image betaBadge = new Image(resources.betaBadge());
 
 		// Add the logo to the root panel
