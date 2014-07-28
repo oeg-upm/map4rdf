@@ -16,13 +16,13 @@ import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
-public class GetAllConfigurationsHandler implements ActionHandler<GetAllConfigurationsDescription,GetAllConfigurationsDescriptionResult>{
+public class GetAllConfigurationsDescriptionsHandler implements ActionHandler<GetAllConfigurationsDescription,GetAllConfigurationsDescriptionResult>{
 	
 	private MultipleConfigurations configurations;
-	private Logger logger = Logger.getLogger(GetAllConfigurationsHandler.class);
+	private Logger logger = Logger.getLogger(GetAllConfigurationsDescriptionsHandler.class);
 			
 	@Inject
-	public GetAllConfigurationsHandler(MultipleConfigurations configurations){
+	public GetAllConfigurationsDescriptionsHandler(MultipleConfigurations configurations){
 		this.configurations=configurations;
 	}
 	
