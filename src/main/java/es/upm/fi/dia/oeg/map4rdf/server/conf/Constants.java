@@ -41,6 +41,10 @@ public class Constants {
 	public static final String SPHERICAL_MAPS_FOLDER="/WEB-INF/maps/spherical_maps/";
 	
 	public static final String FLAT_MAPS_FOLDER="/WEB-INF/maps/flat_maps/";
+	
+	public final static String LOGOS_FOLDER="logos/";
+	
+	public final static String DESCIPTIONS_LOGOS_FOLDER=LOGOS_FOLDER+"descriptions/";
         
 	public static enum GeometryModel {
 		/**

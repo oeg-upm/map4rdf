@@ -11,7 +11,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -33,7 +32,6 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
-import es.upm.fi.dia.oeg.map4rdf.share.conf.ConstantsFolders;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.util.ConfigurationDescription;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
@@ -98,7 +96,7 @@ public class SelectConfigurationView extends Composite implements SelectConfigur
 		panel.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		VerticalPanel infoPanel = new VerticalPanel();
 		if(configDescription.hasImage()){
-			Image image=new Image(GWT.getHostPageBaseURL()+ConstantsFolders.LOGOS_FOLDER+configDescription.getImage());
+			Image image=new Image(GWT.getHostPageBaseURL()+configDescription.getImage());
 			panel.add(image);
 		}
 		infoPanel.add(new Label(LocaleUtil.getBestLabel(configDescription)));

@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAllConfigurationsDescription;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAllConfigurationsDescriptionResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.util.ConfigurationDescription;
@@ -49,7 +50,7 @@ public class GetAllConfigurationsDescriptionsHandler implements ActionHandler<Ge
 	private void addImage(ConfigurationDescription configDescription) {
 		if(configurations.getConfiguration(configDescription.getId()).containsConfigurationParam(ParameterNames.CONFIGURATION_IMAGE)){
 			String image = configurations.getConfiguration(configDescription.getId()).getConfigurationParamValue(ParameterNames.CONFIGURATION_IMAGE);
-			configDescription.setImage(image);
+			configDescription.setImage(Constants.DESCIPTIONS_LOGOS_FOLDER+image);
 		}
 	}
 
