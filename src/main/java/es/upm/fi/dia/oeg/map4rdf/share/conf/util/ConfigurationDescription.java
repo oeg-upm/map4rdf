@@ -5,18 +5,17 @@ import java.util.Map;
 
 import com.google.gwt.dev.util.collect.HashMap;
 
-public class ConfigurationDescription implements Serializable{
+import es.upm.fi.dia.oeg.map4rdf.share.Resource;
+
+public class ConfigurationDescription extends Resource implements Serializable{
 	
 	private static final long serialVersionUID = 1174274854533905981L;
 	
-	private String id;
-	private Map<String,String> labels = new HashMap<String,String>();;
 	private Map<String,String> descriptions = new HashMap<String,String>();
 	private String image = "";
 
 	public ConfigurationDescription(String id){
-		this.id = id;
-		this.labels = new HashMap<String,String>();
+		super(id);
 		this.descriptions = new HashMap<String,String>();
 	}
 
@@ -29,15 +28,9 @@ public class ConfigurationDescription implements Serializable{
 	}
 
 	public String getId() {
-		return id;
+		return super.getUri();
 	}
-
-	public Map<String, String> getLabels() {
-		return labels;
-	}
-	public void addLabel(String locale, String label){
-		labels.put(locale, label);
-	}
+	
 	public String getImage() {
 		return image;
 	}
@@ -49,9 +42,7 @@ public class ConfigurationDescription implements Serializable{
 	public boolean hasImage(){
 		return image!=null && !image.isEmpty();
 	}
-	public boolean hasLabels(){
-		return labels!=null && !labels.isEmpty();
-	}
+	
 	public boolean hasDescription(){
 		return descriptions!=null && !descriptions.isEmpty();
 	}
