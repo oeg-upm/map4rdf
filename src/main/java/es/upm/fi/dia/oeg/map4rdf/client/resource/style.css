@@ -197,6 +197,26 @@ body{
 	text-align:center;
 	font-family: Verdana, Arial, sans-serif;
 }
+.configurationDescriptionLine0Style{
+	cursor: pointer;
+	width: 100%;
+	padding-bottom: 12px;
+	padding-top: 12px;
+}
+.configurationDescriptionLine1Style{
+	cursor: pointer;
+	width: 100%;
+	padding-bottom: 12px;
+	padding-top: 12px;
+	background: rgb(219,232,252); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(219,232,252,1) 0%, rgba(219,232,252,1) 99%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(219,232,252,1)), color-stop(99%,rgba(219,232,252,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(219,232,252,1) 0%,rgba(219,232,252,1) 99%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(219,232,252,1) 0%,rgba(219,232,252,1) 99%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(219,232,252,1) 0%,rgba(219,232,252,1) 99%); /* IE10+ */
+	background: linear-gradient(to bottom, rgba(219,232,252,1) 0%,rgba(219,232,252,1) 99%); /* W3C */
+	filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#dbe8fc', endColorstr='#dbe8fc',GradientType=0 )"; /* IE6-9 */
+}
 .WEBNmas1Line0Style{
 	width: 100%;
 	padding-bottom: 25px;
