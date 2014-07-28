@@ -233,4 +233,6 @@ public interface BrowserMessages extends Messages {
 	String travelModeDoesntExists();
 	
 	String errorGoogleDirections(String status);
+	
+	String configurationSelectionTittle();
 }
