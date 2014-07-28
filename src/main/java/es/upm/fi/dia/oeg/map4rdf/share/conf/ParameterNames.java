@@ -68,4 +68,11 @@ public class ParameterNames {
 	public static final String STATISTICS_SERVICE_URL = "statistics_service_url";
 	
 	public static final String ADDITIONAL_INFO = "additional_info";
+	
+	public static final String CONFIGURATION_DESCRIPTION = "configuration.description";
+	
+	public static final String CONFIGURATION_IMAGE = "configuration.ui.image";
+	
+	public static final String CONFIGURATION_LABELS = "configuration.labels";
+	
 }
