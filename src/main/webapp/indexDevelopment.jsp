@@ -9,7 +9,7 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.js"></script>
     <script src="http://openlayers.org/api/2.13/OpenLayers.js"></script>
     <script src="OpenStreetMapsByFilip.js"></script>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?gwt=1&amp;file=api&amp;v=3.6&amp;sensor=true&amp;" ></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?gwt=1&amp;file=api&amp;v=3.9&amp;sensor=true&amp;" ></script>
     <script type="text/javascript" src="es.upm.fi.dia.oeg.map4rdf.map4rdf/es.upm.fi.dia.oeg.map4rdf.map4rdf.nocache.js"></script>
   </head>
 
