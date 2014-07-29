@@ -1,10 +1,11 @@
 <%@page import="es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.ConfigurationContainer"%>
 <%@page import="es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations"%>
 <%@page import="es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames"%>
+<%@page import="es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil" %>
 <%
 	String googleMapsKey="";
 	if(request.getParameter("GoogleKey")==null){
-		String configID = request.getParameter("config");
+		String configID = request.getParameter(ConfigurationUtil.CONFIGURATION_ID);
 		if(configID!=null && !configID.isEmpty()){
 			MultipleConfigurations globalConf = (MultipleConfigurations) pageContext.getServletContext().getAttribute(MultipleConfigurations.class.getName());
 			ConfigurationContainer configCont = globalConf.getConfiguration(configID);
