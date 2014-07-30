@@ -67,22 +67,25 @@ public class SaveRdfFileHandler implements
 		}
 		String path = configurations.getConfiguration(action.getConfigID())
 				.getConfigurationParamValue(ParameterNames.RDF_STORE_PATH);
-		if(!path.endsWith("/")){
-			path = path+"/";
+		if(!path.endsWith(File.separator)){
+			path = path+File.separator;
 		}
-		File file = new File(path +action.getConfigID()+"/"+ action.getFileName());
+		File file = new File(path +action.getConfigID()+File.separator+ action.getFileName());
     	if (file.exists()) {
     		logger.error("When save Edited rdf file, the file exists.");
     		return new SingletonResult<String>("The file exists");
     	}else{
     		try {
-    			File dirs= new File(path);
-    			dirs.mkdirs();
+    			File dirs= new File(path+action.getConfigID()+File.separator);
+    			if(!dirs.exists()){
+    				dirs.mkdirs();
+    			}
 				if(!file.createNewFile()){
+					return new SingletonResult<String>("Cant create the file.");
 				}
 			} catch (IOException e) {
 				logger.error("Can not save edited rdf file: ",e);
-				return new SingletonResult<String>("Cant create the file");
+				return new SingletonResult<String>("Cant create the file.");
 			}
     	}	
     	
@@ -95,7 +98,7 @@ public class SaveRdfFileHandler implements
 	    	
 		} catch (IOException e) {
 			logger.error("Can not save edited rdf file. Buffered ERROR: ",e);
-			return new SingletonResult<String>("Buffered ERROR");
+			return new SingletonResult<String>("BufferedWriter ERROR when save the content.");
 		}
 		
 		return new SingletonResult<String>("");
