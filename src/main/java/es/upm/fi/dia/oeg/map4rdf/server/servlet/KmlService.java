@@ -155,7 +155,6 @@ public class KmlService extends HttpServlet {
 		return null; // make compiler happy
 	}
 
-	@SuppressWarnings("unchecked")
 	private Set<FacetConstraint> getFacetConstraints(HttpServletRequest req) {
 		Set<FacetConstraint> constraints = new HashSet<FacetConstraint>();
 		Enumeration<String> paramNames = (Enumeration<String>)req.getParameterNames();
