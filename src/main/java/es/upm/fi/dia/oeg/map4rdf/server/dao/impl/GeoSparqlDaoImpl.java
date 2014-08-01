@@ -24,8 +24,6 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.dao.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +89,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			execution = QueryExecutionFactory.sparqlService(endpointUri,
 					createGetResourcesQuery(boundingBox, constraints, max));
 		}else if (this.endpointUri == null || this.endpointUri.isEmpty()){
-			execution = QueryExecutionFactory.sparqlService(endpointUri,
+			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint,
 					createGetALLGeoSparqlResourcesQuery(boundingBox, constraints, max));
 		}else{
 			execution = QueryExecutionFactory.sparqlService(endpointUri,
@@ -140,6 +138,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<GeoResource>(result.values());
 		} catch (Exception e) {
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -200,15 +199,9 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	public List<Facet> getFacets(String predicateUri, BoundingBox boundingBox) throws DaoException {
 		Map<String, Facet> result = new HashMap<String, Facet>();
 		StringBuilder queryBuffer = new StringBuilder();
-		/*queryBuffer.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
-		queryBuffer.append("select distinct ?class ?label where { ");
-		queryBuffer.append("?x geosparql:hasGeometry ?g. ");
-		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
-		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }");
-		queryBuffer.append("}");*/
 		queryBuffer.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		queryBuffer.append("select distinct ?class ?label where { ");
-		queryBuffer.append("?x a geosparql:Geometry. ");
+		queryBuffer.append("?x geosparql:hasGeometry ?g. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }");
 		queryBuffer.append("}");
@@ -218,14 +211,6 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		}else{
 			execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
 		}
-		System.out.println(geoSparqlEndpoint+" "+queryBuffer.toString());
-		try {
-			System.out.println(URLEncoder.encode(queryBuffer.toString(), "UTF-8"));
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.println(execution.toString());
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
