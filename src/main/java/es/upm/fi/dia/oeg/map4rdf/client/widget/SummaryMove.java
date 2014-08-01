@@ -2,6 +2,7 @@ package es.upm.fi.dia.oeg.map4rdf.client.widget;
 
 import java.util.ArrayList;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -89,7 +90,7 @@ public class SummaryMove {
 		for(int i=0;i<allWidgetInOrder.size();i++){
 			int left=parametersSummary.getIntSizeImages()+calculateLeftMove(i);
 			int top=parametersSummary.getIntSizeImages()-calculateTopMove(i);
-			widgetsLineMove.add(new WidgetLineMove(allWidgetInOrder.get(i), new LeftTopPosition(left, top), "px"));
+			widgetsLineMove.add(new WidgetLineMove(allWidgetInOrder.get(i), new LeftTopPosition(left, top), Unit.PX));
 		}
 	}
 	private Timer getFirtsTimer(){

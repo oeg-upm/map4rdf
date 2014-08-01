@@ -37,9 +37,11 @@ import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.geometry.Geometry;
 import org.gwtopenmaps.openlayers.client.geometry.Polygon;
 
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
@@ -232,13 +234,13 @@ public class OpenLayersMapView implements MapView {
 				eventBus.fireEvent(new FacetReloadEvent());
 			}
 		});
-		DOM.setStyleAttribute(image.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(image.getElement(), "top", "62px");
-		DOM.setStyleAttribute(image.getElement(), "left", "8px");
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
-		DOM.setStyleAttribute(image.getElement(), "zIndex", "2080");
+		image.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		image.getElement().getStyle().setTop(62, Unit.PX);
+		image.getElement().getStyle().setLeft(8, Unit.PX);
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
+		image.getElement().getStyle().setZIndex(2080);
 		panel.add(image);
-		DOM.setStyleAttribute(panel.getElement(), "zIndex", "0");
+		panel.getElement().getStyle().setZIndex(0);
 	}
 	
 	private void createAsyncUi(java.util.Map<String,String> parameters){

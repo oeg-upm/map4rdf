@@ -31,9 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -150,19 +151,19 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 	@Override
 	public void setHeight(String height) {
 		super.setHeight(height);
-		DOM.setStyleAttribute(scrollPanel.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(scrollPanel.getElement(), "top", "22px");
+		scrollPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		scrollPanel.getElement().getStyle().setTop(22, Unit.PX);
 	}
 	
 	private void fireSelectionChanged(String id, Boolean value) {
 		if(value){
 			relationFacetIDHexColour.put(id, getFirtsFreeColour());
-			DOM.setStyleAttribute(selectionOptions.get(id).getElement(), "background", DrawPointStyle.getHexColours()[relationFacetIDHexColour.get(id)]);
+			selectionOptions.get(id).getElement().getStyle().setProperty("background", DrawPointStyle.getHexColours()[relationFacetIDHexColour.get(id)]);
 		}else{
 			if(relationFacetIDHexColour.containsKey(id)){
 				removeHexColour(relationFacetIDHexColour.get(id));
 			}
-			DOM.setStyleAttribute(selectionOptions.get(id).getElement(), "background", "");
+			selectionOptions.get(id).getElement().getStyle().setProperty("background", "");
 		}
 		if(relationFacetIDHexColour.get(id)!=null){
 			fireEvent(new FacetValueSelectionChangedEvent(DrawPointStyle.getHexColours()[relationFacetIDHexColour.get(id)],id, value));

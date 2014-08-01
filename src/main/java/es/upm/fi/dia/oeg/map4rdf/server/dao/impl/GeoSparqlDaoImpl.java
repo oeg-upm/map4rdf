@@ -24,6 +24,8 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.dao.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,12 +65,10 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	private static final Logger LOG = Logger.getLogger(GeoSparqlDaoImpl.class);
 	private final String geoSparqlEndpoint;
 	
-	
 	@Inject
 	public GeoSparqlDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,@Named(ParameterNames.ENDPOINT_URL_GEOSPARQL)String geoSparqlEndpoointUrl ,String defaultProjection) {
 		super(endpointUri,defaultProjection);
 		this.geoSparqlEndpoint=geoSparqlEndpoointUrl;
-		
 	}
 
 	@Override
@@ -106,10 +106,10 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String geoUri = solution.getResource("geosparqlwkt").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
 					//TODO: Remove this if when we can obtain crs in endpoint.
-					//if(wkt.toLowerCase().contains("crs84")){
+					if(wkt.toLowerCase().contains("crs84")){
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:23030");
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
 						if(!geometries.isEmpty()){
 							resource = new GeoResource(uri, geometries.get(0));
 							for(int i=1;i<geometries.size();i++){
@@ -118,7 +118,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							result.put(uri, resource);
 						}
 					} else if (!resource.hasGeometry(geoUri)) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:23030");
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
 						if(!geometries.isEmpty()){
 							for(int i=0;i<geometries.size();i++){
 								resource.addGeometry(geometries.get(i));
@@ -131,7 +131,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 						String facetValueID=solution.getResource("facetValueID").getURI();
 						resource.setFacetConstraint(new FacetConstraint(facetID, facetValueID));
 					}
-					//}
+					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
 				} catch (Exception e) {
@@ -200,14 +200,32 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	public List<Facet> getFacets(String predicateUri, BoundingBox boundingBox) throws DaoException {
 		Map<String, Facet> result = new HashMap<String, Facet>();
 		StringBuilder queryBuffer = new StringBuilder();
-		queryBuffer.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
+		/*queryBuffer.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		queryBuffer.append("select distinct ?class ?label where { ");
 		queryBuffer.append("?x geosparql:hasGeometry ?g. ");
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }");
+		queryBuffer.append("}");*/
+		queryBuffer.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
+		queryBuffer.append("select distinct ?class ?label where { ");
+		queryBuffer.append("?x a geosparql:Geometry. ");
+		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
+		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }");
 		queryBuffer.append("}");
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
-
+		QueryExecution execution;
+		if(endpointUri==null || endpointUri.isEmpty()){
+			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint, queryBuffer.toString());
+		}else{
+			execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
+		}
+		System.out.println(geoSparqlEndpoint+" "+queryBuffer.toString());
+		try {
+			System.out.println(URLEncoder.encode(queryBuffer.toString(), "UTF-8"));
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(execution.toString());
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
@@ -227,6 +245,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {

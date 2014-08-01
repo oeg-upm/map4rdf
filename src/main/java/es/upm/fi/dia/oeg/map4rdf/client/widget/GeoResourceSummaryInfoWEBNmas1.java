@@ -12,7 +12,6 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -92,7 +91,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		mainWidget=new DialogBox(false, false);
 		mainWidget.setAnimationEnabled(true);
 		mainWidget.setGlassEnabled(false);
-		DOM.setStyleAttribute(mainWidget.getElement(), "zIndex", "10");
+		mainWidget.getElement().getStyle().setZIndex(10);
 		Button close = new Button(browserMessages.close());
 		close.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -289,8 +288,8 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		anchorsPanel.setSpacing(6);
 		verticalPanel.add(scroll);
 		verticalPanel.add(anchorsPanel);
-		DOM.setStyleAttribute(DOM.getParent(anchorsPanel.getElement()), "borderTop", "2px solid #004C99");
-		DOM.setStyleAttribute(DOM.getParent(anchorsPanel.getElement()), "borderBottom", "2px solid #004C99");
+		anchorsPanel.getElement().getParentElement().getStyle().setProperty("borderTop", "2px solid #004C99");
+		anchorsPanel.getElement().getParentElement().getStyle().setProperty("borderBottom", "2px solid #004C99");
 		panel.add(verticalPanel);
 		int last=guides.size();
 		if(guides.size()>10){last=10;}
@@ -299,9 +298,9 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		for(int i=0;i<=totalI;i++){
 			Anchor anchor=new Anchor(String.valueOf(i+1));
 			anchorsPanel.add(anchor);
-			DOM.setStyleAttribute(anchor.getElement(), "color", "");
+			anchor.getElement().getStyle().setColor("");
 			if(i==0){
-				DOM.setStyleAttribute(anchor.getElement(), "color", "#CC0000");
+				anchor.getElement().getStyle().setColor("#CC0000");
 			}
 			int endGuides=(i+1)*10;
 			if(endGuides>guides.size()){
@@ -541,9 +540,9 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				addSubSetGuides(guides.subList(startGuide, finalGuide), contentTable, height);
 				scroll.scrollToTop();
 				for(int i=0;i<anchorsPanel.getWidgetCount();i++){
-					DOM.setStyleAttribute(anchorsPanel.getWidget(i).getElement(), "color", "");
+					anchorsPanel.getWidget(i).getElement().getStyle().setColor("");
 				}
-				DOM.setStyleAttribute(anchor.getElement(), "color", "#CC0000");	
+				anchor.getElement().getStyle().setColor("#CC0000");	
 			}
 		});
 	}
@@ -560,12 +559,12 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				contentAnchor.setSize("auto", imageHeight+"px");
 				Image imageWidget=new Image(image.getURL());
 				imageWidget.setSize("auto", "180px");
-				DOM.appendChild(contentAnchor.getElement(), imageWidget.getElement());
+				contentAnchor.getElement().appendChild(imageWidget.getElement());
 				contentPanel.add(contentAnchor);
 				for(int i=0;i<anchorsPanel.getWidgetCount();i++){
-					DOM.setStyleAttribute(anchorsPanel.getWidget(i).getElement(), "color", "");
+					anchorsPanel.getWidget(i).getElement().getStyle().setColor("");
 				}
-				DOM.setStyleAttribute(anchor.getElement(), "color", "#CC0000");	
+				anchor.getElement().getStyle().setColor("#CC0000");
 			}
 		});
 	}
@@ -585,9 +584,9 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			imageNumber++;
 			changeImageWithAnchorClick(anchor, height, image, imagePanel, anchorsPanel);
 			anchorsPanel.add(anchor);
-			DOM.setStyleAttribute(anchor.getElement(), "color", "");
+			anchor.getElement().getStyle().setColor("");
 			if(!isImageAdded){
-				DOM.setStyleAttribute(anchor.getElement(), "color", "#CC0000");
+				anchor.getElement().getStyle().setColor("#CC0000");
 				int imageHeight=(int)(height*0.2);
 				Anchor contentImage=new Anchor();
 				contentImage.setHref(image.getPname());
@@ -595,7 +594,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				contentImage.setSize("auto", imageHeight+"px");
 				Image imageWidget=new Image(image.getURL());
 				imageWidget.setSize("auto", "180px");
-				DOM.appendChild(contentImage.getElement(), imageWidget.getElement());
+				contentImage.getElement().appendChild(imageWidget.getElement());
 				imagePanel.add(contentImage);
 			}
 			isImageAdded=true;

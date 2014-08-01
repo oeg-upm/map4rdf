@@ -32,10 +32,10 @@ import java.util.List;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -225,7 +225,7 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 				dateFilterPanel.add(new Label(message));
 				dateFilterPanel.add(new Label(dateTimeFormater(dateFilter.getDate())));
 				Image removeImage = new Image(resources.eraserIcon());
-				DOM.setStyleAttribute(removeImage.getElement(), "cursor", "pointer");
+				removeImage.getElement().getStyle().setCursor(Cursor.POINTER);
 				dateFilterPanel.add(removeImage);
 				addRemoveFilterEvent(removeImage, filters, dateFilterPanel, dateFilter);
 				filters.add(dateFilterPanel);

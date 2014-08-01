@@ -45,6 +45,8 @@ import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.GwtEvent;
@@ -243,10 +245,8 @@ public class OpenLayersMapLayer implements MapLayer,
 						if(getPopupLeft()!=null && getPopupLeft()!="" && !getPopupLeft().isEmpty() && getPopupTop()!=null && getPopupTop()!="" && !getPopupTop().isEmpty()){
 							int popupLeft=Integer.parseInt(getPopupLeft().replace("px", ""));
 							int popupTop=Integer.parseInt(getPopupTop().replace("px", ""));
-						DOM.setStyleAttribute(popupPanel.getElement(), "left",
-								String.valueOf(popupLeft-(width/2))+"px");// + "px");
-						DOM.setStyleAttribute(popupPanel.getElement(), "top",
-								String.valueOf(popupTop-(height/2))+"px");// + "px");
+						popupPanel.getElement().getStyle().setLeft(popupLeft-(width/2), Unit.PX);
+						popupPanel.getElement().getStyle().setTop(popupTop-(height/2), Unit.PX);
 						}
 					}
 				};
@@ -254,8 +254,8 @@ public class OpenLayersMapLayer implements MapLayer,
 				LonLat popupPosition = OpenLayersAdapter.getLatLng(location);
 				popupPosition.transform(location.getProjection(), map.getProjection());
 				popup = new Popup("exclusive-mapresources-popup",
-						popupPosition, new Size(width, height),
-						DOM.getInnerHTML(panel.getElement()), false);
+						popupPosition, new Size(width, height),panel.getElement().getInnerHTML()
+						, false);
 
 				map.addPopupExclusive(popup);
 				popupPanel = new FlowPanel();
@@ -266,18 +266,12 @@ public class OpenLayersMapLayer implements MapLayer,
 				if(getPopupLeft()!=null && getPopupLeft()!="" && getPopupTop()!=null && getPopupTop()!=""){
 					int popupLeft=Integer.parseInt(getPopupLeft().replace("px", ""));
 					int popupTop=Integer.parseInt(getPopupTop().replace("px", ""));
-				
-					DOM.setStyleAttribute(popupPanel.getElement(), "position",
-						"absolute");
-					DOM.setStyleAttribute(popupPanel.getElement(), "left",
-						String.valueOf(popupLeft-(width/2))+"px");// + "px");
-					DOM.setStyleAttribute(popupPanel.getElement(), "top",
-						String.valueOf(popupTop-(height/2))+"px");// + "px");
+					popupPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+					popupPanel.getElement().getStyle().setLeft(popupLeft-(width/2), Unit.PX);
+					popupPanel.getElement().getStyle().setTop(popupTop-(height/2), Unit.PX);
 				}
-				DOM.setStyleAttribute(popupPanel.getElement(), "zIndex", "2024");
-				DOM.setElementAttribute(popupPanel.getElement(), "id",
-						"map4rdf-popup-new");
-
+				popupPanel.getElement().getStyle().setZIndex(2024);
+				popupPanel.getElement().setAttribute("id", "map4rdf-popup-new");
 				replace();
 			}
 

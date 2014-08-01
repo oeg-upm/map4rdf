@@ -11,11 +11,11 @@ import name.alexdeleon.lib.gwtblocks.client.widget.loading.LoadingWidget;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -120,11 +120,11 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 	    loadingBox.setWidget(getLoadingContent(browserResources.loadingIcon(),aemetMessages.loadingChart(), browserResources.css()));
 	    loadingBox.setText(browserMessages.loading());
 	    loadingBox.setTitle(browserMessages.loading());
-	    DOM.setStyleAttribute(loadingBox.getElement(), "zIndex", "20");
+	    loadingBox.getElement().getStyle().setZIndex(20);
 		mainWidget=new DialogBox(false, false);
 		mainWidget.setAnimationEnabled(true);
 		mainWidget.setGlassEnabled(false);
-		DOM.setStyleAttribute(mainWidget.getElement(), "zIndex", "10");
+		mainWidget.getElement().getStyle().setZIndex(10);
 		Button close = new Button(browserMessages.close());
 		close.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -162,12 +162,12 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 				listPanel.add(new Label(aemetMessages.timeOfObservation()+" "+firstObservation.getIntervalo().toString()));
 				FlexTable propertiesPanel=new FlexTable();
 				listPanel.add(propertiesPanel);
-				DOM.setStyleAttribute(propertiesPanel.getElement(), "border", "1px solid black");
-				DOM.setStyleAttribute(propertiesPanel.getElement(), "borderCollapse", "collapse");
+				propertiesPanel.getElement().getStyle().setProperty("border", "1px solid black");
+				propertiesPanel.getElement().getStyle().setProperty("borderCollapse", "collapse");
 				for (final AemetObs observation : obs) {
 					HorizontalPanel obsActual = dameUnidadMedicion(LocaleUtil.getBestLabel(observation.getPropiedad()),
 							observation.getUriObs(), Double.toString(observation.getValor()));
-					DOM.setElementAttribute(obsActual.getElement(), "cellpadding", "8px");
+					obsActual.getElement().getStyle().setProperty("cellpading", "8px");
 					VerticalPanel graf = new VerticalPanel();
 					graf.setSize("35%", "100%");
 					graf.add(new Label(aemetMessages.charts()));
@@ -191,7 +191,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 					obsActual.add(graf);
 					obsActual.setCellWidth(graf, "35%");
 					propertiesPanel.setWidget(row,column,obsActual);
-					DOM.setStyleAttribute(propertiesPanel.getCellFormatter().getElement(row, column), "border", "1px solid black");
+					propertiesPanel.getCellFormatter().getElement(row, column).getStyle().setProperty("border", "1px solid black");
 					column++;
 					if(column==columnLimit){
 						propertiesPanel.getRowFormatter().setVerticalAlign(row, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -368,8 +368,8 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 		panel.setSpacing(8);
 		Image icon = new Image(loadingIcon);
 		icon.setStyleName(style.loadingWidgetIconStyle());
-		DOM.setStyleAttribute(label.getElement(), "float", "right");
-		DOM.setStyleAttribute(label.getElement(), "verticalAlign", "middle");
+		label.getElement().getStyle().setFloat(com.google.gwt.dom.client.Style.Float.RIGHT);
+		label.getElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
 		panel.add(icon);
 		panel.add(label);
 		return panel;
@@ -438,8 +438,7 @@ public class GeoResourceSummaryInfoAemet implements GeoResourceSummaryInfo {
 			
 			//Disable that the dialog disable other events.
 			setModal(false);
-			
-			DOM.setStyleAttribute(this.getElement(), "zIndex", "10");
+			this.getElement().getStyle().setZIndex(10);
 			
 			// DialogBox is a SimplePanel, so you have to set its widget
 			// property to whatever you want its contents to be.

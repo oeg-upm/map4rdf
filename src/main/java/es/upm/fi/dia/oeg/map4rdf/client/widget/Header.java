@@ -29,7 +29,6 @@ import net.customware.gwt.presenter.client.EventBus;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
@@ -88,7 +87,7 @@ public class Header extends Composite {
 				logo = new Image(GWT.getHostPageBaseURL() + result.getLogo());
 				RootPanel.get().add(logo);
 				RootPanel.get().setWidgetPosition(logo, 4, 0);
-				DOM.setStyleAttribute(logo.getElement(), "zIndex", "3");
+				logo.getElement().getStyle().setZIndex(3);
 			}
 		});
 	}
@@ -100,7 +99,7 @@ public class Header extends Composite {
 		// Add the logo to the root panel
 		RootPanel.get().add(logo);
 		RootPanel.get().setWidgetPosition(logo, 4, 0);
-		DOM.setStyleAttribute(logo.getElement(), "zIndex", "3");
+		logo.getElement().getStyle().setZIndex(3);
 
 		panel.add(betaBadge);
 		panel.setWidgetRightWidth(betaBadge, 2, Unit.EM, 48, Unit.PX);

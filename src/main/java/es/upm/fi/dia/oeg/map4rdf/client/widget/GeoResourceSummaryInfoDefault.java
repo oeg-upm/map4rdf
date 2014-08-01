@@ -2,9 +2,9 @@ package es.upm.fi.dia.oeg.map4rdf.client.widget;
 
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -41,9 +41,9 @@ public class GeoResourceSummaryInfoDefault implements GeoResourceSummaryInfo{
 	private DialogBox mainWidget;
 	public GeoResourceSummaryInfoDefault(BrowserMessages messages, BrowserResources resources){
 		mainPanel = new FlowPanel();		
-		DOM.setStyleAttribute(mainPanel.getElement(), "textAlign", "left");
+		mainPanel.getElement().getStyle().setTextAlign(TextAlign.LEFT);
 		label = new Label();
-		DOM.setStyleAttribute(label.getElement(), "wordWrap", "break-word");
+		label.getElement().getStyle().setProperty("wordWrap", "break-word");
 		mainPanel.add(label);
 		mainPanel.add(new InlineHTML("<br />"));
 
@@ -74,7 +74,7 @@ public class GeoResourceSummaryInfoDefault implements GeoResourceSummaryInfo{
 		mainWidget=new DialogBox(false, false);
 		mainWidget.setAnimationEnabled(true);
 		mainWidget.setGlassEnabled(false);
-		DOM.setStyleAttribute(mainWidget.getElement(), "zIndex", "10");
+		mainWidget.getElement().getStyle().setZIndex(10);
 		Button close = new Button(messages.close());
 		close.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {

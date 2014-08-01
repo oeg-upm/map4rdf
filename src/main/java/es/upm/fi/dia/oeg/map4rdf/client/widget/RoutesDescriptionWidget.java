@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.maps.client.services.DirectionsLeg;
 import com.google.gwt.maps.client.services.DirectionsRoute;
 import com.google.gwt.maps.client.services.DirectionsStep;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -121,31 +124,30 @@ public class RoutesDescriptionWidget extends Composite{
 		routesSelect=new FlowPanel();
 		Label label=new Label(browserMessages.nameRoute());
 		routesSelect.add(label);
-		DOM.setStyleAttribute(label.getElement(), "fontSize", "14px");
-		DOM.setStyleAttribute(label.getElement(), "textAlign", "center");
-		DOM.setStyleAttribute(label.getElement(), "color", "blue");
+		label.getElement().getStyle().setFontSize(14, Unit.PX);
+		label.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		label.getElement().getStyle().setColor("blue");
 		routesNumbers=new FlowPanel();
-		DOM.setStyleAttribute(routesNumbers.getElement(), "textAlign", "center");
+		routesNumbers.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		routesSelect.add(routesNumbers);
 	}
 	private void addRouteSelect(final int number){
 		Anchor anchor=new Anchor(number+"");
 		allRoutesNumbers.add(anchor);
 		if(number!=1){
-			DOM.setStyleAttribute(anchor.getElement(), "marginLeft","15px");
+			anchor.getElement().getStyle().setMarginLeft(15, Unit.PX);
 		}else{
-			DOM.setStyleAttribute(anchor.getElement(), "color", "red");
+			anchor.getElement().getStyle().setColor("red");
 			lastNumberChange=anchor;
 		}
-		DOM.setStyleAttribute(anchor.getElement(), "fontSize", "12px");
+		anchor.getElement().getStyle().setFontSize(12, Unit.PX);
 		anchor.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				DOM.setStyleAttribute(lastNumberChange.getElement(), "color", "blue");
+				lastNumberChange.getElement().getStyle().setColor("blue");
 				lastNumberChange=allRoutesNumbers.get(number-1);
-				DOM.setStyleAttribute(lastNumberChange.getElement(), "color", "red");
+				lastNumberChange.getElement().getStyle().setColor("red");
 				scrollPanel.setWidget(routePanels.get(number-1));
 				callback.onRouteSelected(routes.get(number-1));
 			}

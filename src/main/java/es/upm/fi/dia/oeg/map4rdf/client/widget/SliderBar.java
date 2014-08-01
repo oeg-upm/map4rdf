@@ -5,6 +5,11 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -17,8 +22,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent; 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -72,14 +75,14 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 
 	private Widget createUI() {
 		mainPanel = new FocusPanel();
-		addMainStyle(mainPanel.getElement());
+		addMainStyle(mainPanel);
 		mainPanel.setHeight("34pt");
 		flowPanel = new FlowPanel();
 		line = new FlowPanel();
-		addLineStyle(line.getElement());
+		addLineStyle(line);
 		flowPanel.setHeight("34pt");
 		knob = new Image(GWT.getModuleBaseURL() + "slider.png");
-		addKnobStyle(knob.getElement());
+		addKnobStyle(knob);
 		mainPanel.addMouseDownHandler(new MouseDownHandler() {
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
@@ -140,7 +143,7 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 				distance=temp;
 			}
 		}
-		move(knob.getElement(),actualPosition);
+		move(knob,actualPosition);
 		if(fireEvent){
 			fireEvents();
 		}
@@ -231,59 +234,58 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 		}
 		return toReturn;
 	}
-	private void addMainStyle(Element element) {
-		DOM.setStyleAttribute(element, "backgroundColor", "white");
-		DOM.setStyleAttribute(element, "cursor", "auto");
+	private void addMainStyle(Widget widget) {
+		widget.getElement().getStyle().setBackgroundColor("white");
+		widget.getElement().getStyle().setCursor(Cursor.AUTO);
 	}
 
-	private void addLabelStyle(Element element) {
-		DOM.setStyleAttribute(element, "position", "absolute");
-		DOM.setStyleAttribute(element, "visibility", "visible");
-		DOM.setStyleAttribute(element, "top", "2pt");
-		DOM.setStyleAttribute(element, "fontSize", "8pt");
-		DOM.setStyleAttribute(element, "cursor", "default");
-		DOM.setElementAttribute(element, "draggable", "false");
+	private void addLabelStyle(Widget widget) {
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		widget.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		widget.getElement().getStyle().setTop(2, Unit.PT);
+		widget.getElement().getStyle().setFontSize(8, Unit.PT);
+		widget.getElement().getStyle().setCursor(Cursor.DEFAULT);
+		widget.getElement().setAttribute("draggable", "false");
 	}
 
-	private void addLineStyle(Element element) {
-		DOM.setStyleAttribute(element, "border", "1px solid black");
-		DOM.setStyleAttribute(element, "backgroundColor", "white");
-		DOM.setStyleAttribute(element, "height", "4px");
-		DOM.setStyleAttribute(element, "top", "22pt");
-		DOM.setStyleAttribute(element, "overflow", "hidden");
-		DOM.setStyleAttribute(element, "position", "absolute");
-		DOM.setStyleAttribute(element, "left", horizontalSpacing + "px");
-		DOM.setStyleAttribute(element, "visibility", "visible");
-		DOM.setStyleAttribute(element, "opacity", "1.0");
-		DOM.setElementAttribute(element, "draggable", "false");
+	private void addLineStyle(Widget widget) {
+		widget.getElement().getStyle().setProperty("border", "1px solid black");
+		widget.getElement().getStyle().setBackgroundColor("white");
+		widget.getElement().getStyle().setHeight(4, Unit.PX);
+		widget.getElement().getStyle().setTop(22, Unit.PT);
+		widget.getElement().getStyle().setOverflow(Overflow.HIDDEN);
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		widget.getElement().getStyle().setLeft(horizontalSpacing, Unit.PX);
+		widget.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		widget.getElement().getStyle().setOpacity(1.0);
+		widget.getElement().setAttribute("draggable", "false");
 	}
 
-	private void addKnobStyle(Element element) {
-		DOM.setStyleAttribute(element, "position", "absolute");
-		DOM.setStyleAttribute(element, "top", "14pt");
-		DOM.setElementAttribute(element, "border", "0");
-		DOM.setStyleAttribute(element, "left", horizontalSpacing - 5 + "px");
-		DOM.setStyleAttribute(element, "cursor", "pointer");
-		DOM.setStyleAttribute(element, "visibility", "visible");
-		DOM.setStyleAttribute(element, "opacity", "1.0");
-		DOM.setElementAttribute(element, "draggable", "false");
+	private void addKnobStyle(Widget widget) {
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		widget.getElement().getStyle().setTop(14, Unit.PT);
+		widget.getElement().setAttribute("border", "0");
+		widget.getElement().getStyle().setLeft(horizontalSpacing-5, Unit.PX);
+		widget.getElement().getStyle().setCursor(Cursor.POINTER);
+		widget.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		widget.getElement().getStyle().setOpacity(1.0);
+		widget.getElement().setAttribute("draggable", "false");
 	}
 
-	private void addTickStyle(Element element) {
-		DOM.setStyleAttribute(element, "position", "absolute");
-		DOM.setStyleAttribute(element, "top", "16pt");
-		DOM.setStyleAttribute(element, "width", "1px");
-		DOM.setStyleAttribute(element, "height", "6pt");
-		DOM.setStyleAttribute(element, "background",
-				"none repeat scroll 0% 0% black");
-		DOM.setStyleAttribute(element, "overflow", "hidden");
-		DOM.setStyleAttribute(element, "visibility", "visible");
-		DOM.setStyleAttribute(element, "opacity", "1.0");
-		DOM.setElementAttribute(element, "draggable", "false");
+	private void addTickStyle(Widget widget) {
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		widget.getElement().getStyle().setTop(16, Unit.PT);
+		widget.getElement().getStyle().setWidth(1, Unit.PX);
+		widget.getElement().getStyle().setHeight(6, Unit.PT);
+		widget.getElement().getStyle().setProperty("background", "none repeat scroll 0% 0% black");
+		widget.getElement().getStyle().setOverflow(Overflow.HIDDEN);
+		widget.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		widget.getElement().getStyle().setOpacity(1.0);
+		widget.getElement().setAttribute("draggable", "false");
 	}
 
-	private void move(Element element, int pixelMove) {
-		DOM.setStyleAttribute(element, "left", pixelMove + "px");
+	private void move(Widget widget, int pixelMove) {
+		widget.getElement().getStyle().setLeft(pixelMove, Unit.PX);
 	}
 
 	private void refreshPosition(int x) {
@@ -295,7 +297,7 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 		if (x < horizontalSpacing - knob.getOffsetWidth() / 2) {
 			x = horizontalSpacing - knob.getOffsetWidth() / 2;
 		}
-		move(knob.getElement(), x);
+		move(knob, x);
 	}
 
 	private void initComponents() {
@@ -312,7 +314,7 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 		double x = horizontalSpacing;
 		for (int i = 0; i < numTicks; i++) {
 			FlowPanel tick = new FlowPanel();
-			addTickStyle(tick.getElement());
+			addTickStyle(tick);
 			flowPanel.add(tick);
 			int move;
 			if (i == numTicks - 1) {
@@ -321,7 +323,7 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 			} else {
 				move=(int) Math.round(x);
 			}
-			move(tick.getElement(),move);
+			move(tick,move);
 			x += separationTicks;
 		}
 		// Init labels
@@ -331,7 +333,7 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 		double xLabel = horizontalSpacing;
 		for (int i = 0; i < numLabels; i++) {
 			Label label = new Label(labelFormatter.formatLabel(this, (((double)(max-min)/(double)(numLabels-1))*i)+min));
-			addLabelStyle(label.getElement());
+			addLabelStyle(label);
 			flowPanel.add(label);
 			int move;
 			if (i == numTicks - 1) {
@@ -342,12 +344,12 @@ public class SliderBar extends SimplePanel implements HasValueChangeHandlers<Dou
 			} else {
 				move=(int) Math.round(xLabel - label.getOffsetWidth() / 2);
 			}
-			move(label.getElement(),move);
+			move(label,move);
 			xLabel += separationLabels;
 		}
 		// Init knob
 		flowPanel.add(knob);
-		move(knob.getElement(), actualPosition);
+		move(knob, actualPosition);
 		// Init steps
 		positionsMap.clear();
 		double numStepsDouble=(max-min)/stepSize;

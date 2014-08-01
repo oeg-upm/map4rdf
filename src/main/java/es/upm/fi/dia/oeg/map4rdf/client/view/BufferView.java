@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -155,7 +154,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		buttonErase.addClickHandler(handler);
 		anchorResource = new Anchor();
 		anchorResource.setSize("140px", "40px");
-		DOM.setStyleAttribute(anchorResource.getElement(), "wordWrap", "break-word");
+		anchorResource.getElement().getStyle().setProperty("wordWrap", "break-word");
 		panelAnchorResource= new FlowPanel();
 		panelAnchorResource.add(anchorResource);
 		panelAnchorResource.setWidth("142px");

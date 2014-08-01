@@ -12,11 +12,17 @@ import org.gwtopenmaps.openlayers.client.LonLat;
 
 
 
+
+
+
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,7 +43,6 @@ import com.google.gwt.maps.client.services.DirectionsService;
 import com.google.gwt.maps.client.services.DirectionsStatus;
 import com.google.gwt.maps.client.services.DirectionsWaypoint;
 import com.google.gwt.maps.client.services.TravelMode;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -188,8 +193,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				traceRoute();
 			}
 		});
-		DOM.setStyleAttribute(traceRoute.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(traceRoute.getElement(), "right", "20px");
+		traceRoute.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		traceRoute.getElement().getStyle().setRight(20, Unit.PX);
 		Grid optionsGrid=initializeOptionsGrid();
 		optionsDisPanel=new DisclosurePanel(browserMessages.moreOptions());
 		optionsDisPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
@@ -620,9 +625,9 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		anchor.setTarget("_blank");
 		anchorContainer.add(anchor);
 		anchorContainer.setSize("170px","100%");
-		DOM.setStyleAttribute(anchorContainer.getElement(), "wordWrap", "break-word");
-		DOM.setStyleAttribute(anchorContainer.getElement(), "textAlign", "center");
-		DOM.setStyleAttribute(anchor.getElement(), "textAlign","center");
+		anchorContainer.getElement().getStyle().setProperty("wordWrap", "break-word");
+		anchorContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		anchor.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		char leter=DrawPointStyle.getMinLeter();
 		if(row<DrawPointStyle.getLeterSize()){
 			leter=(char)(DrawPointStyle.getMinLeter()+row);
@@ -640,7 +645,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		Button button = new Button();
 		button.setSize("32px", "28px");
 		button.getElement().appendChild(new Image(browserResources.eraserIcon()).getElement());
-		DOM.setStyleAttribute(button.getElement(),"left" , "0px");
+		button.getElement().getStyle().setLeft(0, Unit.PX);
 		routesWidget.setWidget(row, 2, button);
 		ClickHandler handler = new ClickHandler() {
 			
@@ -817,7 +822,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		Label errorLabel=new Label(error);
 		errorLabel.setHeight("70px");
-		DOM.setStyleAttribute(errorLabel.getElement(),"textAlign", "Center");
+		errorLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		panel.add(errorLabel);
 		panel.setCellVerticalAlignment(errorLabel, HasVerticalAlignment.ALIGN_TOP);
 		Button button=new Button(browserMessages.close());

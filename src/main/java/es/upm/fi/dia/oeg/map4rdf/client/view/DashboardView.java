@@ -25,7 +25,6 @@
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -115,20 +114,20 @@ public class DashboardView extends ResizeComposite implements DashboardPresenter
 			mainPopupPanel.setHeight(height+"px");
 		}
 		if(style==null || style.equals("")){
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "15px");		
+			mainPopupPanel.getElement().getStyle().setZIndex(2080);
+			mainPopupPanel.getElement().getStyle().setLeft(15, Unit.PX);
+			mainPopupPanel.getElement().getStyle().setTop(15,Unit.PX);	
 		}else if(style.equals("Geoprocessing")){
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "");
-			DOM.removeElementAttribute(mainPopupPanel.getElement(),"top");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "bottom", "15px");
-			DOM.setStyleAttribute(widget.getElement(), "left", (int)(width*0.06)+"px");
+			mainPopupPanel.getElement().getStyle().setZIndex(2080);
+			mainPopupPanel.getElement().getStyle().setLeft(15, Unit.PX);
+			mainPopupPanel.getElement().getStyle().setProperty("top", "");
+			mainPopupPanel.getElement().getStyle().clearTop();
+			mainPopupPanel.getElement().getStyle().setBottom(15, Unit.PX);
+			widget.getElement().getStyle().setLeft((int)(width*0.06), Unit.PX);
 		} else if(style.equals("Big")){
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "zIndex", "2080");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "left", "15px");
-			DOM.setStyleAttribute(mainPopupPanel.getElement(), "top", "15px");
+			mainPopupPanel.getElement().getStyle().setZIndex(2080);
+			mainPopupPanel.getElement().getStyle().setLeft(15, Unit.PX);
+			mainPopupPanel.getElement().getStyle().setTop(15,Unit.PX);
 			widget.setSize(width-3+"px", height-3+"px");
 		}
 	}

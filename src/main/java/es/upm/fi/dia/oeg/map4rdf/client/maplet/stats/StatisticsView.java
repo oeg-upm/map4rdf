@@ -24,10 +24,10 @@ import java.util.List;
 
 import name.alexdeleon.lib.gwtblocks.client.widget.loading.LoadingWidget;
 
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -130,10 +130,9 @@ public class StatisticsView extends SimplePanel implements StatisticsPresenter.D
 	public void refreshTimeline() {
 		timeline = widgetFactory.createTimeline();
 		mapContainer.add(timeline);
-		Element h = timeline.getElement();
-		DOM.setStyleAttribute(h, "position", "absolute");
-		DOM.setStyleAttribute(h, "right", 22 + "px");
-		DOM.setStyleAttribute(h, "bottom", 22 + "px");
-		DOM.setStyleAttribute(h, "zIndex", "2024");
+		timeline.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		timeline.getElement().getStyle().setRight(22, Unit.PX);
+		timeline.getElement().getStyle().setBottom(22, Unit.PX);
+		timeline.getElement().getStyle().setZIndex(2024);
 	}
 }
