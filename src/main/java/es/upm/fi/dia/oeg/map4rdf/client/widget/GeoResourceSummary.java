@@ -512,7 +512,6 @@ public class GeoResourceSummary extends Composite {
 		return image;
 	}
 	private void revealWikipedia() {
-		System.out.println("WikipediaParseURL: "+wikipediaParseURL);
 		if(wikipediaResultWidget!=null){
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
