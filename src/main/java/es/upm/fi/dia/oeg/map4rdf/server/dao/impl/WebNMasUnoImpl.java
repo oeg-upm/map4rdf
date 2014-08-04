@@ -249,11 +249,12 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if (constraints != null && !constraints.isEmpty()) {
 			for (FacetConstraint constraint : constraints) {
 				if (constraint.getFacetValueId().contains("Trip")) {
-					// tratamiento especial si es un viaje
-					query.append("{ ?t <" + constraint.getFacetId() + "> <"
-							+ constraint.getFacetValueId() + ">.");
-					query.append("?t <"+constraint.getFacetId()+"> ?facetValueID.");
-					query.append("?t ?facetID <"+constraint.getFacetValueId()+">.");
+					query.append("{?t ?facetID ?facetValueID. ");
+					query.append("FILTER(");
+					query.append("?facetID IN(");
+					query.append("<"+constraint.getFacetId()+">)");
+					query.append(" && ?facetValueID IN(");
+					query.append("<"+constraint.getFacetValueId()+">)). ");
 					query.append("?t <http://webenemasuno.linkeddata.es/ontology/OPMO/hasItinerary> ?r.");
 					query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
 					query.append("?r <http://webenemasuno.linkeddata.es/ontology/OPMO/hasPart> ?part.");
@@ -263,20 +264,24 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 					query.append("} UNION");
 				} else if (constraint.getFacetValueId().contains("Point")) {
 					//Tratamiento especial si es un punto
-					query.append("{ ?r <" + constraint.getFacetId() + "> <"
-							+ constraint.getFacetValueId() + ">.");
-					query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-					query.append("?r ?facetID <"+constraint.getFacetValueId()+">.");
+					query.append("{?r ?facetID ?facetValueID. ");
+					query.append("FILTER(");
+					query.append("?facetID IN(");
+					query.append("<"+constraint.getFacetId()+">)");
+					query.append(" && ?facetValueID IN(");
+					query.append("<"+constraint.getFacetValueId()+">)). ");
 					query.append("?r <" + Geo.lat + "> ?lat. ");
 					query.append("?r <" + Geo.lng + "> ?lng . ");
 					query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
 					query.append("} UNION");
 				} else {
 					// cualquier cosa con localizacion (guias, aristas)
-					query.append("{ ?g <" + constraint.getFacetId() + "> <"
-							+ constraint.getFacetValueId() + ">. ");
-					query.append("?g <"+constraint.getFacetId()+"> ?facetValueID.");
-					query.append("?g ?facetID <"+constraint.getFacetValueId()+">.");
+					query.append("{?g ?facetID ?facetValueID. ");
+					query.append("FILTER(");
+					query.append("?facetID IN(");
+					query.append("<"+constraint.getFacetId()+">)");
+					query.append(" && ?facetValueID IN(");
+					query.append("<"+constraint.getFacetValueId()+">)). ");
 					query.append("?g <"+Geo.location+"> ?r.");
 					query.append("?r <" + Geo.lat + "> ?lat. ");
 					query.append("?r <" + Geo.lng + "> ?lng . ");
@@ -286,7 +291,6 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			query.delete(query.length() - 5, query.length());
 		}
-		
 		// filters
 		if (boundingBox != null) {
 			query = addBoundingBoxFilter(query, boundingBox);

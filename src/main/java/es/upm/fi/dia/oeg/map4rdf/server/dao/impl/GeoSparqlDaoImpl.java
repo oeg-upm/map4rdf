@@ -381,13 +381,16 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
 		if (constraints != null) {
+			query.append("?r ?facetID ?facetValueID. ");
+			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
-				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
-				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
-				query.append("} UNION");
+				query.append("(?facetID IN(");
+				query.append("<"+constraint.getFacetId()+">)");
+				query.append(" && ?facetValueID IN(");
+				query.append("<"+constraint.getFacetValueId()+">)) || ");
 			}
-			query.delete(query.length() - 5, query.length());
+			query.delete(query.length() - 3, query.length());
+			query.append(").");
 		}
 		//filters
 		//NORMAL endpoint not applicable geosparql filters
