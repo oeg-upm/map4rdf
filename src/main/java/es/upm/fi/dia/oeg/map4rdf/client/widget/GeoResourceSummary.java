@@ -109,7 +109,7 @@ public class GeoResourceSummary extends Composite {
 	private Widget wikipediaResultWidget;
 	private Widget wikipediaWidget;
 	private String twitterURL;
-	private String wikipediaParseURL;
+	private String wikipediaParseURL=GWT.getModuleBaseURL()+"parseWikipedia?URL=";
 	private Map<String,String> additionalsInfo;
 	private DispatchAsync dispatchAsync;
 	private Panel centerPanel;
@@ -143,7 +143,6 @@ public class GeoResourceSummary extends Composite {
 	}
 	private void initAsync(){
 		List<String> parameters= new ArrayList<String>();
-		parameters.add(ParameterNames.WIKIPEDIA_PARSE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
 		parameters.add(ParameterNames.TWITTER_STATUS_URL);
 		parameters.add(ParameterNames.GEOMETRY_MODEL);
@@ -158,14 +157,6 @@ public class GeoResourceSummary extends Composite {
 
 			@Override
 			public void onSuccess(GetMultipleConfigurationParametersResult result) {
-				String wiki=result.getResults().get(ParameterNames.WIKIPEDIA_PARSE_URL);
-				if(wiki!=null && !wiki.isEmpty()){
-					wikipediaParseURL=wiki;
-				}else{
-					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
-							GeoResourceSummary.this.messages.configParameterNullOrEmpty(ParameterNames.WIKIPEDIA_PARSE_URL));
-							
-				}
 				String summaryWidgets=result.getResults().get(ParameterNames.SUMMARY_WIDGETS);
 				if(summaryWidgets==null || summaryWidgets.isEmpty()){
 					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
@@ -521,6 +512,7 @@ public class GeoResourceSummary extends Composite {
 		return image;
 	}
 	private void revealWikipedia() {
+		System.out.println("WikipediaParseURL: "+wikipediaParseURL);
 		if(wikipediaResultWidget!=null){
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
