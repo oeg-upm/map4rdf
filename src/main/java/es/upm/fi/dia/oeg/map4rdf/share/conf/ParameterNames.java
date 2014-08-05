@@ -59,8 +59,6 @@ public class ParameterNames {
 	
 	public static final String SPHERICAL_MERCATOR = "spherical_mercator";
 	
-	public static final String WIKIPEDIA_PARSE_URL = "wikipedia_parse_url";
-	
 	public static final String SUMMARY_WIDGETS = "summary_widgets";
 	
 	public static final String TWITTER_STATUS_URL = "twitter_status_url";
