@@ -425,7 +425,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				if(points.isEmpty()){
 					executeGoogleDirections();
 				}else{
-					Geometry geometry = new PolyLineBean(null, points);
+					Geometry geometry = new PolyLineBean(null, points, points.get(0).getProjection());
 					GeoResource geoResource = new GeoResource(null,geometry);
 					listGeoResource.add(geoResource);
 					mapPresenter.getDisplay().stopProcessing();
@@ -807,7 +807,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			Double lng=directionRoute.getOverview_Path().get(j).getLongitude();
 			points.add(new PointBean("", lng, lat,"EPSG:4326"));
 		}	
-		Geometry geometry = new PolyLineBean(null, points);
+		Geometry geometry = new PolyLineBean(null, points,"EPSG:4326");
 		GeoResource geoResource = new GeoResource(null,geometry);
 		List<GeoResource> list=new ArrayList<GeoResource>();
 		list.add(geoResource);

@@ -150,7 +150,7 @@ public class GeoUtils {
 						points.add(new PointBean(uri, point.getX(), point.getY(),point.getProjection()));
 					}
 					if(!points.isEmpty()){
-						geometries.add(new PolyLineBean(uri, points));
+						geometries.add(new PolyLineBean(uri, points,points.get(0).getProjection()));
 					}
 				}
 			}
@@ -171,7 +171,7 @@ public class GeoUtils {
 						points.add(new PointBean(uri, point.getX(), point.getY(),point.getProjection()));
 					}
 					if(!points.isEmpty()){
-						geometries.add(new PolygonBean(uri, points));
+						geometries.add(new PolygonBean(uri, points,crs));
 					}
 				}
 			}
@@ -280,9 +280,9 @@ public class GeoUtils {
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
-		    	polygons.add(new PolygonBean(uri, points));
+		    	polygons.add(new PolygonBean(uri, points,projection));
 		    }
-		    geometrias.add(new MultiPolygonBean(uri, polygons));
+		    geometrias.add(new MultiPolygonBean(uri, polygons,projection));
 			break;
 		case "polygon":
 			for(int i=0; i<geometry.getNumGeometries();i++){
@@ -291,7 +291,7 @@ public class GeoUtils {
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
-		    	geometrias.add(new PolygonBean(uri, points));
+		    	geometrias.add(new PolygonBean(uri, points,projection));
 		    }
 			break;
 		case "multilinestring":
@@ -302,7 +302,7 @@ public class GeoUtils {
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
-		    	geometrias.add(new PolyLineBean(uri, points));
+		    	geometrias.add(new PolyLineBean(uri, points,projection));
 		    }
 			break;
 		case "point":

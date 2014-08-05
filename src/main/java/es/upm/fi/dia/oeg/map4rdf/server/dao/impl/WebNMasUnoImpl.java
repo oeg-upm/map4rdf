@@ -322,7 +322,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 			puntosOrdenados.add(p1);
 		}
 		// Los puntos vienen ordenados ya por ?order (en la consulta)
-		PolyLineBean p = new PolyLineBean(uriItinerario, puntosOrdenados);
+		PolyLineBean p = new PolyLineBean(uriItinerario, puntosOrdenados,defaultProjection);
 		return p;
 	}
 	private String createGetItineraryQuery(Integer limit, String uri) {

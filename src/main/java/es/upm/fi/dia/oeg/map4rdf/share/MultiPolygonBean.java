@@ -10,18 +10,21 @@ public class MultiPolygonBean implements MultiPolygon, Serializable {
 	private static final long serialVersionUID = -7013129176404871397L;
 	private ArrayList<Polygon> polygons;
 	private String uri;
+	private String projection;
 	MultiPolygonBean() {
 		
 	}
 
-	public MultiPolygonBean(String uri, Polygon... polygons) {
+	public MultiPolygonBean(String uri,String projection, Polygon... polygons) {
 		this.uri=uri;
 		this.polygons = new ArrayList<Polygon>(Arrays.asList(polygons));
+		this.projection = projection;
 	}
 
-	public MultiPolygonBean(String uri, List<Polygon> polygons) {
+	public MultiPolygonBean(String uri, List<Polygon> polygons, String projection) {
 		this.polygons= new ArrayList<Polygon>(polygons);
 		this.uri = uri;
+		this.projection = projection;
 	}
 
 	@Override
@@ -48,6 +51,11 @@ public class MultiPolygonBean implements MultiPolygon, Serializable {
 	@Override
 	public List<Polygon> getPolygons() {
 		return polygons;
+	}
+
+	@Override
+	public String getProjection() {
+		return projection;
 	}
 
 }

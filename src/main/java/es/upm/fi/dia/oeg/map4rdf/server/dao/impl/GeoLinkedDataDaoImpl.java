@@ -252,12 +252,24 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	public PolyLine getPolyline(String uri) throws DaoException {
 		List<Point> points = getGeometryPoints(uri);
-		return points.isEmpty() ? null : new PolyLineBean(uri, points);
+		String projection;
+		if(points==null || points.isEmpty()){
+			projection = defaultProjection;
+		}else{
+			projection = points.get(0).getProjection();
+		}
+		return points.isEmpty() ? null : new PolyLineBean(uri,projection);
 	}
 
 	public Polygon getPolygon(String uri) throws DaoException {
 		List<Point> points = getGeometryPoints(uri);
-		return points.isEmpty() ? null : new PolygonBean(uri, points);
+		String projection;
+		if(points==null || points.isEmpty()){
+			projection = defaultProjection;
+		}else{
+			projection = points.get(0).getProjection();
+		}
+		return points.isEmpty() ? null : new PolygonBean(uri, points,projection);
 	}
 
 	public List<Point> getGeometryPoints(String uri) throws DaoException {

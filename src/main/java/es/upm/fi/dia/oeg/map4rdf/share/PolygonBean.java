@@ -37,19 +37,22 @@ public class PolygonBean implements Polygon, Serializable {
 	private static final long serialVersionUID = 3563826545061442578L;
 	private ArrayList<Point> points;
 	private String uri;
+	private String projection;
 
 	PolygonBean() {
 		// for serialization
 	}
 
-	public PolygonBean(String uri, Point... points) {
+	public PolygonBean(String uri,String projection, Point... points) {
 		this.points = new ArrayList<Point>(Arrays.asList(points));
 		this.uri = uri;
+		this.projection = projection;
 	}
 
-	public PolygonBean(String uri, List<Point> points) {
+	public PolygonBean(String uri, List<Point> points,String projection) {
 		this.points = new ArrayList<Point>(points);
 		this.uri = uri;
+		this.projection = projection;
 	}
 
 	@Override
@@ -68,6 +71,11 @@ public class PolygonBean implements Polygon, Serializable {
 	@Override
 	public Type getType() {
 		return Type.POLYGON;
+	}
+
+	@Override
+	public String getProjection() {
+		return projection;
 	}
 
 }
