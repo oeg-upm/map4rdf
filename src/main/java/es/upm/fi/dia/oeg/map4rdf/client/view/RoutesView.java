@@ -2,18 +2,11 @@ package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.gwtopenmaps.openlayers.client.LonLat;
-
-
-
-
-
-
 
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.dispatch.client.DispatchAsync;
@@ -77,6 +70,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.util.GeoResourceGeometry;
+import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.util.PanelWithGeoResourceGeometry;
 import es.upm.fi.dia.oeg.map4rdf.client.util.RouteSelectedCallback;
@@ -392,12 +386,10 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		mapPresenter.getDisplay().getDefaultLayer().getMapView().closeWindow();
 		List<Point> points = new ArrayList<Point>();
 		for(GeoResourceGeometry geoRG : route){
-			for(Point point:geoRG.getGeometry().getPoints()){
-				LonLat openPoint= OpenLayersAdapter.getLatLng(point);
-				openPoint.transform(point.getProjection(), "EPSG:4326");
-				TwoDimentionalCoordinate twoCoor=OpenLayersAdapter.getTwoDimentionalCoordinate(openPoint,"EPSG:4326");
-				points.add(new PointBean(point.getUri(), twoCoor.getX(),twoCoor.getY(),"EPSG:4326"));
-			}
+			LonLat openPoint= OpenLayersAdapter.getLatLng(GeoUtils.getCentroid(geoRG.getGeometry()));
+			openPoint.transform(geoRG.getGeometry().getProjection(), "EPSG:4326");
+			TwoDimentionalCoordinate twoCoor=OpenLayersAdapter.getTwoDimentionalCoordinate(openPoint,"EPSG:4326");
+			points.add(new PointBean(geoRG.getGeometry().getUri(), twoCoor.getX(),twoCoor.getY(),"EPSG:4326"));
 		}
 		if(route.size()<2){
 			widgetFactory.getDialogBox().showError(browserMessages.error2OrMorePoints());
@@ -636,6 +628,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}
 		DrawPointStyle style= new DrawPointStyle(leter);
 		List<GeoResource> list= new ArrayList<GeoResource>();
+		GeoResource centroidResource = new GeoResource(resource.getUri(),GeoUtils.getCentroid(geometry));
+		list.add(centroidResource);
 		list.add(resource);
 		mapPresenter.drawGeoResources(list, style);
 		routesWidget.setWidget(row, 0, new Image(GWT.getModuleBaseURL()+style.getImageURL()));
@@ -717,23 +711,18 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		JsArray<DirectionsWaypoint> waypointsJsArray = (JsArray<DirectionsWaypoint>) (DirectionsWaypoint.createArray());
 		for(int i=0;i<route.size();i++){
 			GeoResourceGeometry geoResourceGeometry = route.get(i);
-			Collection<Point> collection = geoResourceGeometry.getGeometry().getPoints();
-			Point[] array = collection.toArray(new Point[geoResourceGeometry.getGeometry().getPoints().size()]);
-			for(int j=0;j<array.length;j++){
-				Point point=array[j];
-				LonLat openPoint= OpenLayersAdapter.getLatLng(point);
-				openPoint.transform(point.getProjection(), "EPSG:4326");
-				LatLng latLng= LatLng.newInstance(openPoint.lat(),openPoint.lon());
-				DirectionsWaypoint waypoint=DirectionsWaypoint.newInstance();
-				waypoint.setLocation(latLng);
-				if(i==0 && j==0){
-					request.setOrigin(latLng);
-				} else if(i==route.size()-1 && j==array.length-1){
-					request.setDestination(latLng);
-				}else{
-					waypointsJsArray.push(waypoint);
-				}
-				
+			Point point=GeoUtils.getCentroid(geoResourceGeometry.getGeometry());
+			LonLat openPoint= OpenLayersAdapter.getLatLng(point);
+			openPoint.transform(point.getProjection(), "EPSG:4326");
+			LatLng latLng= LatLng.newInstance(openPoint.lat(),openPoint.lon());
+			DirectionsWaypoint waypoint=DirectionsWaypoint.newInstance();
+			waypoint.setLocation(latLng);
+			if(i==0){
+				request.setOrigin(latLng);
+			} else if(i==route.size()-1){
+				request.setDestination(latLng);
+			}else{
+				waypointsJsArray.push(waypoint);
 			}
 		}
 		request.setTravelMode(travelMode);

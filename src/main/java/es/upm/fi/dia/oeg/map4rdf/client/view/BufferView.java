@@ -45,10 +45,10 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
-import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoprocessingType;
+import es.upm.fi.dia.oeg.map4rdf.share.Point;
 
 public class BufferView extends ResizeComposite implements BufferPresenter.Display,BufferSetPointHandler{
 	private DispatchAsync dispatchAsync;
@@ -72,7 +72,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	private Panel resultsBufferWidget;
 	private final DrawPointStyle pointStyle=new DrawPointStyle(DrawPointStyle.Style.NEXT_POINTS);
 	private GeoResource resource;
-	private Geometry geometry;
+	private Point centroid;
 	private enum DistanceTypes{
 		Km,m;
 	}
@@ -203,7 +203,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		anchorResource.setText("");
 		anchorResource.setHref("");
 		this.resource=null;
-		this.geometry=null;
+		this.centroid=null;
 		mapPresenter.removePointsStyle(pointStyle);
 		resourcePanel.clear();
 		resourcePanel.add(addResourcePanel);
@@ -216,7 +216,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 
 	private void drawPoints() {
 		
-		if(resource!=null && geometry!=null){
+		if(resource!=null && centroid!=null){
 			mapPresenter.getDisplay().getDefaultLayer().getMapView().closeWindow();
 			mapPresenter.removePointsStyle(pointStyle);
 			double radiousKM=convertStringToDoubleRadiousKM(distanceTextBox.getValue(), DistanceTypes.valueOf(distanceTypeBox.getValue(distanceTypeBox.getSelectedIndex())));
@@ -225,8 +225,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				return;
 			}
 			mapPresenter.getDisplay().startProcessing();
-			BoundingBox boundingBox = GeoUtils.computeBoundingBox(geometry.getPoints(), "EPSG:4326");
-			GetBufferGeoResources action= new GetBufferGeoResources(configID.getConfigID(),resource.getUri(), boundingBox.getCenter(), radiousKM);
+			GetBufferGeoResources action= new GetBufferGeoResources(configID.getConfigID(),resource.getUri(), centroid, radiousKM);
 			dispatchAsync.execute(action, new AsyncCallback<GetBufferGeoResourcesResult>() {
 
 				@Override
@@ -238,7 +237,6 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 			
 				@Override
 				public void onSuccess(GetBufferGeoResourcesResult result) {
-					
 					mapPresenter.drawGeoResources(result.getListGeoResources(),pointStyle);
 					mapPresenter.getDisplay().stopProcessing();
 					mapPresenter.setVisibleBox(result.getBoundingBox());
@@ -312,15 +310,18 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	}
 	
 	private void setGeoResource(GeoResource resource, Geometry geometry){
+		this.resource=resource;
+		this.centroid=GeoUtils.getCentroid(resource.getFirstGeometry());
 		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		List<GeoResource> geoResources=new ArrayList<GeoResource>();
+		GeoResource newResource = new GeoResource(resource.getUri(),centroid);
+		geoResources.add(newResource);
 		geoResources.add(resource);
 		mapPresenter.drawGeoResources(geoResources,new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		String label=LocaleUtil.getBestLabel(resource);
 		anchorResource.setText(label);
 		anchorResource.setHref(resource.getUri());
-		this.resource=resource;
-		this.geometry=geometry;
+		
 		resourcePanel.clear();
 		resourcePanel.add(removeResourcePanel);
 	}

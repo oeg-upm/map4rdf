@@ -217,10 +217,10 @@ public class GeoResourceSummary extends Composite {
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
 		}
-		if (geometry.getType() == MapShape.Type.POINT) {
+		if(geometry!=null && !geometry.getPoints().isEmpty()){
 			routesWidget.setVisible(true);
 			bufferWidget.setVisible(true);
-		} else {
+		}else{
 			routesWidget.setVisible(false);
 			bufferWidget.setVisible(false);
 		}
