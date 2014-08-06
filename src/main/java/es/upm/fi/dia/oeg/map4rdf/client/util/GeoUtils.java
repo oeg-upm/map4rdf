@@ -27,10 +27,15 @@ package es.upm.fi.dia.oeg.map4rdf.client.util;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.gwtopenmaps.openlayers.client.util.JSObject;
+
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBoxBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
+import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygon;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
+import es.upm.fi.dia.oeg.map4rdf.share.PointBean;
+import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
 
 /**
@@ -72,6 +77,64 @@ public class GeoUtils {
 		}
 		return new BoundingBoxBean(new TwoDimentionalCoordinateBean(minX, minY,projection), new TwoDimentionalCoordinateBean(maxX,
 				maxY,projection),projection);
+	}
+	
+	public static Point getCentroid(Geometry geometry){
+		switch (geometry.getType()) {
+		case CIRCLE:
+			//TODO Implement circle getCentroid
+			break;
+		case MULTIPOLYGON:
+			MultiPolygon multiPolygon = (MultiPolygon) geometry;
+			org.gwtopenmaps.openlayers.client.geometry.Polygon polygons[]=new org.gwtopenmaps.openlayers.client.geometry.Polygon[multiPolygon.getPolygons().size()];
+			int i=0;
+			for(Polygon polygon:multiPolygon.getPolygons()){
+				org.gwtopenmaps.openlayers.client.geometry.LinearRing rings[] = {new org.gwtopenmaps.openlayers.client.geometry.LinearRing(getPoints(polygon.getPoints()))};
+				polygons[i++]= new org.gwtopenmaps.openlayers.client.geometry.Polygon(rings);
+			}
+			org.gwtopenmaps.openlayers.client.geometry.MultiPolygon openMultiPolygon = new org.gwtopenmaps.openlayers.client.geometry.MultiPolygon(polygons);
+			return new PointBean(geometry.getUri(),getGeometryCentroidX(openMultiPolygon.getJSObject()), getGeometryCentroidY(openMultiPolygon.getJSObject()), geometry.getProjection());
+		case POINT:
+			return (Point) geometry;
+		case POLYGON:
+			org.gwtopenmaps.openlayers.client.geometry.LinearRing rings[] = {new org.gwtopenmaps.openlayers.client.geometry.LinearRing(getPoints(geometry.getPoints()))};
+			org.gwtopenmaps.openlayers.client.geometry.Polygon polygon = new org.gwtopenmaps.openlayers.client.geometry.Polygon(rings);
+			return new PointBean(geometry.getUri(),getGeometryCentroidX(polygon.getJSObject()),getGeometryCentroidY(polygon.getJSObject()), geometry.getProjection());
+		case POLYLINE:
+			org.gwtopenmaps.openlayers.client.geometry.LineString lineString = new org.gwtopenmaps.openlayers.client.geometry.LineString(getPoints(geometry.getPoints()));
+			return new PointBean(geometry.getUri(),getGeometryCentroidX(lineString.getJSObject()),getGeometryCentroidY(lineString.getJSObject()), geometry.getProjection());
+		default:
+			//Make compiler happy.
+			break;
+		
+		}
+		
+		return null;
+	}
+	/**
+	 * JSObject geometry need to be a org.gwtopenmaps.openlayers.client.geometry.Geometry convert to JSObject
+	 * Use geometry.getJSObject();
+	 * */
+	private native static double getGeometryCentroidX(JSObject geometry) /*-{
+		return geometry.getCentroid().x;
+	}-*/;
+	/**
+	 * JSObject geometry need to be a org.gwtopenmaps.openlayers.client.geometry.Geometry convert to JSObject
+	 * Use geometry.getJSObject();
+	 * */
+	private native static double getGeometryCentroidY(JSObject geometry) /*-{
+		return geometry.getCentroid().y;
+	}-*/;
+	private static org.gwtopenmaps.openlayers.client.geometry.Point[] getPoints(
+			Collection<Point> points) {
+		org.gwtopenmaps.openlayers.client.geometry.Point[] pointsArray = new org.gwtopenmaps.openlayers.client.geometry.Point[points
+				.size()];
+		int index = 0;
+		for (Point p : points) {
+			pointsArray[index++] = new org.gwtopenmaps.openlayers.client.geometry.Point(
+					p.getX(), p.getY());
+		}
+		return pointsArray;
 	}
 
 }

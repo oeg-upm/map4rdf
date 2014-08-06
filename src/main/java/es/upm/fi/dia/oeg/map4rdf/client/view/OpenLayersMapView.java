@@ -39,6 +39,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
+import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapLayer;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummary;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.MapShapeStyleFactory;
@@ -122,8 +123,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 							public void onClick(ClickEvent event) {
 								window.close();
 								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+								Point centroid=GeoUtils.getCentroid(line);
+								GeoResource newResource = new GeoResource(resource.getUri(), centroid);
+								drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, line);
-								window.open(line.getPoints().get(0));
+								window.open(centroid);
 							}
 						});
 				break;
@@ -136,8 +140,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 							public void onClick(ClickEvent event) {
 								window.close();
 								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+								Point centroid=GeoUtils.getCentroid(polygon);
+								GeoResource newResource = new GeoResource(resource.getUri(), centroid);
+								drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, polygon);
-								window.open(polygon.getPoints().get(0));
+								window.open(centroid);
 							}
 						});
 				break;
@@ -154,8 +161,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 								public void onClick(ClickEvent event) {
 									window.close();
 									removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+									Point centroid=GeoUtils.getCentroid(poly);
+									GeoResource newResource = new GeoResource(resource.getUri(), centroid);
+									drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 									summary.setGeoResource(resource, poly);
-									window.open(poly.getPoints().get(0));
+									window.open(centroid);
 								}
 							});
 				}
