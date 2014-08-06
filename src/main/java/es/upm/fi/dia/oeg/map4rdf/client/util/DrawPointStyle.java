@@ -85,7 +85,14 @@ public class DrawPointStyle {
 		}
 	}
 	public String getFacetHexColour() {
-		return facetHexColour;
+		switch (style) {
+		case CENTER_NEXT_POINTS:
+			return "#ffb225";
+		case ROUTES:
+			return "#00d600";
+		default:
+			return facetHexColour;
+		}
 	}
 	public void setFacetHexColour(String facetHexColour) {
 		this.facetHexColour = facetHexColour;
