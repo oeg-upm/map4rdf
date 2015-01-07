@@ -51,13 +51,7 @@
 		<dependency>
 			<groupId>name.alexdeleon.lib</groupId>
 			<artifactId>gwt-blocks</artifactId>
-			<version>0.0.9</version>
-			<exclusions>
-					<exclusion>
-						<groupId>com.google.gwt.inject</groupId>
-						<artifactId>gin</artifactId>
-					</exclusion>
-			</exclusions>
+			<version>0.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt.inject</groupId>
