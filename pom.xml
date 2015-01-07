@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
         <properties>
             <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-			<gwt.version>2.6.1</gwt.version>
+			<gwt.version>2.7.0</gwt.version>
         </properties>
 	<parent>
 		<artifactId>parent-pom-os</artifactId>
@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>org.gwtopenmaps.openlayers</groupId>
 			<artifactId>gwt-openlayers-client</artifactId>
-			<version>0.9</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.gwt-charts</groupId>
