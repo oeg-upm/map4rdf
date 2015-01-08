@@ -65,7 +65,6 @@ public class KmlService extends HttpServlet {
 	private static final long serialVersionUID = 4451922424233735357L;
 	private MultipleConfigurations configurations;
 	private static final String [] reservedParameters={ConfigurationUtil.CONFIGURATION_ID};
-	//TODO Repair KML service with multiple configurations
 	@Inject
 	public KmlService(MultipleConfigurations configurations) {
 		this.configurations = configurations;;
@@ -77,7 +76,7 @@ public class KmlService extends HttpServlet {
 		String configID = getConfigurationID(req);
 		try {
 			List<GeoResource> resources = configurations.getConfiguration(configID)
-					.getMap4rdfDao().getGeoResources(null, constraints,100);
+					.getMap4rdfDao().getGeoResources(null, constraints);
 			resp.setContentType("application/vnd.google-earth.kml+xml");
 			writeKml(resources, resp.getOutputStream());
 		} catch (DaoException e) {
