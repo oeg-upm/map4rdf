@@ -182,7 +182,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 
 					@Override
 					public void onSuccess(SingletonResult<String> result) {
-						Window.open(GWT.getModuleBaseURL() + result.getValue(), "kml", null);
+						Window.open(GWT.getModuleBaseURL() + result.getValue(), "resources.kml", null);
 					}
 				});
 			}
