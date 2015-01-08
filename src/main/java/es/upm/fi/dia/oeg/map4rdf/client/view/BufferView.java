@@ -177,7 +177,8 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				}
 			}
 		});
-		distanceTypeBox = new ListBox(false);
+		distanceTypeBox = new ListBox();
+		distanceTypeBox.setMultipleSelect(false);
 		for(DistanceTypes i:DistanceTypes.values()){
 			distanceTypeBox.addItem(i.name());
 		}

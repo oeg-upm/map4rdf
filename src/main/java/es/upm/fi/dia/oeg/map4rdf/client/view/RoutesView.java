@@ -237,7 +237,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		label= new Label(browserMessages.avoidTolls());
 		disableWidgetsIfNoDriving.add(label);
 		grid.setWidget(4, 0,label);
-		travelListBox = new ListBox(false);
+		travelListBox = new ListBox();
+		travelListBox.setMultipleSelect(false);
 		for(int i=0;i<travelsModeInOrder.length;i++){
 			travelListBox.addItem(travelsModeInOrder[i]);
 		}
@@ -256,7 +257,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			}
 		});
 		grid.setWidget(0, 1, travelListBox);
-		ListBox listBox=new ListBox(false);
+		ListBox listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		BooleanBoxChangeHandler changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), routeAlternatives);
 		listBox.addItem(browserMessages.yes());
 		listBox.addItem(browserMessages.no());
@@ -267,7 +269,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			listBox.setSelectedIndex(1);
 		}
-		listBox=new ListBox(false);
+		listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), optimizeWaypoints);
 		listBox.addItem(browserMessages.yes());
 		listBox.addItem(browserMessages.no());
@@ -278,7 +281,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			listBox.setSelectedIndex(1);
 		}
-		listBox=new ListBox(false);
+		listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), avoidHighways);
 		disableWidgetsIfNoDriving.add(listBox);
 		listBox.addItem(browserMessages.yes());
@@ -290,7 +294,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			listBox.setSelectedIndex(1);
 		}
-		listBox=new ListBox(false);
+		listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		disableWidgetsIfNoDriving.add(listBox);
 		changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), avoidTolls);
 		listBox.addItem(browserMessages.yes());

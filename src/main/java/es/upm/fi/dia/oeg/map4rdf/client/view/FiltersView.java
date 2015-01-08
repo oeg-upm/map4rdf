@@ -180,7 +180,8 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 		panel.add(dateFilterPanel);
 	    DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd-MM-yyyy");
 	    DateBox dateBox = new DateBox(new DatePickerWithYearSelector(), new Date(), new DateBox.DefaultFormat(dateFormat));
-	    final ListBox comboBox=new ListBox(false);
+	    final ListBox comboBox=new ListBox();
+	    comboBox.setMultipleSelect(false);
 	    comboBox.addItem(messages.equalsTo(),DateFilter.DateFilterType.EQUAL.name());
 	    comboBox.addItem(messages.beforeTo(),DateFilter.DateFilterType.BEFORE.name());
 	    comboBox.addItem(messages.afterTo(),DateFilter.DateFilterType.AFTER.name());

@@ -135,10 +135,14 @@ public class PopupStatisticsView extends Composite{
 		mainGrid = new Grid(4,1);
 		Grid chooseGrid = new Grid(2,4);
 		statisticsGrid = new Grid(1,1);
-		statisticsBox= new ListBox(false);
-		dimensionsXBox = new ListBox(false);
-		dimensionsYBox = new ListBox(false);
-		aggrBox = new ListBox(false);
+		statisticsBox= new ListBox();
+		statisticsBox.setMultipleSelect(false);
+		dimensionsXBox = new ListBox();
+		dimensionsXBox.setMultipleSelect(false);
+		dimensionsYBox = new ListBox();
+		dimensionsYBox.setMultipleSelect(false);
+		aggrBox = new ListBox();
+		aggrBox.setMultipleSelect(false);
 		aggrBox.setVisible(false);
 		aggrBox.addItem("SUM");
 		aggrBox.addItem("COUNT");
