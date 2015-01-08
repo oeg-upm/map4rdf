@@ -31,6 +31,7 @@ import org.gwtopenmaps.openlayers.client.util.JSObject;
 
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.BoundingBoxBean;
+import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygon;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
@@ -82,8 +83,8 @@ public class GeoUtils {
 	public static Point getCentroid(Geometry geometry){
 		switch (geometry.getType()) {
 		case CIRCLE:
-			//TODO Implement circle getCentroid
-			break;
+			Circle circle = (Circle) geometry;
+			return new PointBean(geometry.getUri(), circle.getCenter().getX(), circle.getCenter().getY(), geometry.getProjection());
 		case MULTIPOLYGON:
 			MultiPolygon multiPolygon = (MultiPolygon) geometry;
 			org.gwtopenmaps.openlayers.client.geometry.Polygon polygons[]=new org.gwtopenmaps.openlayers.client.geometry.Polygon[multiPolygon.getPolygons().size()];
