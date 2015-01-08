@@ -70,6 +70,7 @@ public class GetGeoResourcesHandler implements
 						!action.getBoundingBox().getProjection().toLowerCase().trim().equals(defaultProjection.toLowerCase().trim())){
 						throw new ActionException("Bounding box projection of GetGeoResources (action) isn't equals to server projection");
 				}
+				//TODO Add Query Limit to config file.
 				resources = configurations.getConfiguration(action.getConfigID())
 						.getMap4rdfDao().getGeoResources(action.getBoundingBox(),
 						action.getFacetConstraints(), 1000);
