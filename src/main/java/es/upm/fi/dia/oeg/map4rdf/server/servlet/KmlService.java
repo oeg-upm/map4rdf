@@ -45,7 +45,7 @@ import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.LineString;
 import de.micromata.opengis.kml.v_2_2_0.MultiGeometry;
 import de.micromata.opengis.kml.v_2_2_0.Placemark;
-import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
+import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
 import es.upm.fi.dia.oeg.map4rdf.share.Circle;
@@ -64,6 +64,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 public class KmlService extends HttpServlet {
 	private static final long serialVersionUID = 4451922424233735357L;
 	private MultipleConfigurations configurations;
+	private static final String [] reservedParameters={ConfigurationUtil.CONFIGURATION_ID};
 	//TODO Repair KML service with multiple configurations
 	@Inject
 	public KmlService(MultipleConfigurations configurations) {
@@ -73,9 +74,10 @@ public class KmlService extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Set<FacetConstraint> constraints = getFacetConstraints(req);
+		String configID = getConfigurationID(req);
 		try {
-			List<GeoResource> resources = configurations.getConfiguration("geolinkeddata")
-					.getMap4rdfDao().getGeoResources(null, constraints);
+			List<GeoResource> resources = configurations.getConfiguration(configID)
+					.getMap4rdfDao().getGeoResources(null, constraints,100);
 			resp.setContentType("application/vnd.google-earth.kml+xml");
 			writeKml(resources, resp.getOutputStream());
 		} catch (DaoException e) {
@@ -87,7 +89,7 @@ public class KmlService extends HttpServlet {
 		Kml kml = new Kml();
 		Document doc = kml.createAndSetDocument();
 		for (GeoResource resource : resources) {
-			Placemark placemark = doc.createAndAddPlacemark().withName(LocaleUtil.getBestLabel(resource));
+			Placemark placemark = doc.createAndAddPlacemark().withName(resource.getUri());
 			if (resource.isMultiGeometry()) {
 				MultiGeometry multiGeometry = new MultiGeometry();
 				for (Geometry geometry : resource.getGeometries()) {
@@ -160,11 +162,31 @@ public class KmlService extends HttpServlet {
 		Enumeration<String> paramNames = (Enumeration<String>)req.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			String facetId = paramNames.nextElement();
-			String[] valueIds = req.getParameterValues(facetId);
-			for (String valueId : valueIds) {
-				constraints.add(new FacetConstraint(facetId, valueId));
+			boolean isReservedParam = false;
+			for(String toTest : reservedParameters){
+				if(toTest.toLowerCase().trim().equals(facetId.toLowerCase().trim())){
+					isReservedParam=true;
+					break;
+				}
+			}
+			if(!isReservedParam){
+				String[] valueIds = req.getParameterValues(facetId);
+				for (String valueId : valueIds) {
+					constraints.add(new FacetConstraint(facetId, valueId));
+				}
 			}
 		}
+		if(constraints.isEmpty()){
+			return null;
+		}
 		return constraints;
+	}
+
+	private String getConfigurationID(HttpServletRequest req) throws ServletException {
+		String value = req.getParameter(ConfigurationUtil.CONFIGURATION_ID);
+		if(value == null || value.isEmpty()){
+			throw new ServletException("Bad parameter value of parameter key: "+ConfigurationUtil.CONFIGURATION_ID);
+		}
+		return value;
 	}
 }

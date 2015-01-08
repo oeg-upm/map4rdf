@@ -62,14 +62,19 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 	private final MapLayer.PopupWindow window;
 	private Map<String,List<Point>> points;
 	
+	public interface Stylesheet {
+		String kmlButtonStyle();
+	}
+	
 	@Inject
 	public OpenLayersMapView(ConfIDInterface configID,WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
 		super(configID,widgetFactory, dispatchAsync,eventBus,browserResources,browserMessages);
-		kmlButton = createKMLButton();
+		kmlButton = createKMLButton(browserResources);
 		summary = widgetFactory.createGeoResourceSummary();
 		window = getDefaultLayer().createPopupWindow();
 		window.add(summary);
-		points=new HashMap<String, List<Point>>();	
+		points=new HashMap<String, List<Point>>();
+		super.panel.add(kmlButton);
 	}
 
 	@Override
@@ -179,8 +184,10 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 
 	}
 
-	private Image createKMLButton() {
-		Image button = new Image();
+	private Image createKMLButton(BrowserResources browserResources) {
+		Image button = new Image(browserResources.kmlButton());
+		button.setStyleName(browserResources.css().kmlButtonStyle());
+		button.getElement().getStyle().setZIndex(2080);
 		return button;
 	}
 	

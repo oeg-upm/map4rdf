@@ -197,6 +197,13 @@ body{
 	text-align:center;
 	font-family: Verdana, Arial, sans-serif;
 }
+.kmlButtonStyle{
+		position: absolute;
+		top: 90px;
+		left: 8px;
+		cursor: pointer;
+}
+
 .configurationDescriptionLine0Style{
 	cursor: pointer;
 	width: 100%;

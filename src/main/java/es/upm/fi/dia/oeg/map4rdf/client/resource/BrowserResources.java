@@ -53,7 +53,9 @@ public interface BrowserResources extends ClientBundle {
 	interface BrowserCss extends LoadingWidget.Stylesheet, ToggleButton.Stylesheet, FacetWidget.Stylesheet,
 			DataToolBar.Stylesheet, Timeline.Stylesheet, GeoResourceSummaryInfoDefault.Stylesheet, PopupGeoprocessingView.Stylesheet,
 			GeoprocessingView.Stylesheet,FiltersView.Stylesheet,GeoResourceSummaryInfoWEBNmas1.Stylesheet,
-			SelectConfigurationView.Stylesheet,CssResource{
+			SelectConfigurationView.Stylesheet,es.upm.fi.dia.oeg.map4rdf.client.view.OpenLayersMapView.Stylesheet,
+			CssResource{
+		
 		String header();
 
 		String footer();

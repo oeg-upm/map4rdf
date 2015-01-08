@@ -32,6 +32,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 
 /**
@@ -58,9 +59,17 @@ public class GetGeoResourcesAsKmlUrlHandler implements ActionHandler<GetGeoResou
 					queryBuilder.append("&");
 				}
 				queryBuilder.deleteCharAt(queryBuilder.length() - 1);
+				queryBuilder.append("&");
+				queryBuilder.append(ConfigurationUtil.CONFIGURATION_ID);
+				queryBuilder.append("=");
+				queryBuilder.append(action.getConfigID());
 			} catch (UnsupportedEncodingException e) {
 				assert false : "utf-8 exists";
 			}
+		}else{
+			queryBuilder.append(ConfigurationUtil.CONFIGURATION_ID);
+			queryBuilder.append("=");
+			queryBuilder.append(action.getConfigID());
 		}
 		return new SingletonResult<String>("kml?" + queryBuilder.toString());
 	}

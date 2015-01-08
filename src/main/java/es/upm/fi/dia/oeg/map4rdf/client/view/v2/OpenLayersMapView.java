@@ -85,7 +85,7 @@ public class OpenLayersMapView implements MapView {
 	private Map map;
 	private MapWidget mapWidget;
 	private final OpenLayersMapLayer defaultLayer;
-	private AbsolutePanel panel;
+	protected AbsolutePanel panel;
 	private LayerSwitcher layerSwitcher;
 	private EventBus eventBus;
 	private String defaultProjection;
