@@ -92,7 +92,12 @@
             <groupId>org.geotools</groupId>
             <artifactId>gt-geometry</artifactId>
             <version>11.0</version>
-        </dependency>   
+        </dependency>
+        <dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20140107</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
