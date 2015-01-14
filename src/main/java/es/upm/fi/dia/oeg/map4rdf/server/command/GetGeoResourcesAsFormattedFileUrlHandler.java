@@ -30,7 +30,7 @@ import java.net.URLEncoder;
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsFormattedFileUrl;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
@@ -39,15 +39,15 @@ import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
  * @author Alexander De Leon
  */
 
-public class GetGeoResourcesAsKmlUrlHandler implements ActionHandler<GetGeoResourcesAsKmlUrl, SingletonResult<String>> {
+public class GetGeoResourcesAsFormattedFileUrlHandler implements ActionHandler<GetGeoResourcesAsFormattedFileUrl, SingletonResult<String>> {
 
 	@Override
-	public Class<GetGeoResourcesAsKmlUrl> getActionType() {
-		return GetGeoResourcesAsKmlUrl.class;
+	public Class<GetGeoResourcesAsFormattedFileUrl> getActionType() {
+		return GetGeoResourcesAsFormattedFileUrl.class;
 	}
 
 	@Override
-	public SingletonResult<String> execute(GetGeoResourcesAsKmlUrl action, ExecutionContext context)
+	public SingletonResult<String> execute(GetGeoResourcesAsFormattedFileUrl action, ExecutionContext context)
 			throws ActionException {
 		StringBuilder queryBuilder = new StringBuilder();
 		if (action.getFacetConstraints() != null) {
@@ -75,7 +75,7 @@ public class GetGeoResourcesAsKmlUrlHandler implements ActionHandler<GetGeoResou
 	}
 
 	@Override
-	public void rollback(GetGeoResourcesAsKmlUrl action, SingletonResult<String> result, ExecutionContext context)
+	public void rollback(GetGeoResourcesAsFormattedFileUrl action, SingletonResult<String> result, ExecutionContext context)
 			throws ActionException {
 		// nothing to do
 	}

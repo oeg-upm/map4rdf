@@ -29,16 +29,16 @@ import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 /**
  * @author Alexander De Leon
  */
-public class GetGeoResourcesAsKmlUrl extends GetGeoResourcesBase implements Action<SingletonResult<String>> {
+public class GetGeoResourcesAsFormattedFileUrl extends GetGeoResourcesBase implements Action<SingletonResult<String>> {
 
 	private static final long serialVersionUID = -2487905598341429230L;
 
-	private GetGeoResourcesAsKmlUrl() {
+	private GetGeoResourcesAsFormattedFileUrl() {
 		// for serialization
 		super("",null);
 	}
 
-	public GetGeoResourcesAsKmlUrl(String configID,BoundingBox boundingBox) {
+	public GetGeoResourcesAsFormattedFileUrl(String configID,BoundingBox boundingBox) {
 		super(configID,boundingBox);
 	}
 

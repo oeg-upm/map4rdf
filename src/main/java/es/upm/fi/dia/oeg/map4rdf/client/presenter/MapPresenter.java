@@ -45,7 +45,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsFormattedFileUrl;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedEvent;
@@ -172,7 +172,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		getDisplay().getKmlButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				GetGeoResourcesAsKmlUrl action = new GetGeoResourcesAsKmlUrl(configID.getConfigID(),getVisibleBox());
+				GetGeoResourcesAsFormattedFileUrl action = new GetGeoResourcesAsFormattedFileUrl(configID.getConfigID(),getVisibleBox());
 				action.setFacetConstraints(facetConstraints);
 				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
 					@Override
