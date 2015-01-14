@@ -58,23 +58,27 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 		MapPresenter.Display{
 
 	private final Image kmlButton;
+	private final Image geoJSONButton;
 	private final GeoResourceSummary summary;
 	private final MapLayer.PopupWindow window;
 	private Map<String,List<Point>> points;
 	
 	public interface Stylesheet {
 		String kmlButtonStyle();
+		String geoJSONButtonStyle();
 	}
 	
 	@Inject
 	public OpenLayersMapView(ConfIDInterface configID,WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
 		super(configID,widgetFactory, dispatchAsync,eventBus,browserResources,browserMessages);
 		kmlButton = createKMLButton(browserResources);
+		geoJSONButton = createGeoJSONButton(browserResources);
 		summary = widgetFactory.createGeoResourceSummary();
 		window = getDefaultLayer().createPopupWindow();
 		window.add(summary);
 		points=new HashMap<String, List<Point>>();
 		super.panel.add(kmlButton);
+		super.panel.add(geoJSONButton);
 	}
 
 	@Override
@@ -96,8 +100,35 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 		return kmlButton;
 	}
 
-	/* --------------- helper methods -- */
+	
 
+	@Override
+	public HasClickHandlers getGeoJSONButton() {
+		return geoJSONButton;
+	}
+	
+	
+	@Override
+	public void closeWindow() {
+		removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+		window.close();
+		summary.closeSummary();
+	}
+
+	@Override
+	public void removePolylines() {
+		
+		getDefaultLayer().removePolylines();
+	}
+
+	@Override
+	public void removePointsStyle(DrawPointStyle pointStyle) {
+		
+		getDefaultLayer().removePointsStyle(pointStyle);
+	}
+
+	/* --------------- helper methods -- */
+	
 	private void drawGeoResource(final GeoResource resource, DrawPointStyle drawStyle) {
 		for (Geometry geometry : resource.getGeometries()) {
 			switch (geometry.getType()) {
@@ -191,24 +222,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 		return button;
 	}
 	
-	@Override
-	public void closeWindow() {
-		removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
-		window.close();
-		summary.closeSummary();
-	}
-	
-	
-	@Override
-	public void removePolylines() {
-		
-		getDefaultLayer().removePolylines();
-	}
-
-	@Override
-	public void removePointsStyle(DrawPointStyle pointStyle) {
-		
-		getDefaultLayer().removePointsStyle(pointStyle);
+	private Image createGeoJSONButton(BrowserResources browserResources) {
+		Image button = new Image(browserResources.geoJSONButton());
+		button.setStyleName(browserResources.css().geoJSONButtonStyle());
+		button.getElement().getStyle().setZIndex(2080);
+		return button;
 	}
 
 

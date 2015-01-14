@@ -32,14 +32,22 @@ import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 public class GetGeoResourcesAsFormattedFileUrl extends GetGeoResourcesBase implements Action<SingletonResult<String>> {
 
 	private static final long serialVersionUID = -2487905598341429230L;
-
+	public static enum ServiceType{GEOJSON,KML}
+	private ServiceType serviceType;
+	
 	private GetGeoResourcesAsFormattedFileUrl() {
 		// for serialization
 		super("",null);
+		serviceType = null;
 	}
 
-	public GetGeoResourcesAsFormattedFileUrl(String configID,BoundingBox boundingBox) {
+	public GetGeoResourcesAsFormattedFileUrl(String configID,BoundingBox boundingBox,ServiceType serviceType) {
 		super(configID,boundingBox);
+		this.serviceType = serviceType;
+	}
+
+	public ServiceType getServiceType() {
+		return serviceType;
 	}
 
 }

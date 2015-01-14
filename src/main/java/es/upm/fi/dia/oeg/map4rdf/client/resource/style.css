@@ -203,6 +203,12 @@ body{
 		left: 8px;
 		cursor: pointer;
 }
+.geoJSONButtonStyle{
+		position: absolute;
+		top: 120px;
+		left: 8px;
+		cursor: pointer;
+}
 
 .configurationDescriptionLine0Style{
 	cursor: pointer;

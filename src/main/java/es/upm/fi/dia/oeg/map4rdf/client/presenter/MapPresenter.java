@@ -101,6 +101,8 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		Vector getFilterVector();
 		
 		HasClickHandlers getKmlButton();
+		
+		HasClickHandlers getGeoJSONButton();
 
 		
 	}
@@ -172,7 +174,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		getDisplay().getKmlButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				GetGeoResourcesAsFormattedFileUrl action = new GetGeoResourcesAsFormattedFileUrl(configID.getConfigID(),getVisibleBox());
+				GetGeoResourcesAsFormattedFileUrl action = new GetGeoResourcesAsFormattedFileUrl(configID.getConfigID(),getVisibleBox(),GetGeoResourcesAsFormattedFileUrl.ServiceType.KML);
 				action.setFacetConstraints(facetConstraints);
 				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
 					@Override
@@ -183,6 +185,24 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 					@Override
 					public void onSuccess(SingletonResult<String> result) {
 						Window.open(GWT.getModuleBaseURL() + result.getValue(), "resources.kml", null);
+					}
+				});
+			}
+		});
+		getDisplay().getGeoJSONButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				GetGeoResourcesAsFormattedFileUrl action = new GetGeoResourcesAsFormattedFileUrl(configID.getConfigID(),getVisibleBox(),GetGeoResourcesAsFormattedFileUrl.ServiceType.GEOJSON);
+				action.setFacetConstraints(facetConstraints);
+				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						widgetFactory.getDialogBox().showError(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(SingletonResult<String> result) {
+						Window.open(GWT.getModuleBaseURL() + result.getValue(), "resources.json", null);
 					}
 				});
 			}

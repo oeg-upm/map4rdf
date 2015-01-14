@@ -77,6 +77,9 @@ public interface BrowserResources extends ClientBundle {
 
 	@Source("kml.png")
 	ImageResource kmlButton();
+	
+	@Source("geojson.png")
+	ImageResource geoJSONButton();
 
 	@ImageOptions(repeatStyle = RepeatStyle.Horizontal)
 	@Source("top_bg.gif")

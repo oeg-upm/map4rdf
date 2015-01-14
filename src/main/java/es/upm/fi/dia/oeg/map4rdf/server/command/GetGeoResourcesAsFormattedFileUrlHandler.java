@@ -71,7 +71,14 @@ public class GetGeoResourcesAsFormattedFileUrlHandler implements ActionHandler<G
 			queryBuilder.append("=");
 			queryBuilder.append(action.getConfigID());
 		}
-		return new SingletonResult<String>("kml?" + queryBuilder.toString());
+		switch (action.getServiceType()) {
+		case GEOJSON:
+			return new SingletonResult<String>("geojson?" + queryBuilder.toString());
+		case KML:
+			return new SingletonResult<String>("kml?" + queryBuilder.toString());
+		default:
+			return new SingletonResult<String>("kml?" + queryBuilder.toString());
+		}
 	}
 
 	@Override
