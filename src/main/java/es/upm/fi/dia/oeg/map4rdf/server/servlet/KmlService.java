@@ -78,6 +78,9 @@ public class KmlService extends HttpServlet {
 			List<GeoResource> resources = configurations.getConfiguration(configID)
 					.getMap4rdfDao().getGeoResources(null, constraints);
 			resp.setContentType("application/vnd.google-earth.kml+xml");
+			String headerKey = "Content-Disposition";
+	        String headerValue = String.format("attachment; filename=\"%s\"","resources.kml");
+	        resp.setHeader(headerKey, headerValue);
 			writeKml(resources, resp.getOutputStream());
 		} catch (DaoException e) {
 			throw new ServletException(e);

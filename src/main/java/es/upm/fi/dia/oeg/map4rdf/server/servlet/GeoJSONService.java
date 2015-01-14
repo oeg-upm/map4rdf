@@ -35,6 +35,7 @@ public class GeoJSONService extends HttpServlet {
 
 	private static final long serialVersionUID = 4940408910832985953L;
 	private MultipleConfigurations configurations;
+	private static enum GeoJSON_Types{Point,LineString,Polygon,MultiPolygon};
 	private static final String[] reservedParameters = { ConfigurationUtil.CONFIGURATION_ID };
 	private Logger LOG = Logger.getLogger(GeoJSONService.class);
 
@@ -53,6 +54,9 @@ public class GeoJSONService extends HttpServlet {
 					.getConfiguration(configID).getMap4rdfDao()
 					.getGeoResources(null, constraints);
 			resp.setContentType("application/json");
+			String headerKey = "Content-Disposition";
+	        String headerValue = String.format("attachment; filename=\"%s\"","resources.json");
+	        resp.setHeader(headerKey, headerValue);
 			writeGeoJSON(resources, resp.getOutputStream());
 		} catch (DaoException daoException) {
 			throw new ServletException(daoException);
@@ -125,7 +129,7 @@ public class GeoJSONService extends HttpServlet {
 
 	private JSONObject getJSONofPoint(Point geometryPoint) {
 		JSONObject point = new JSONObject();
-		point.put("type", "Point");
+		point.put("type", GeoJSON_Types.Point.toString());
 		JSONArray coord = new JSONArray();
 		coord.put(geometryPoint.getX());
 		coord.put(geometryPoint.getY());
@@ -135,7 +139,7 @@ public class GeoJSONService extends HttpServlet {
 	
 	private JSONObject getJSONofPolygon(Polygon polygon) {
 		JSONObject polygonJSON = new JSONObject();
-		polygonJSON.put("type", "Polygon");
+		polygonJSON.put("type", GeoJSON_Types.Polygon.toString());
 		JSONArray allPolygons = new JSONArray();
 		JSONArray onePolygon = new JSONArray();
 		for(Point point: polygon.getPoints()){
@@ -151,7 +155,7 @@ public class GeoJSONService extends HttpServlet {
 
 	private JSONObject getJSONofMultiPolygon(MultiPolygon multiPolygon) {
 		JSONObject multiPolygonJSON = new JSONObject();
-		multiPolygonJSON.put("type", "MultiPolygon");
+		multiPolygonJSON.put("type", GeoJSON_Types.MultiPolygon.toString());
 		JSONArray polygonsArray = new JSONArray();
 		for(Polygon polygon: multiPolygon.getPolygons()){
 			JSONArray allPolygons = new JSONArray();
@@ -171,7 +175,7 @@ public class GeoJSONService extends HttpServlet {
 
 	private JSONObject getJSONofPolyline(PolyLine polyLine) {
 		JSONObject polylineJSON = new JSONObject();
-		polylineJSON.put("type", "LineString");
+		polylineJSON.put("type", GeoJSON_Types.LineString.toString());
 		JSONArray lineString = new JSONArray();
 		for(Point point: polyLine.getPoints()){
 			JSONArray coord = new JSONArray();
