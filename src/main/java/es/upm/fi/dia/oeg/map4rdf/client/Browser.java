@@ -124,6 +124,7 @@ public class Browser implements EntryPoint {
 			for (String param : parameters) {
 				final String[] parts = param.split("=");
 				if (parts[0].equals("uri")) {
+					//TODO remove timer and use events.
 					Timer timer = new Timer() {
 						@Override
 						public void run() {
