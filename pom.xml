@@ -13,7 +13,7 @@
 	
 	<groupId>es.upm.oeg.geolinkeddata</groupId>
 	<artifactId>map4rdf</artifactId>
-	<version>0.0.4-OL-SNAPSHOT</version>
+	<version>0.0.5-OL-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Map4RDF</name>
 	<dependencies>
