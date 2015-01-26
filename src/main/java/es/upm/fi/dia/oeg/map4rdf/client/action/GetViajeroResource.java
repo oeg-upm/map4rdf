@@ -25,23 +25,23 @@
 package es.upm.fi.dia.oeg.map4rdf.client.action;
 
 import net.customware.gwt.dispatch.shared.Action;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroResourceContainer;
 
 /**
  * @author Alexander De Leon
  */
-public class GetWebNMasUnoResource extends MultipleConfigurationAction implements Action<SingletonResult<WebNMasUnoResourceContainer>> {
+public class GetViajeroResource extends MultipleConfigurationAction implements Action<SingletonResult<ViajeroResourceContainer>> {
 
 	private static final long serialVersionUID = -3999056428106064245L;
 	
 	private String uri;
 
-	private GetWebNMasUnoResource() {
+	private GetViajeroResource() {
 		super("");
 		// for serilization
 	}
 
-	public GetWebNMasUnoResource(String configID,String uri) {
+	public GetViajeroResource(String configID,String uri) {
 		super(configID);
 		this.uri = uri;
 	}

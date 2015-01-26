@@ -1,10 +1,10 @@
-package es.upm.fi.dia.oeg.map4rdf.share.webnmasuno;
+package es.upm.fi.dia.oeg.map4rdf.share.viajero;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WebNMasUnoTrip extends WebNMasUnoResource implements Serializable {
+public class ViajeroTrip extends ViajeroResource implements Serializable {
 
 	private static final long serialVersionUID = 5932164905343611605L;
 	private String title;
@@ -22,11 +22,11 @@ public class WebNMasUnoTrip extends WebNMasUnoResource implements Serializable {
 	private List<TripProvenance> provenances=new ArrayList<TripProvenance>();
 	
 	@SuppressWarnings("unused")
-	private WebNMasUnoTrip() {
+	private ViajeroTrip() {
 		// For serialization
 	}
 
-	public WebNMasUnoTrip(String title, String url, String uri,
+	public ViajeroTrip(String title, String url, String uri,
 			String idItiner, String d) {
 		if (title.equals("")) {
 			this.title = "No disponible";

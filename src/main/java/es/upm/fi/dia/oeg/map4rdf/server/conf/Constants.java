@@ -78,9 +78,9 @@ public class Constants {
 		 */
 		AEMET,
 		/**
-		 * The WebNMasUno subproject model.
+		 * The Viajero subproject model.
 		 * */
-		WEBNMASUNO;
+		VIAJERO;
 	}
 
 }

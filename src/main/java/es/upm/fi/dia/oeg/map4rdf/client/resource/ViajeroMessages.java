@@ -2,7 +2,7 @@ package es.upm.fi.dia.oeg.map4rdf.client.resource;
 
 import com.google.gwt.i18n.client.Messages;
 
-public interface WebNMasUnoMessages extends Messages{
+public interface ViajeroMessages extends Messages{
 	public String guides();
 	public String trips();
 	public String noGuidesAndTrips();

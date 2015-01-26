@@ -1,4 +1,4 @@
-package es.upm.fi.dia.oeg.map4rdf.share.webnmasuno;
+package es.upm.fi.dia.oeg.map4rdf.share.viajero;
 
 import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 

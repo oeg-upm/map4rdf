@@ -124,7 +124,7 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 			}
 			@Override
 			public void onSuccess(SingletonResult<String> result) {
-				if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(result.getValue())){
+				if(SharedGeometryModels.VIAJERO.equalsIgnoreCase(result.getValue())){
 					addYearDatePicker();
 				}	
 			}

@@ -14,7 +14,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.DbPediaDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoLinkedDataDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoSparqlDaoImpl;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.VCardDaoImpl;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.WebNMasUnoImpl;
+import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.ViajeroImpl;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 public class ConfigurationContainer {
@@ -86,8 +86,8 @@ public class ConfigurationContainer {
 			return new GeoSparqlDaoImpl(endpointUri,geosparqlEndpointUri,defaultProjection);
 		case AEMET:
 			return new AemetDaoImpl(endpointUri,defaultProjection);
-		case WEBNMASUNO:
-			return new WebNMasUnoImpl(endpointUri,defaultProjection);
+		case VIAJERO:
+			return new ViajeroImpl(endpointUri,defaultProjection);
 		default:
 			// make compiler happy
 			return null;

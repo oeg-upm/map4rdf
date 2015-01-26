@@ -1,10 +1,10 @@
-package es.upm.fi.dia.oeg.map4rdf.share.webnmasuno;
+package es.upm.fi.dia.oeg.map4rdf.share.viajero;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WebNMasUnoGuide extends WebNMasUnoResource implements Serializable {
+public class ViajeroGuide extends ViajeroResource implements Serializable {
 
 	private static final long serialVersionUID = 630125676546727117L;
 	private String title;
@@ -12,13 +12,13 @@ public class WebNMasUnoGuide extends WebNMasUnoResource implements Serializable 
 	private String uri;
 	private String date;
 
-	private List<WebNMasUnoImage> images=new ArrayList<WebNMasUnoImage>();
+	private List<ViajeroImage> images=new ArrayList<ViajeroImage>();
 	
-	public WebNMasUnoGuide() {
+	public ViajeroGuide() {
 
 	}
 
-	public WebNMasUnoGuide(String title, String url, String uri, String date) {
+	public ViajeroGuide(String title, String url, String uri, String date) {
 		if (title.equals("")) {
 			String[] urlSplit=url.split("/");
 			if(urlSplit.length>=2){
@@ -54,11 +54,11 @@ public class WebNMasUnoGuide extends WebNMasUnoResource implements Serializable 
 		return date;
 	}
 
-	public List<WebNMasUnoImage> getImages() {
+	public List<ViajeroImage> getImages() {
 		return images;
 	}
 
-	public void addImage(WebNMasUnoImage image) {
+	public void addImage(ViajeroImage image) {
 		this.images.add(image);
 	}
 	
@@ -72,7 +72,7 @@ public class WebNMasUnoGuide extends WebNMasUnoResource implements Serializable 
 		buffer.append("url="+url);
 		buffer.append(" | ");
 		buffer.append("date="+date);
-		for(WebNMasUnoImage image:images){
+		for(ViajeroImage image:images){
 			buffer.append(" | ");
 			buffer.append(image);
 		}

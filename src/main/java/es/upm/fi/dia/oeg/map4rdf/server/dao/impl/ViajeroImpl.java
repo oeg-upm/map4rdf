@@ -32,13 +32,13 @@ import es.upm.fi.dia.oeg.map4rdf.share.Resource;
 import es.upm.fi.dia.oeg.map4rdf.share.StatisticDefinition;
 import es.upm.fi.dia.oeg.map4rdf.share.Year;
 import es.upm.fi.dia.oeg.map4rdf.share.aemet.AemetResource;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroResourceContainer;
 
-public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
+public class ViajeroImpl extends CommonDaoImpl implements Map4rdfDao {
 
-	private static final Logger LOG = Logger.getLogger(WebNMasUnoImpl.class);
+	private static final Logger LOG = Logger.getLogger(ViajeroImpl.class);
 
-	public WebNMasUnoImpl(String endpointUri,String defaultProjection) {
+	public ViajeroImpl(String endpointUri,String defaultProjection) {
 		super(endpointUri,defaultProjection);
 	}
 
@@ -93,7 +93,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 	public List<GeoResourceOverlay> getGeoResourceOverlays(
 			StatisticDefinition statisticDefinition, BoundingBox boundingBox,
 			Set<FacetConstraint> constraints) throws DaoException {
-		// TODO Not statistics in WebN+1
+		// TODO Not statistics in Viajero
 		return Collections.emptyList();
 	}
 
@@ -138,13 +138,13 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	@Override
 	public List<Year> getYears(String datasetUri) throws DaoException {
-		// TODO Not statistics in WebN+1
+		// TODO Not statistics in Viajero
 		return Collections.emptyList();
 	}
 
 	@Override
 	public List<Resource> getStatisticDatasets() throws DaoException {
-		// TODO Not statistics in WebN+1
+		// TODO Not statistics in Viajero
 		return Collections.emptyList();
 	}
 
@@ -165,7 +165,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 					GeoResource resource = result.get(uri);
 
 					if (resource == null) {
-						resource = new WebNMasUnoResourceContainer(uri,
+						resource = new ViajeroResourceContainer(uri,
 								new PointBean(uri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					}
@@ -190,10 +190,10 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox,
 			Set<FacetConstraint> constraints, Integer max) throws DaoException {
-		HashMap<String, WebNMasUnoResourceContainer> result = new HashMap<String, WebNMasUnoResourceContainer>();
+		HashMap<String, ViajeroResourceContainer> result = new HashMap<String, ViajeroResourceContainer>();
 		QueryExecution execution = QueryExecutionFactory.sparqlService(
 				endpointUri,
-				createGetResourcesQueryAdaptedWebNMasUno(boundingBox,
+				createGetResourcesQueryAdaptedViajero(boundingBox,
 						constraints, max));
 
 		try {
@@ -204,15 +204,15 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String uri = solution.getResource("r").getURI();
 					double lat = solution.getLiteral("lat").getDouble();
 					double lng = solution.getLiteral("lng").getDouble();
-					WebNMasUnoResourceContainer resource = null;
+					ViajeroResourceContainer resource = null;
 					resource = result.get(uri);
 					if (resource == null) {
 						if(solution.contains("facetValueID") && solution.getResource("facetValueID").getURI().contains("Trip")){
-							resource = new WebNMasUnoResourceContainer(uri,
+							resource = new ViajeroResourceContainer(uri,
 									getItinerary(uri));
 							result.put(uri, resource);
 						}else{
-							resource = new WebNMasUnoResourceContainer(uri,
+							resource = new ViajeroResourceContainer(uri,
 									new PointBean(uri, lng, lat,defaultProjection));
 							result.put(uri, resource);
 						}
@@ -240,7 +240,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 		}
 	}
 
-	private String createGetResourcesQueryAdaptedWebNMasUno(
+	private String createGetResourcesQueryAdaptedViajero(
 			BoundingBox boundingBox, Set<FacetConstraint> constraints,
 			Integer limit) {
 		StringBuilder query = new StringBuilder(

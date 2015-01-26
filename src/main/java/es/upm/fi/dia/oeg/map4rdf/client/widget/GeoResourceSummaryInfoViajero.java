@@ -31,33 +31,33 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetViajeroResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FilterDateChangeEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FilterDateChangeEventHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
-import es.upm.fi.dia.oeg.map4rdf.client.resource.WebNMasUnoMessages;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.ViajeroMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DateFilter;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoGuide;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoImage;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoTrip;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.TripProvenance;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroGuide;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroImage;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroResourceContainer;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroTrip;
 
-public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,FilterDateChangeEventHandler{
+public class GeoResourceSummaryInfoViajero implements GeoResourceSummaryInfo,FilterDateChangeEventHandler{
 	
 	public interface Stylesheet {
-		String WEBNmas1Line0Style();
-		String WEBNmas1Line1Style();
-		String WEBNmas1Line0TripProvenanceLine0();
-		String WEBNmas1Line0TripProvenanceLine1();
-		String WEBNmas1Line1TripProvenanceLine0();
-		String WEBNmas1Line1TripProvenanceLine1();
-		String WEBNmas1CellPadding();
+		String viajeroLine0Style();
+		String viajeroLine1Style();
+		String viajeroLine0TripProvenanceLine0();
+		String viajeroLine0TripProvenanceLine1();
+		String viajeroLine1TripProvenanceLine0();
+		String viajeroLine1TripProvenanceLine1();
+		String viajeroCellPadding();
 	}
 	
 	private final ConfIDInterface configID;
@@ -67,21 +67,21 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 	private Panel mainPanel;
 	private TabPanel mainTabPanel=new TabPanel();
 	private DispatchAsync dispatchAsync;
-	private WebNMasUnoMessages webNmessages=GWT.create(WebNMasUnoMessages.class);
+	private ViajeroMessages viajeroMessages=GWT.create(ViajeroMessages.class);
 	private FlowPanel guidesPanel=new FlowPanel();
 	private FlowPanel tripsPanel=new FlowPanel();
 	private Grid additionalInfoPanel=new Grid(0, 0);
-	private List<WebNMasUnoGuide> lastGuides;
+	private List<ViajeroGuide> lastGuides;
 	private List<DateFilter> dateFilters;
-	private List<WebNMasUnoTrip> lastTrips;
-	public GeoResourceSummaryInfoWEBNmas1(ConfIDInterface configID,DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources,BrowserMessages browserMessages){
+	private List<ViajeroTrip> lastTrips;
+	public GeoResourceSummaryInfoViajero(ConfIDInterface configID,DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources,BrowserMessages browserMessages){
 		this.configID = configID;
 		this.browserMessages=browserMessages;
 		this.browserResources=browserResources;
 		this.dispatchAsync=dispatchAsync;
 		this.dateFilters=new ArrayList<DateFilter>();
-		this.lastGuides=new ArrayList<WebNMasUnoGuide>();
-		this.lastTrips=new ArrayList<WebNMasUnoTrip>();
+		this.lastGuides=new ArrayList<ViajeroGuide>();
+		this.lastTrips=new ArrayList<ViajeroTrip>();
 		eventBus.addHandler(FilterDateChangeEvent.getType(), this);
 		createUI();
 	}
@@ -148,7 +148,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		lastGuides.clear();
 		lastTrips.clear();
 		mainPanel.add(new Label(browserMessages.loading()));
-		dispatchAsync.execute(new GetWebNMasUnoResource(configID.getConfigID(),resource.getUri()), new AsyncCallback<SingletonResult<WebNMasUnoResourceContainer>>() {
+		dispatchAsync.execute(new GetViajeroResource(configID.getConfigID(),resource.getUri()), new AsyncCallback<SingletonResult<ViajeroResourceContainer>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -157,7 +157,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			}
 
 			@Override
-			public void onSuccess(SingletonResult<WebNMasUnoResourceContainer> result) {
+			public void onSuccess(SingletonResult<ViajeroResourceContainer> result) {
 				mainPanel.clear();
 				mainPanel.add(mainTabPanel);
 				boolean wasShowing=mainWidget.isShowing();
@@ -172,17 +172,17 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 				if(result.getValue().haveGuides() || result.getValue().haveTrips()){
 					if(result.getValue().haveTrips()){
 						addTrips(applyFiltersTrip(result.getValue().getTrips()), tripsPanel);
-						mainTabPanel.add(tripsPanel,webNmessages.trips());
+						mainTabPanel.add(tripsPanel,viajeroMessages.trips());
 						mainTabPanel.selectTab(mainTabPanel.getWidgetIndex(tripsPanel));
 					}
 					if(result.getValue().haveGuides()){
 						addGuides(applyFiltersGuide(result.getValue().getGuides()), guidesPanel);
-						mainTabPanel.add(guidesPanel, webNmessages.guides());
+						mainTabPanel.add(guidesPanel, viajeroMessages.guides());
 						mainTabPanel.selectTab(mainTabPanel.getWidgetIndex(guidesPanel));
 					}
 					mainPanel.add(mainTabPanel);
 				}else{
-					mainPanel.add(new Label(webNmessages.noGuidesAndTrips()));
+					mainPanel.add(new Label(viajeroMessages.noGuidesAndTrips()));
 					mainPanel.add(mainTabPanel);
 				}
 				if(wasShowing){
@@ -215,15 +215,15 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		addGuides(applyFiltersGuide(lastGuides), guidesPanel);
 		addTrips(applyFiltersTrip(lastTrips), tripsPanel);
 	}
-	private List<WebNMasUnoGuide> applyFiltersGuide(List<WebNMasUnoGuide> toApply){
+	private List<ViajeroGuide> applyFiltersGuide(List<ViajeroGuide> toApply){
 		if(toApply==null){
-			return new ArrayList<WebNMasUnoGuide>();
+			return new ArrayList<ViajeroGuide>();
 		}
 		if(dateFilters.isEmpty() || toApply.isEmpty()){
 			return toApply;
 		}
-		List<WebNMasUnoGuide> dataFiltered=new ArrayList<WebNMasUnoGuide>();
-		for(WebNMasUnoGuide guide:toApply){
+		List<ViajeroGuide> dataFiltered=new ArrayList<ViajeroGuide>();
+		for(ViajeroGuide guide:toApply){
 			boolean passAllFilters=true;
 			for(DateFilter filter:dateFilters){
 				Date date=getDate(guide.getDate());
@@ -239,15 +239,15 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		}
 		return dataFiltered;
 	}
-	private List<WebNMasUnoTrip> applyFiltersTrip(List<WebNMasUnoTrip> toApply){
+	private List<ViajeroTrip> applyFiltersTrip(List<ViajeroTrip> toApply){
 		if(toApply==null){
-			return new ArrayList<WebNMasUnoTrip>();
+			return new ArrayList<ViajeroTrip>();
 		}
 		if(dateFilters.isEmpty() || toApply.isEmpty()){
 			return toApply;
 		}
-		List<WebNMasUnoTrip> dataFiltered=new ArrayList<WebNMasUnoTrip>();
-		for(WebNMasUnoTrip trip:toApply){
+		List<ViajeroTrip> dataFiltered=new ArrayList<ViajeroTrip>();
+		for(ViajeroTrip trip:toApply){
 			boolean passAllFilters=true;
 			for(DateFilter filter:dateFilters){
 				Date date=getDate(trip.getDate());
@@ -264,11 +264,11 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		return dataFiltered;
 	}
 	// TODO search and remove all incrusted styles.
-	private void addGuides(List<WebNMasUnoGuide> guides, Panel panel){
+	private void addGuides(List<ViajeroGuide> guides, Panel panel){
 		panel.clear();
 		if(guides.isEmpty()){
 			if(!lastGuides.isEmpty()){
-				panel.add(new Label(webNmessages.notGuidesForDateFilter()));
+				panel.add(new Label(viajeroMessages.notGuidesForDateFilter()));
 			}else{
 				return;
 			}
@@ -310,11 +310,11 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		}
 		
 	}
-	private void addTrips(List<WebNMasUnoTrip> trips, Panel panel){
+	private void addTrips(List<ViajeroTrip> trips, Panel panel){
 		panel.clear();
 		if(trips.isEmpty()){
 			if(!dateFilters.isEmpty()){
-				panel.add(new Label(webNmessages.notTripsForDateFilter()));
+				panel.add(new Label(viajeroMessages.notTripsForDateFilter()));
 			}else{
 				return;
 			}
@@ -327,14 +327,14 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		vertical.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		scroll.setWidget(vertical);
 		int tripStyle=0;
-		for(WebNMasUnoTrip trip:trips){
+		for(ViajeroTrip trip:trips){
 			Widget widget=getTripWidget(trip,tripStyle);
 			vertical.add(widget);
 			tripStyle=(tripStyle+1)%2;
 		}
 		panel.add(scroll);
 	}
-	private Widget getTripWidget(WebNMasUnoTrip trip,int style) {
+	private Widget getTripWidget(ViajeroTrip trip,int style) {
 		HorizontalPanel toReturn=new HorizontalPanel();
 		toReturn.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		toReturn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -346,7 +346,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		mainLine.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainLine.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		mainLine.setSpacing(7);
-		mainLine.add(new Label(webNmessages.title()));
+		mainLine.add(new Label(viajeroMessages.title()));
 		mainLine.add(new Anchor(trip.getTitle(), trip.getURL(), "_blank"));
 		Image rdfImage= new Image(browserResources.rdfIcon());
 		Anchor rdfAnchor=new Anchor("",trip.getURI(),"_blank");
@@ -361,10 +361,10 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			vertical.add(moreInfoTrip);
 		}
 		if(style==0){
-			toReturn.addStyleName(browserResources.css().WEBNmas1Line0Style());
+			toReturn.addStyleName(browserResources.css().viajeroLine0Style());
 		}
 		if(style==1){
-			toReturn.setStyleName(browserResources.css().WEBNmas1Line1Style());
+			toReturn.setStyleName(browserResources.css().viajeroLine1Style());
 		}
 		VerticalPanel provenances=new VerticalPanel();
 		provenances.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -381,8 +381,8 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			VerticalPanel temp=new VerticalPanel();
 			temp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 			temp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			Label historic=new Label(webNmessages.historic());
-			historic.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			Label historic=new Label(viajeroMessages.historic());
+			historic.addStyleName(browserResources.css().viajeroCellPadding());
 			temp.add(historic);
 			temp.add(provenances);
 			toReturn.add(temp);
@@ -400,7 +400,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		if(tripProvenance.haveTitle()){
 			if(tripProvenance.haveURL()){
 				Anchor title=new Anchor(tripProvenance.getTitle());
-				title.addStyleName(browserResources.css().WEBNmas1CellPadding());
+				title.addStyleName(browserResources.css().viajeroCellPadding());
 				title.setHref(tripProvenance.getUrl());
 				title.setTarget("_blank");
 				horizontal.add(title);
@@ -410,30 +410,30 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		}
 		if(tripProvenance.haveBlog()){
 			Anchor linkBlog= new Anchor("",tripProvenance.getBlog(),"_blank");
-			linkBlog.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			linkBlog.addStyleName(browserResources.css().viajeroCellPadding());
 			Image rdfBlog=new Image(browserResources.rdfIcon());
 			linkBlog.getElement().appendChild(rdfBlog.getElement());
 			horizontal.add(linkBlog);
 		}
 		if(tripProvenance.haveTime()){
 			Label timeLabel=new Label(getVisualDate(tripProvenance.getTime()));
-			timeLabel.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			timeLabel.addStyleName(browserResources.css().viajeroCellPadding());
 			horizontal.add(timeLabel);
 		}
 		if(tripProvenance.haveSubTitle()){
 			Label subTitleLabel=new Label(tripProvenance.getSubTitle());
 			subTitleLabel.setWidth("350px");
-			subTitleLabel.addStyleName(browserResources.css().WEBNmas1CellPadding());
+			subTitleLabel.addStyleName(browserResources.css().viajeroCellPadding());
 			toReturn.add(subTitleLabel);
 		}
 		if(style==00){
-			toReturn.setStyleName(browserResources.css().WEBNmas1Line0TripProvenanceLine0());
+			toReturn.setStyleName(browserResources.css().viajeroLine0TripProvenanceLine0());
 		}else if(style==01){
-			toReturn.setStyleName(browserResources.css().WEBNmas1Line0TripProvenanceLine1());
+			toReturn.setStyleName(browserResources.css().viajeroLine0TripProvenanceLine1());
 		}else if(style==10){
-			toReturn.setStyleName(browserResources.css().WEBNmas1Line1TripProvenanceLine0());
+			toReturn.setStyleName(browserResources.css().viajeroLine1TripProvenanceLine0());
 		}else if(style==11){
-			toReturn.setStyleName(browserResources.css().WEBNmas1Line1TripProvenanceLine1());
+			toReturn.setStyleName(browserResources.css().viajeroLine1TripProvenanceLine1());
 		}
 		if(horizontal.getWidgetCount()>0){
 			return toReturn;
@@ -442,7 +442,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		}
 	}
 
-	private Widget getMoreInfoTripWidget(WebNMasUnoTrip trip){
+	private Widget getMoreInfoTripWidget(ViajeroTrip trip){
 		VerticalPanel vertical=new VerticalPanel();
 		FlexTable table= new FlexTable();
 		boolean addedAMoreInfo=false;
@@ -454,13 +454,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			if(trip.haveDistanceLess()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
 				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
-				table.setWidget(actualRow, actualColumn, new Label(webNmessages.distanceLess()+" "+trip.getDistanceLess()));
+				table.setWidget(actualRow, actualColumn, new Label(viajeroMessages.distanceLess()+" "+trip.getDistanceLess()));
 				actualColumn++;
 			}
 			if(trip.haveDistanceMore()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
 				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
-				table.setWidget(actualRow, actualColumn, new Label(webNmessages.distanceMore()+" "+trip.getDistanceMore()));
+				table.setWidget(actualRow, actualColumn, new Label(viajeroMessages.distanceMore()+" "+trip.getDistanceMore()));
 			}
 			actualRow++;
 		}
@@ -471,13 +471,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			if(trip.haveDurationLess()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
 				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
-				table.setWidget(actualRow, actualColumn, new Label(webNmessages.durationLess()+" "+trip.getDurationLess()));
+				table.setWidget(actualRow, actualColumn, new Label(viajeroMessages.durationLess()+" "+trip.getDurationLess()));
 				actualColumn++;
 			}
 			if(trip.haveDurationMore()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
 				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
-				table.setWidget(actualRow, actualColumn, new Label(webNmessages.durationMore()+" "+trip.getDurationMore()));
+				table.setWidget(actualRow, actualColumn, new Label(viajeroMessages.durationMore()+" "+trip.getDurationMore()));
 			}
 			actualRow++;
 		}
@@ -488,13 +488,13 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			if(trip.havePriceLess()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
 				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
-				table.setWidget(actualRow, actualColumn, new Label(webNmessages.priceLess()+" "+trip.getPriceLess()));
+				table.setWidget(actualRow, actualColumn, new Label(viajeroMessages.priceLess()+" "+trip.getPriceLess()));
 				actualColumn++;
 			}
 			if(trip.havePriceMore()){
 				table.getCellFormatter().setVerticalAlignment(actualRow, actualColumn, HasVerticalAlignment.ALIGN_MIDDLE);
 				table.getCellFormatter().setHorizontalAlignment(actualRow, actualColumn, HasHorizontalAlignment.ALIGN_LEFT);
-				table.setWidget(actualRow, actualColumn, new Label(webNmessages.priceMore()+" "+trip.getPriceMore()));
+				table.setWidget(actualRow, actualColumn, new Label(viajeroMessages.priceMore()+" "+trip.getPriceMore()));
 			}
 			actualRow++;
 		}
@@ -502,7 +502,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			vertical.add(table);
 		}
 		if(trip.haveDescription()){
-			Label description = new Label(webNmessages.description()+" "+trip.getDescription());
+			Label description = new Label(viajeroMessages.description()+" "+trip.getDescription());
 			vertical.add(description);
 		}
 		if(addedAMoreInfo || trip.haveDescription()){	
@@ -511,10 +511,10 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			return null;
 		}
 	}
-	private void addSubSetGuides(List<WebNMasUnoGuide> guides, FlexTable table, int height){
+	private void addSubSetGuides(List<ViajeroGuide> guides, FlexTable table, int height){
 		table.clear();
 		int row=0;
-		for(WebNMasUnoGuide guide:guides){
+		for(ViajeroGuide guide:guides){
 			table.getRowFormatter().setVerticalAlign(0, HasVerticalAlignment.ALIGN_MIDDLE);
 			table.setWidget(row, 0, new Anchor(guide.getTitle(),guide.getURL(),"_blank"));
 			table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_CENTER);
@@ -533,7 +533,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			row++;
 		}
 	}
-	private void addChangeGuidesPager(final Anchor anchor,final int startGuide,final int finalGuide,final List<WebNMasUnoGuide> guides,final FlexTable contentTable,final int height,final HorizontalPanel anchorsPanel, final ScrollPanel scroll){
+	private void addChangeGuidesPager(final Anchor anchor,final int startGuide,final int finalGuide,final List<ViajeroGuide> guides,final FlexTable contentTable,final int height,final HorizontalPanel anchorsPanel, final ScrollPanel scroll){
 		anchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -546,7 +546,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			}
 		});
 	}
-	private void changeImageWithAnchorClick(final Anchor anchor, final int height,final WebNMasUnoImage image,final Panel contentPanel,final HorizontalPanel anchorsPanel){
+	private void changeImageWithAnchorClick(final Anchor anchor, final int height,final ViajeroImage image,final Panel contentPanel,final HorizontalPanel anchorsPanel){
 		anchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -568,7 +568,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			}
 		});
 	}
-	private Widget getWidgetForImages(WebNMasUnoGuide guide, int height){
+	private Widget getWidgetForImages(ViajeroGuide guide, int height){
 		VerticalPanel toReturn=new VerticalPanel();
 		toReturn.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		toReturn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -579,7 +579,7 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 		toReturn.add(anchorsPanel);
 		boolean isImageAdded=false;
 		int imageNumber=1;
-		for(WebNMasUnoImage image:guide.getImages()){
+		for(ViajeroImage image:guide.getImages()){
 			Anchor anchor=new Anchor(String.valueOf(imageNumber));
 			imageNumber++;
 			changeImageWithAnchorClick(anchor, height, image, imagePanel, anchorsPanel);
@@ -605,21 +605,21 @@ public class GeoResourceSummaryInfoWEBNmas1 implements GeoResourceSummaryInfo,Fi
 			return null;
 		}
 	}
-	private Date getDate(String webNmas1Date){
+	private Date getDate(String viajeroDate){
 		try{
 			DateTimeFormat dtf = DateTimeFormat.getFormat("yyyyMMdd");
-			return dtf.parse(webNmas1Date);
+			return dtf.parse(viajeroDate);
 		} catch (Exception e){
 			return null;
 		}
 	}
-	private String getVisualDate(String webNmas1Date){
+	private String getVisualDate(String viajeroDate){
 		try{
-			Date date=getDate(webNmas1Date);
+			Date date=getDate(viajeroDate);
 			DateTimeFormat newFormat = DateTimeFormat.getFormat("dd-MM-yyyy");
 			return newFormat.format(date);
 		}catch (Exception e){
-			return webNmas1Date;
+			return viajeroDate;
 		}
 	}
 

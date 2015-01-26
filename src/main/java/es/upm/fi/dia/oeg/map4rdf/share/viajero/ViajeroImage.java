@@ -1,4 +1,4 @@
-package es.upm.fi.dia.oeg.map4rdf.share.webnmasuno;
+package es.upm.fi.dia.oeg.map4rdf.share.viajero;
 
 import java.io.Serializable;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
  *
  * @author Daniel Garijo
  */
-public class WebNMasUnoImage extends WebNMasUnoResource implements Serializable {
+public class ViajeroImage extends ViajeroResource implements Serializable {
 
 	private static final long serialVersionUID = 956723024219051717L;
 	private String title;
@@ -16,17 +16,17 @@ public class WebNMasUnoImage extends WebNMasUnoResource implements Serializable 
 
 
     //serialization
-    public WebNMasUnoImage (){
+    public ViajeroImage (){
     }
 
-    public WebNMasUnoImage(String URI, String pname,String URL){       
+    public ViajeroImage(String URI, String pname,String URL){       
         this.URI = URI;
         this.pname = pname;
         this.URL=URL;
         this.title = "";
     }
     
-    public WebNMasUnoImage(String URI, String pname,String URL, String title) {       
+    public ViajeroImage(String URI, String pname,String URL, String title) {       
         this.URI = URI;
         this.pname = pname;
         this.URL=URL;

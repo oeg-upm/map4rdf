@@ -431,8 +431,8 @@ public class GeoResourceSummary extends Composite {
 		if(SharedGeometryModels.AEMET.equalsIgnoreCase(geometryModel)){
 			return new GeoResourceSummaryInfoAemet(configID,dispatchAsync, resources, messages, widgetFactory);
 		}
-		if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(geometryModel)){
-			return new GeoResourceSummaryInfoWEBNmas1(configID,dispatchAsync,eventBus, resources, messages);
+		if(SharedGeometryModels.VIAJERO.equalsIgnoreCase(geometryModel)){
+			return new GeoResourceSummaryInfoViajero(configID,dispatchAsync,eventBus, resources, messages);
 		}
 		return new GeoResourceSummaryInfoDefault(messages, resources);
 	}

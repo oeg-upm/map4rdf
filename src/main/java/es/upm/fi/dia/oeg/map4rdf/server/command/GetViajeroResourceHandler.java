@@ -22,34 +22,34 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetViajeroResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.TripProvenance.TripProvenanceType;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoGuide;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoImage;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoResourceContainer;
-import es.upm.fi.dia.oeg.map4rdf.share.webnmasuno.WebNMasUnoTrip;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.TripProvenance;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroGuide;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroImage;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroResourceContainer;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.ViajeroTrip;
+import es.upm.fi.dia.oeg.map4rdf.share.viajero.TripProvenance.TripProvenanceType;
 
 /**
  * @author Daniel Garijo Adapted by: @author Francisco Siles
  */
-public class GetWebNMasUnoResourceHandler
+public class GetViajeroResourceHandler
 		implements
-		ActionHandler<GetWebNMasUnoResource, SingletonResult<WebNMasUnoResourceContainer>> {
+		ActionHandler<GetViajeroResource, SingletonResult<ViajeroResourceContainer>> {
 
 	private MultipleConfigurations configurations;
-	private Logger logger = Logger.getLogger(GetWebNMasUnoResourceHandler.class);
+	private Logger logger = Logger.getLogger(GetViajeroResourceHandler.class);
 	@Inject
-	public GetWebNMasUnoResourceHandler(MultipleConfigurations configurations) {
+	public GetViajeroResourceHandler(MultipleConfigurations configurations) {
 		this.configurations = configurations;
 	}
 
 	@Override
-	public SingletonResult<WebNMasUnoResourceContainer> execute(
-			GetWebNMasUnoResource action, ExecutionContext context)
+	public SingletonResult<ViajeroResourceContainer> execute(
+			GetViajeroResource action, ExecutionContext context)
 			throws ActionException {
 		String uri = action.getUri();
 		if (uri == null || uri.length() == 0) {
@@ -63,30 +63,30 @@ public class GetWebNMasUnoResourceHandler
 		if(endpointUri==null || endpointUri.isEmpty()){
 			throw new ActionException("Bad endpoint URL in config file");
 		}
-		WebNMasUnoResourceContainer resource = getDatosGuiasViajes(endpointUri,uri);
-		return new SingletonResult<WebNMasUnoResourceContainer>(resource);
+		ViajeroResourceContainer resource = getDatosGuiasViajes(endpointUri,uri);
+		return new SingletonResult<ViajeroResourceContainer>(resource);
 	}
 
 	@Override
-	public Class<GetWebNMasUnoResource> getActionType() {
-		return GetWebNMasUnoResource.class;
+	public Class<GetViajeroResource> getActionType() {
+		return GetViajeroResource.class;
 	}
 
 	@Override
-	public void rollback(GetWebNMasUnoResource action,
-			SingletonResult<WebNMasUnoResourceContainer> result,
+	public void rollback(GetViajeroResource action,
+			SingletonResult<ViajeroResourceContainer> result,
 			ExecutionContext context) throws ActionException {
 		// nothing to do
 
 	}
 
-	private WebNMasUnoResourceContainer getDatosGuiasViajes(String endpointUri,String uri) {
-		WebNMasUnoResourceContainer resource = new WebNMasUnoResourceContainer();
-		List<WebNMasUnoGuide> guides = getGuides(endpointUri,100, uri);
+	private ViajeroResourceContainer getDatosGuiasViajes(String endpointUri,String uri) {
+		ViajeroResourceContainer resource = new ViajeroResourceContainer();
+		List<ViajeroGuide> guides = getGuides(endpointUri,100, uri);
 		if (guides != null && !guides.isEmpty()) {
 			resource.addAllGuides(guides);
 		}
-		List<WebNMasUnoTrip> trips = getTrips(endpointUri,100, uri);
+		List<ViajeroTrip> trips = getTrips(endpointUri,100, uri);
 		if (trips != null && !trips.isEmpty()) {
 			resource.addAllTrips(trips);
 		}
@@ -94,13 +94,13 @@ public class GetWebNMasUnoResourceHandler
 
 	}
 
-	private List<WebNMasUnoGuide> getGuides(String endpointUri, int i, String uri) {
+	private List<ViajeroGuide> getGuides(String endpointUri, int i, String uri) {
 		/*
 		 * TODO modify this method, wait for Ocorcho to change the model. The
 		 * images are property in endpoint. The application does not need to get
 		 * redirected urls and does not need to check urls.
 		 */
-		Map<String, WebNMasUnoGuide> guides = new HashMap<String, WebNMasUnoGuide>();
+		Map<String, ViajeroGuide> guides = new HashMap<String, ViajeroGuide>();
 		long start = Calendar.getInstance().getTimeInMillis();
 		QueryExecution exec = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetGuidesQuery(100, uri));
@@ -140,16 +140,16 @@ public class GetWebNMasUnoResourceHandler
 				long tempCheckURIStop = Calendar.getInstance()
 						.getTimeInMillis();
 				checkURI += tempCheckURIStop - tempCheckURIStart;
-				WebNMasUnoGuide g;
+				ViajeroGuide g;
 				if (guides.containsKey(uriGuide)
 						&& guides.get(uriGuide) != null) {
 					g = guides.get(uriGuide);
 				} else {
-					g = new WebNMasUnoGuide(titleGuide, urlGuide, uriGuide,
+					g = new ViajeroGuide(titleGuide, urlGuide, uriGuide,
 							dateGuia);
 					guides.put(uriGuide, g);
 				}
-				WebNMasUnoImage image = null;
+				ViajeroImage image = null;
 				if (solution.contains("uriImage")
 						&& solution.contains("pnameImage")) {
 					String uriImage = solution.getResource("uriImage").getURI();
@@ -166,11 +166,11 @@ public class GetWebNMasUnoResourceHandler
 						if (solution.contains("titImage")) {
 							String titImage = solution.getLiteral("titImage")
 									.getLexicalForm();
-							image = new WebNMasUnoImage(uriImage,
+							image = new ViajeroImage(uriImage,
 									getNewPname(pnameImage), imageURL, titImage);
 							imagenes++;
 						} else {
-							image = new WebNMasUnoImage(uriImage,
+							image = new ViajeroImage(uriImage,
 									getNewPname(pnameImage), imageURL);
 							imagenes++;
 						}
@@ -184,7 +184,7 @@ public class GetWebNMasUnoResourceHandler
 		long end = Calendar.getInstance().getTimeInMillis();
 		int recursosSinImagenes = 0;
 		int imagenesDeMas = 0;
-		for (WebNMasUnoGuide guide : guides.values()) {
+		for (ViajeroGuide guide : guides.values()) {
 			if (guide.getImages().isEmpty()) {
 				recursosSinImagenes++;
 			} else if (guide.getImages().size() > 1) {
@@ -207,14 +207,14 @@ public class GetWebNMasUnoResourceHandler
 		 * System.out.println("Tiempo total:"+(end-start)); System.out.println(
 		 * "-----------------------------------------------------");
 		 */
-		return new ArrayList<WebNMasUnoGuide>(guides.values());
+		return new ArrayList<ViajeroGuide>(guides.values());
 	}
 
-	private List<WebNMasUnoTrip> getTrips(String endpointUri, int i, String uri) {
+	private List<ViajeroTrip> getTrips(String endpointUri, int i, String uri) {
 		// viaje
 		QueryExecution exec = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetTripsQuery(i, uri));
-		Map<String, WebNMasUnoTrip> tripsMaps = new HashMap<String, WebNMasUnoTrip>();
+		Map<String, ViajeroTrip> tripsMaps = new HashMap<String, ViajeroTrip>();
 		ResultSet queryResult = exec.execSelect();
 		while (queryResult.hasNext()) {
 			QuerySolution solution = queryResult.next();
@@ -240,7 +240,7 @@ public class GetWebNMasUnoResourceHandler
 				dateViaje = "";
 			}
 			if (!uriTrip.equals("")) {
-				WebNMasUnoTrip t = new WebNMasUnoTrip(titTrip, tripURL,
+				ViajeroTrip t = new ViajeroTrip(titTrip, tripURL,
 						uriTrip, uri, dateViaje);
 				addOtherTripsVariables(t, solution);
 				if (!tripsMaps.containsKey(uriTrip)) {
@@ -249,10 +249,10 @@ public class GetWebNMasUnoResourceHandler
 				}
 			}
 		}
-		return new ArrayList<WebNMasUnoTrip>(tripsMaps.values());
+		return new ArrayList<ViajeroTrip>(tripsMaps.values());
 	}
 
-	private void addOtherTripsVariables(WebNMasUnoTrip trip,
+	private void addOtherTripsVariables(ViajeroTrip trip,
 			QuerySolution solution) {
 		// ADD ?pL ?pH ?dL ?dH ?tD ?prL ?prH
 		// pL = price less than
@@ -284,7 +284,7 @@ public class GetWebNMasUnoResourceHandler
 			trip.setDistanceMore((solution.getLiteral("prH").getLexicalForm()));
 		}
 	}
-	private void addProvenanceTrip(String endpointUri,String uriTrip, WebNMasUnoTrip trip){
+	private void addProvenanceTrip(String endpointUri,String uriTrip, ViajeroTrip trip){
 		QueryExecution exec2 = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetTripProvenance(1000, uriTrip));
 		ResultSet queryResult2 = exec2.execSelect();
