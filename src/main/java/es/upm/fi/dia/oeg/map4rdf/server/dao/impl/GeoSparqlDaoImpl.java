@@ -103,12 +103,17 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String uri = solution.getResource("r").getURI();
 					String geoUri = solution.getResource("geosparqlwkt").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
-					//TODO: Remove this if when we can obtain crs in endpoint.
-					UriAndEPSG uriAndEpsgOfWKT = getDetectedUriAndEPSG(wkt);
-					if(uriAndEpsgOfWKT!=null){
+					String projection = null;
+					if(solution.contains("crs")){
+						projection = solution.getLiteral("crs").getString();
+					}
 					GeoResource resource = result.get(uri);
+					if(projection!=null || isThisWKTofThisProjection(wkt, defaultProjection)){
+						if(projection==null){
+							projection = defaultProjection;
+						}
 					if (resource == null) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,uriAndEpsgOfWKT.getEPSG());
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
 						if(!geometries.isEmpty()){
 							resource = new GeoResource(uri, geometries.get(0));
 							for(int i=1;i<geometries.size();i++){
@@ -117,7 +122,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							result.put(uri, resource);
 						}
 					} else if (!resource.hasGeometry(geoUri)) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,uriAndEpsgOfWKT.getEPSG());
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
 						if(!geometries.isEmpty()){
 							for(int i=0;i<geometries.size();i++){
 								resource.addGeometry(geometries.get(i));
@@ -163,18 +168,18 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				try {
 					String geoUri = solution.getResource("geosparql").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
-					//TODO: Remove this "if" when we can obtain crs in endpoint.
-					if(wkt.toLowerCase().contains("crs84")){
-						//TODO: Solve problem with only accept EPSG:4326
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
-						if(!geometries.isEmpty()){
-							resource = new GeoResource(uri, geometries.get(0));
-							for(int i=1;i<geometries.size();i++){
-								resource.addGeometry(geometries.get(i));
-							}
-						}
-						getOtherInfo(uri, resource, solution);
+					String projection = solution.getLiteral("crs").getString();
+					if(projection==null || projection.isEmpty()){
+						projection = defaultProjection;
 					}
+					List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
+					if(!geometries.isEmpty()){
+						resource = new GeoResource(uri, geometries.get(0));
+						for(int i=1;i<geometries.size();i++){
+							resource.addGeometry(geometries.get(i));
+						}
+					}
+					getOtherInfo(uri, resource, solution);
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: ",e);
 				} catch (Exception e) {
@@ -295,12 +300,13 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		if(constraints!=null){
-			query.append("SELECT distinct ?r ?geosparqlwkt ?wkt ?facetID ?facetValueID ");
+			query.append("SELECT distinct ?r ?geosparqlwkt ?crs ?wkt ?facetID ?facetValueID ");
 		}else{
-			query.append("SELECT distinct ?r ?geosparqlwkt ?wkt ");
+			query.append("SELECT distinct ?r ?geosparqlwkt ?crs ?wkt ");
 		}
 		query.append("WHERE { ");
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("OPTIONAL{?geosparqlwkt geosparql:crs ?crs}.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
 		if (constraints != null) {
 			for (FacetConstraint constraint : constraints) {
@@ -326,12 +332,13 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		if(constraints!=null){
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ?facetID ?facetValueID ");
 		}else{
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ");
 		}
 		query.append("WHERE { ");
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("OPTIONAL{?geosparqlwkt geosparql:crs ?crs}.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
@@ -352,6 +359,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		if (limit != null) {
 			query.append(" LIMIT " + limit);
 		}
+		
 		return query.toString();
 	}
 	private String createGetResourceOtherInfo(String resourceUri){
@@ -368,14 +376,15 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		if(constraints!=null){
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ?facetID ?facetValueID ");
 		}else{
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ");
 		}
 		query.append("WHERE { ");
 		/*query.append("?r <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlgml.");
 		query.append("?geosparqlgml <http://www.opengis.net/ont/geosparql/asGML>  ?gml.");*/
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("OPTIONAL {?geosparqlwkt geosparql:crs ?crs}.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
 		//query.append("?geosparqlwkt <"+RDF.type+"> ?geoType.");
 		//query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
@@ -407,6 +416,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("SELECT ?label ?geosparql ?wkt ?seeAlso ");
 		query.append("WHERE { ");
 		query.append("<" + uri + "> geosparql:hasGeometry ?geosparql. ");
+		query.append("OPTIONAL {?geosparql geosparql:crs ?crs}.");
 		query.append("?geosparql geosparql:asWKT ?wkt.");
 		query.append("OPTIONAL { <" + uri + "> <" + RDFS.label + "> ?label } .");
 		query.append("OPTIONAL { <" + uri + "> <" + RDFS.seeAlso + "> ?seeAlso}. ");
@@ -428,30 +438,21 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		return query;
 	}
 	
-	private class UriAndEPSG{
-		private String uri;
-		private String epsg;
-		public UriAndEPSG(String uri,String epsg){
-			this.uri = uri;
-			this.epsg = epsg;
-		}
-		
-		public String getUri(){
-			return uri;
-		}
-		
-		public String getEPSG(){
-			return epsg;
-		}
-		
-	}
-	private UriAndEPSG[] validUriAndEPSG={new UriAndEPSG("crs84", "EPSG:4326"),new UriAndEPSG("epsg/0/23030", "EPSG:23030")};
-	private UriAndEPSG getDetectedUriAndEPSG(String wkt){
-			for(UriAndEPSG uriAndEPSG:validUriAndEPSG){
-				if(wkt.toLowerCase().contains(uriAndEPSG.getUri())){
-					return uriAndEPSG;
+	private boolean isThisWKTofThisProjection(String wkt, String projection){
+		if(projection!=null && wkt!=null){
+			if(projection.length()!=9){
+				return false;
+			}else{
+				String containsLowerCase;
+				if(projection.toLowerCase().equals("epsg:4326")){
+					containsLowerCase = "crs84";
+				}else{
+					containsLowerCase = "epsg/0/"+projection.split(":")[1];
 				}
+				return wkt.toLowerCase().contains(containsLowerCase);
 			}
-			return null;
+		}else{
+			return projection == null && wkt == null;
+		}
 	}
 }
