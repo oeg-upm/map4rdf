@@ -104,10 +104,11 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String geoUri = solution.getResource("geosparqlwkt").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
 					//TODO: Remove this if when we can obtain crs in endpoint.
-					if(wkt.toLowerCase().contains("crs84")){
+					UriAndEPSG uriAndEpsgOfWKT = getDetectedUriAndEPSG(wkt);
+					if(uriAndEpsgOfWKT!=null){
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,uriAndEpsgOfWKT.getEPSG());
 						if(!geometries.isEmpty()){
 							resource = new GeoResource(uri, geometries.get(0));
 							for(int i=1;i<geometries.size();i++){
@@ -116,7 +117,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							result.put(uri, resource);
 						}
 					} else if (!resource.hasGeometry(geoUri)) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,uriAndEpsgOfWKT.getEPSG());
 						if(!geometries.isEmpty()){
 							for(int i=0;i<geometries.size();i++){
 								resource.addGeometry(geometries.get(i));
@@ -425,5 +426,32 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append(boundingBox.getTop().getX()+" "+boundingBox.getTop().getY());
 		query.append("))\"^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
 		return query;
+	}
+	
+	private class UriAndEPSG{
+		private String uri;
+		private String epsg;
+		public UriAndEPSG(String uri,String epsg){
+			this.uri = uri;
+			this.epsg = epsg;
+		}
+		
+		public String getUri(){
+			return uri;
+		}
+		
+		public String getEPSG(){
+			return epsg;
+		}
+		
+	}
+	private UriAndEPSG[] validUriAndEPSG={new UriAndEPSG("crs84", "EPSG:4326"),new UriAndEPSG("epsg/0/23030", "EPSG:23030")};
+	private UriAndEPSG getDetectedUriAndEPSG(String wkt){
+			for(UriAndEPSG uriAndEPSG:validUriAndEPSG){
+				if(wkt.toLowerCase().contains(uriAndEPSG.getUri())){
+					return uriAndEPSG;
+				}
+			}
+			return null;
 	}
 }
