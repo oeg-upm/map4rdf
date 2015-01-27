@@ -92,7 +92,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint,
 					createGetALLGeoSparqlResourcesQuery(boundingBox, constraints, max));
 		}else{
-			execution = QueryExecutionFactory.sparqlService(endpointUri,
+			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint,
 					createGetGeoSparqlResourcesQuery(boundingBox, constraints, max));
 		}
 		try {
