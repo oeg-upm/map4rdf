@@ -168,10 +168,14 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				try {
 					String geoUri = solution.getResource("geosparql").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
-					String projection = solution.getLiteral("crs").getString();
-					if(projection==null || projection.isEmpty()){
-						projection = defaultProjection;
+					String projection = null;
+					if(solution.contains("crs")){
+						projection = solution.getLiteral("crs").getString();
 					}
+					if(projection!=null || isThisWKTofThisProjection(wkt, defaultProjection)){
+						if(projection==null){
+							projection = defaultProjection;
+						}
 					List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
 					if(!geometries.isEmpty()){
 						resource = new GeoResource(uri, geometries.get(0));
@@ -180,6 +184,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 						}
 					}
 					getOtherInfo(uri, resource, solution);
+					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: ",e);
 				} catch (Exception e) {
