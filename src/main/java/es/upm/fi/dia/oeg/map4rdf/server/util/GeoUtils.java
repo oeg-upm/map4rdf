@@ -29,11 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.io.WKTReader;
 
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
+import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygonBean;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PointBean;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLineBean;
+import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 import es.upm.fi.dia.oeg.map4rdf.share.PolygonBean;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
@@ -43,12 +49,14 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
  */
 public class GeoUtils {
 	private static final Logger LOG = Logger.getLogger(es.upm.fi.dia.oeg.map4rdf.server.util.GeoUtils.class);
-	private static enum WKTTypes{Point, LineString, Polygon}
+	//If you modify this enum remember to modify validWKTTypes String and transformWKTtoOEG method.
+	private static enum WKTTypes{Point, LineString, Polygon,MultiPoint,MultiPolygon,MultiLineString}
+	private static String validWKTTypes="{Point, LineString, Polygon,MultiPoint,MultiPolygon,MultiLineString}";
 	public static double getDistance(TwoDimentionalCoordinate point1, TwoDimentionalCoordinate point2) {
 		return Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2));
 	}
-	public static List<Geometry> getWKTGeometries(String uri ,String GMLText, String WKTText){
-		String crs=TwoDimentionalCoordinateBean.getDefaultProjection();
+	public static List<Geometry> getWKTGeometries(String uri ,String GMLText, String WKTText,String projection){
+		String crs=projection;
 		/*if(GMLText.contains("srsName")){
 			String parseText=GMLText.substring(GMLText.indexOf("srsName"), GMLText.indexOf(" ", GMLText.indexOf("srsName")));
 			parseText=parseText.replace(" ", "");
@@ -64,17 +72,18 @@ public class GeoUtils {
 			printGMLError(uri, error, GMLText);
 			crs=TwoDimentionalCoordinateBean.getDefaultProjection();
 		}*/
+		
 		String realWKTText="";
 		int firtsIndex=-1;
 		for(WKTTypes i: WKTTypes.values()){
-			int index=WKTText.indexOf(i.toString());
+			int index=WKTText.toLowerCase().indexOf(i.toString().toLowerCase());
 			if(index>=0 && (index<firtsIndex || firtsIndex==-1)){
 				firtsIndex=index;
 			}
 		}
 		
 		if(firtsIndex==-1){
-			printWKTError(uri,"Not found valid WKTType. Valid types are:"+WKTTypes.values(), WKTText);
+			printWKTError(uri,"Not found valid WKTType. Valid types are:"+validWKTTypes, WKTText);
 			return null;
 		}
 		realWKTText=WKTText.substring(firtsIndex, WKTText.length());
@@ -102,11 +111,20 @@ public class GeoUtils {
 			return null;
 		}
 		realWKTText=realWKTText.substring(0,lastIndex);
-		return transforWKTtoOEG(uri, realWKTText, crs);
+		/*parseWKTGeotools(uri, GMLText, realWKTText, projection);
+		//parseWKTGeotools(uri, GMLText, WKTText, projection);
+		parseWKTGeotools("", "", "POINT(1 45)", "");
+		parseWKTGeotools("", "", "MULTIPOINT(40 35, 20 10)", "");
+		parseWKTGeotools("", "", "LINESTRING(1 1, 2 2, 3 3, 4 4, 5 5, 6 6)", "");
+		parseWKTGeotools("", "", "MULTILINESTRING((1 1, 2 2),(3 3, 4 4))", "");
+		parseWKTGeotools("", "", "POLYGON ( (0 0, 10 0, 10 10, 0 10, 0 0),( 20 20, 20 40, 40 40, 40 20, 20 20) )", "");
+		parseWKTGeotools("", "", "MULTIPOLYGON(((1 1, 2 1,2 0, 1 1)),((3 3, 4 3,4 2, 3 3)))", "");
+		parseWKTGeotools("", "", "POLYGON((1 1, 2 1,2 0, 1 1))", "");*/
+		return parseWKTGeotools(uri, GMLText, realWKTText, crs);
 	}
 	private static List<Geometry> transforWKTtoOEG(String uri,String realWKTText,String crs){
-		if(realWKTText.contains(WKTTypes.Point.toString())){
-			String stringPoints=realWKTText.replace(WKTTypes.Point.toString(), "");
+		if(realWKTText.toLowerCase().contains(WKTTypes.Point.toString().toLowerCase())){
+			String stringPoints=realWKTText.toLowerCase().replace(WKTTypes.Point.toString().toLowerCase(), "");
 			List<TwoDimentionalCoordinate> points=extractTwoDimentionalCoordinate(uri, crs, stringPoints);
 			if(!points.isEmpty()){
 				List<Geometry> geometries= new ArrayList<Geometry>();
@@ -117,8 +135,8 @@ public class GeoUtils {
 			}
 			return null;
 		}
-		if(realWKTText.contains(WKTTypes.LineString.toString())){
-			String stringLineString=realWKTText.replace(WKTTypes.LineString.toString(), "");
+		if(realWKTText.toLowerCase().contains(WKTTypes.LineString.toString().toLowerCase())){
+			String stringLineString=realWKTText.toLowerCase().replace(WKTTypes.LineString.toString().toLowerCase(), "");
 			stringLineString=stringLineString.replaceAll(" +", " ");;
 			stringLineString=stringLineString.replace(')', 'z');
 			stringLineString=stringLineString.replaceAll("z ,", "z,");
@@ -138,8 +156,8 @@ public class GeoUtils {
 			return geometries;
 			
 		}
-		if(realWKTText.contains(WKTTypes.Polygon.toString())){
-			String stringLineString=realWKTText.replace(WKTTypes.Polygon.toString(), "");
+		if(realWKTText.toLowerCase().contains(WKTTypes.Polygon.toString().toLowerCase())){
+			String stringLineString=realWKTText.toLowerCase().replace(WKTTypes.Polygon.toString().toLowerCase(), "");
 			stringLineString=stringLineString.replaceAll(" +", " ");;
 			stringLineString=stringLineString.replace(')', 'z');
 			stringLineString=stringLineString.replaceAll("z ,", "z,");
@@ -173,6 +191,7 @@ public class GeoUtils {
 			try{
 				double x=Double.parseDouble(coordenates[0]);
 				double y=Double.parseDouble(coordenates[1]);
+				//double[] xy=convertPoint(x,y,crs,"EPSG:4326");
 				TwoDimentionalCoordinateBean point= new TwoDimentionalCoordinateBean(x, y,crs);
 				toReturn.add(point);
 			}catch(NumberFormatException e){
@@ -195,4 +214,113 @@ public class GeoUtils {
 		LOG.warn("In resource:"+uri);
 		LOG.warn("GML Text:"+"\""+GMLText+"\"");
 	}*/
+	/*private static double[] convertPoint(double x,double y, String epsgFrom, String epsgTo){
+		double toReturnX=0.0;
+		double toReturnY=0.0;
+		try {			
+			CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:25830");
+			CoordinateReferenceSystem targetCRS = CRS.decode(epsgTo);
+			MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, false);
+			GeometryBuilder builder = new GeometryBuilder( sourceCRS );
+			Point point = (Point) builder.createPoint( x, y );
+			Point targetPoint = (Point) JTS.transform((com.vividsolutions.jts.geom.Geometry)point, transform);
+			toReturnX=targetPoint.getX();
+			toReturnY=targetPoint.getY();
+		} catch (NoSuchAuthorityCodeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FactoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return new double[]{toReturnX, toReturnY};
+	}*/
+	
+	
+	private static List<Geometry> parseWKTGeotools(String uri ,String GMLText, String WKTText,String projection){
+		try{
+			/*GeoTools.addClassLoader(ClassLoader.getSystemClassLoader());
+			CoordinateReferenceSystem crs = CRS.decode("EPSG:23030");
+            GeometryFactory geometryFactory = new GeometryFactoryImpl(crs);
+            PositionFactory positionFactory = new PositionFactoryImpl();
+            PrimitiveFactory primitiveFactory = new PrimitiveFactoryImpl();
+            AggregateFactory aggregateFactory = new AggregateFactoryImpl();
+            WKTParser parser = new WKTParser( geometryFactory, primitiveFactory, positionFactory, aggregateFactory);
+            org.opengis.geometry.Geometry geometry = parser.parse(WKTText);*/
+			//CoordinateReferenceSystem crs = CRS.decode("EPSG:23030");
+			com.vividsolutions.jts.geom.GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+		    WKTReader reader = new WKTReader(geometryFactory);
+		    com.vividsolutions.jts.geom.Geometry geometry = reader.read(WKTText);
+		    if(geometry==null){
+		    	printWKTError(uri, "Error in GeoTools INVALID WKT of resource: "+uri, WKTText);
+		    	return null;
+		    }
+		    return transformGeoToolsGeometryToOEG(uri,WKTText,projection,geometry);
+		    
+		    
+		    
+		}catch(Exception e){
+			printWKTError(uri, "Error in GeoTools parse WKT of resource: "+uri, WKTText);
+			LOG.error("",e);
+		}
+		return null;
+	}
+	private static List<Geometry> transformGeoToolsGeometryToOEG(String uri, String WKTText, String projection,
+			com.vividsolutions.jts.geom.Geometry geometry) {
+		// TODO Auto-generated method stub
+		List<Geometry> geometrias = new ArrayList<Geometry>();
+		switch (geometry.getGeometryType().toLowerCase()) {
+		case "multipolygon":
+			List<Polygon> polygons= new ArrayList<Polygon>();
+			for(int i=0; i<geometry.getNumGeometries();i++){
+		    	Coordinate [] coordinates = geometry.getGeometryN(i).getCoordinates();
+		    	List<Point> points= new ArrayList<Point>();
+		    	for(int j=0;j<coordinates.length;j++){
+		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
+		    	}
+		    	polygons.add(new PolygonBean(uri, points));
+		    }
+		    geometrias.add(new MultiPolygonBean(uri, polygons));
+			break;
+		case "polygon":
+			for(int i=0; i<geometry.getNumGeometries();i++){
+		    	Coordinate [] coordinates = geometry.getGeometryN(i).getCoordinates();
+		    	List<Point> points= new ArrayList<Point>();
+		    	for(int j=0;j<coordinates.length;j++){
+		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
+		    	}
+		    	geometrias.add(new PolygonBean(uri, points));
+		    }
+			break;
+		case "multilinestring":
+		case "linestring":
+			for(int i=0; i<geometry.getNumGeometries();i++){
+		    	Coordinate [] coordinates = geometry.getGeometryN(i).getCoordinates();
+		    	List<Point> points= new ArrayList<Point>();
+		    	for(int j=0;j<coordinates.length;j++){
+		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
+		    	}
+		    	geometrias.add(new PolyLineBean(uri, points));
+		    }
+			break;
+		case "point":
+		case "multipoint":
+			for(int i=0; i<geometry.getNumGeometries();i++){
+		    	Coordinate [] coordinates = geometry.getGeometryN(i).getCoordinates();
+		    	for(int j=0;j<coordinates.length;j++){
+		    		geometrias.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
+		    	}
+		    }
+			break;
+		default:
+			printWKTError(uri, "GeoTools return a invalid type of geometry.", WKTText);
+			return null;
+		}
+		return geometrias;
+	}
 }

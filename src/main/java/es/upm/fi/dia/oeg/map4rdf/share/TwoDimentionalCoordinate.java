@@ -29,10 +29,12 @@ package es.upm.fi.dia.oeg.map4rdf.share;
  */
 public interface TwoDimentionalCoordinate extends MapShape {
 	
-	double getX();
+	public double getX();
 
-	double getY();
+	public double getY();
 	
-	String getProjection();
-
+	public String getProjection();
+	
+	//Can only be accessed in client mode
+	public void transform(String from, String to);
 }

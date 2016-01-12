@@ -21,9 +21,11 @@ import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 public class CommonDaoImpl {
 	
 	protected final String endpointUri;
+	protected final String defaultProjection;
 	
-	public CommonDaoImpl(String endpointUri) {
+	public CommonDaoImpl(String endpointUri,String defaultProjection) {
 		this.endpointUri = endpointUri;
+		this.defaultProjection = defaultProjection;
 	}
 	
 	public List<SubjectDescription> getSubjectDescription(String subject)

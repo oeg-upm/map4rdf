@@ -67,8 +67,8 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 	private static final Logger LOG = Logger.getLogger(GeoLinkedDataDaoImpl.class);
 
 	@Inject
-	public VCardDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri) {
-		super(endpointUri);
+	public VCardDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri, String defaultProjection) {
+		super(endpointUri,defaultProjection);
 	}
 
 	@Override
@@ -109,10 +109,10 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					double lng = solution.getLiteral("lng").getDouble();
 					GeoResource resource = result.get(uri);
 					if (resource == null) {
-						resource = new GeoResource(uri, new PointBean(geoUri, lng, lat));
+						resource = new GeoResource(uri, new PointBean(geoUri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					} else if (!resource.hasGeometry(geoUri)) {
-						resource.addGeometry(new PointBean(geoUri, lng, lat));
+						resource.addGeometry(new PointBean(geoUri, lng, lat,defaultProjection));
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");
@@ -155,9 +155,9 @@ public class VCardDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					double lat = solution.getLiteral("lat").getDouble();
 					double lng = solution.getLiteral("lng").getDouble();
 					if (resource == null) {
-						resource = new GeoResource(uri, new PointBean(geoUri, lng, lat));
+						resource = new GeoResource(uri, new PointBean(geoUri, lng, lat,defaultProjection));
 					} else if (!resource.hasGeometry(geoUri)) {
-						resource.addGeometry(new PointBean(geoUri, lng, lat));
+						resource.addGeometry(new PointBean(geoUri, lng, lat,defaultProjection));
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");

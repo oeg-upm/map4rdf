@@ -115,7 +115,7 @@ public class OpenLayersMapLayer implements MapLayer,
 		for (Point p : points) {
 			LonLat ll = new LonLat(p.getX(), p.getY());
 			ll.transform(p.getProjection(), map.getProjection());
-			tranformedPoints.add(new PointBean(p.getUri(), ll.lon(), ll.lat()));
+			tranformedPoints.add(new PointBean(p.getUri(), ll.lon(), ll.lat(),map.getProjection()));
 		}
 		LinearRing ring = new LinearRing(getPoints(tranformedPoints));
 		return addFeature(
@@ -130,7 +130,7 @@ public class OpenLayersMapLayer implements MapLayer,
 		for (Point p : points) {
 			LonLat ll = new LonLat(p.getX(), p.getY());
 			ll.transform(p.getProjection(), map.getProjection());
-			tranformedPoints.add(new PointBean(p.getUri(), ll.lon(), ll.lat()));
+			tranformedPoints.add(new PointBean(p.getUri(), ll.lon(), ll.lat(),map.getProjection()));
 		}
 		LineString lineString = new LineString(getPoints(tranformedPoints));
 		return addFeature(lineString, getStyle(polyline), pointStyle);

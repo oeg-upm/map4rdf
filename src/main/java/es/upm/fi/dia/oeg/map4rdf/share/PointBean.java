@@ -38,11 +38,6 @@ public class PointBean extends TwoDimentionalCoordinateBean implements Point {
 	PointBean() {
 		// for serialization
 	}
-
-	public PointBean(String uri, double x, double y) {
-		super(x, y);
-		this.uri = uri;
-	}
 	public PointBean(String uri, double x, double y, String projection) {
 		super(x, y, projection);
 		this.uri = uri;

@@ -38,8 +38,8 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private static final Logger LOG = Logger.getLogger(WebNMasUnoImpl.class);
 
-	public WebNMasUnoImpl(String endpointUri) {
-		super(endpointUri);
+	public WebNMasUnoImpl(String endpointUri,String defaultProjection) {
+		super(endpointUri,defaultProjection);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 					if (resource == null) {
 						resource = new AemetResource(uri, new PointBean(
-								uri, lng, lat));
+								uri, lng, lat,defaultProjection));
 					}
 					if (solution.contains("label")) {
 						Literal labelLiteral = solution.getLiteral("label");
@@ -166,7 +166,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 					if (resource == null) {
 						resource = new WebNMasUnoResourceContainer(uri,
-								new PointBean(uri, lng, lat));
+								new PointBean(uri, lng, lat,defaultProjection));
 						result.put(uri, resource);
 					}
 					if (solution.contains("label")) {
@@ -213,7 +213,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 							result.put(uri, resource);
 						}else{
 							resource = new WebNMasUnoResourceContainer(uri,
-									new PointBean(uri, lng, lat));
+									new PointBean(uri, lng, lat,defaultProjection));
 							result.put(uri, resource);
 						}
 					}
@@ -314,7 +314,7 @@ public class WebNMasUnoImpl extends CommonDaoImpl implements Map4rdfDao {
 			point = solution2.getResource("point").getURI();
 			lat = solution2.getLiteral("lat").getDouble();
 			longitude = solution2.getLiteral("long").getDouble();
-			PointBean p1 = new PointBean(point, longitude, lat);
+			PointBean p1 = new PointBean(point, longitude, lat,defaultProjection);
 			puntosOrdenados.add(p1);
 		}
 		// Los puntos vienen ordenados ya por ?order (en la consulta)

@@ -114,6 +114,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
     private Widget resultWidget;
 	private List<GeoResource> listGeoResource;
 	private String statisticsURL="";
+	private String serverProjection="";
     
     
     @Inject
@@ -236,7 +237,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 			@Override
 			public void run() {
 				List<GeoResource> resources= new ArrayList<GeoResource>();
-		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto=new PointBean("", -3.645757, 40.465757,"EPSG:4326");
+		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto=new PointBean("", 678017.24, 4613322.29,"EPSG:23030");
 		    	/*es.upm.fi.dia.oeg.map4rdf.share.Point punto2=new PointBean("", -3.645757, 40.30,"EPSG:4326");
 		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto3=new PointBean("", -3.50, 40.465757,"EPSG:4326");
 		    	es.upm.fi.dia.oeg.map4rdf.share.Point punto4=new PointBean("", -3.1, 39.465757,"EPSG:4326");
@@ -248,7 +249,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		    	*-/
 		    	resources.add(new GeoResource("http://datos.localidata.com/recurso/Provincia/Madrid/Municipio/madrid/LocalComercial/11109169L80",punto));
 		    	//resources.add(new GeoResource("www.multipoligono.com", multiPolyGeometry));
-		    	mapPresenter.drawGeoResouces(resources, new DrawPointStyle());
+		    	mapPresenter.drawGeoResources(resources, new DrawPointStyle());
 				this.cancel();
 			}
 		};
@@ -258,6 +259,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 		List<String> parameters= new ArrayList<String>();
 		parameters.add(ParameterNames.STATISTICS_SERVICE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
+		parameters.add(ParameterNames.DEFAULT_PROJECTION);
 	    //Initialize asyn variables
 		dispatchAsync.execute(new GetMultipleConfigurationParameters(parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
@@ -281,6 +283,12 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
 					widgetFactory.getDialogBox().showError(messages.configParameterNullOrEmpty(ParameterNames.STATISTICS_SERVICE_URL));
 				}else{
 					statisticsURL=stat;
+				}
+				String projection=values.getResults().get(ParameterNames.DEFAULT_PROJECTION);
+				if(projection == null || projection.isEmpty()){
+					widgetFactory.getDialogBox().showError(messages.configParameterNullOrEmpty(ParameterNames.DEFAULT_PROJECTION));
+				}else{
+					serverProjection=projection;
 				}
 				getDisplay().addWestWidget(facetPresenter.getDisplay().asWidget(), messages.facets());
 				if(result != null && result.asList().size()>0) {
@@ -346,7 +354,7 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
            		}
            		for(FacetConstraint i:constraints){
            			if(toDraw.containsKey(i.getFacetId()+i.getFacetValueId())){
-           				mapPresenter.drawGeoResouces(toDraw.get(i.getFacetId()+i.getFacetValueId()),new DrawPointStyle(i.getHexColour()));
+           				mapPresenter.drawGeoResources(toDraw.get(i.getFacetId()+i.getFacetValueId()),new DrawPointStyle(i.getHexColour()));
            			}
            		}
                	resultsPresenter.setResults(result.asList());
@@ -372,8 +380,8 @@ public class DashboardPresenter extends PagePresenter<DashboardPresenter.Display
             @Override
             public void onSuccess(SingletonResult<GeoResource> result) {
             	if(result.getValue()!=null){          		
-            		mapPresenter.drawGeoResouces(Collections.singletonList(result.getValue()));
-                	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries()));
+            		mapPresenter.drawGeoResources(Collections.singletonList(result.getValue()));
+                	mapPresenter.setVisibleBox(GeoUtils.computeBoundingBoxFromGeometries(result.getValue().getGeometries(),serverProjection));
                 	mapPresenter.getDisplay().stopProcessing();
             	}else{
             		widgetFactory.getDialogBox().showError(messages.errorToLoadResourceInUrlParam());

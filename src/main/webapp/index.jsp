@@ -21,6 +21,8 @@
     <script src="OpenStreetMapsByFilip.js"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?gwt=1&amp;file=api&amp;v=3.6&amp;sensor=true&amp;key=<%=googleMapsKey%>" ></script>
     <script type="text/javascript" src="es.upm.fi.dia.oeg.map4rdf.map4rdf/es.upm.fi.dia.oeg.map4rdf.map4rdf.nocache.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/1.1.0/proj4js-compressed.js"></script>
+    <script type="text/javascript" src="http://spatialreference.org/ref/epsg/23030/proj4js/"></script>
   </head>
 
   <body>    

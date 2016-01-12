@@ -43,6 +43,16 @@ public class GetRoutePointsHandler implements ActionHandler<GetRoutePoints, GetR
 		List<es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point> points = new ArrayList<es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point>();
 		List<Point> toReturn = new ArrayList<Point>();
 		if(this.timeoutMiliSeconds!=0){
+			boolean incorrectEPSG=false;
+			for(Point point:action.getPoints()){
+				if(!point.getProjection().toLowerCase().trim().equals("epsg:4326")){
+					incorrectEPSG=true;
+					break;
+				}
+			}
+			if(incorrectEPSG){
+				throw new ActionException("EPSG incorrect in some point, can't use Route service");
+			}
 			for(Point point:action.getPoints()){
 				points.add(new es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point(String.valueOf(point.getX()),String.valueOf(point.getY())));
 			}
@@ -50,7 +60,7 @@ public class GetRoutePointsHandler implements ActionHandler<GetRoutePoints, GetR
 			List<List<es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point>> paths = rfc.getPath(points);
 			for(List<es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point> listPoints:paths){
 				for(es.upm.fi.dia.oeg.map4rdf.server.cartociudad.types.Point point: listPoints){
-					toReturn.add(new PointBean("", Double.parseDouble(point.getLat()),Double.parseDouble(point.getLon())));
+					toReturn.add(new PointBean("", Double.parseDouble(point.getLat()),Double.parseDouble(point.getLon()),"EPSG:4326"));
 				}
 			}
 		}
