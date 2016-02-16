@@ -70,8 +70,15 @@ public class Constants {
 		/**
 		 * The GeoSPARQL model used by OGC.
 		 * Documentation URL: 
+		 * Endpoint: Strabon
 		 * */
-		GEOSPARQL,
+		GEOSPARQL_STRABON,
+		/**
+		 * The GeoSPARQL model used by OGC.
+		 * Documentation URL: 
+		 * Endpoint: Virtuoso
+		 * */
+		GEOSPARQL_VIRTUOSO,
 		/**
 		 * The AEMET subproject model.
 		 * 

@@ -82,8 +82,10 @@ public class ConfigurationContainer {
 			return new DbPediaDaoImpl(endpointUri,defaultProjection);
 		case VCARD:
 			return new VCardDaoImpl(endpointUri,defaultProjection);
-		case GEOSPARQL:
-			return new GeoSparqlDaoImpl(endpointUri,geosparqlEndpointUri,defaultProjection);
+		case GEOSPARQL_STRABON:
+			return new GeoSparqlDaoImpl(endpointUri,geosparqlEndpointUri,defaultProjection,GeoSparqlDaoImpl.EndpointType.STRABON);
+		case GEOSPARQL_VIRTUOSO:
+			return new GeoSparqlDaoImpl(endpointUri,geosparqlEndpointUri,defaultProjection,GeoSparqlDaoImpl.EndpointType.VIRTUOSO);
 		case AEMET:
 			return new AemetDaoImpl(endpointUri,defaultProjection);
 		case VIAJERO:

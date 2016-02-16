@@ -26,6 +26,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.MapShape;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometry;
 
 /**
  * @author Alexander De Leon
@@ -52,6 +53,15 @@ public class MapShapeStyleFactory {
 	}
 	public static StyleMapShape<Polygon> createStyle(Polygon polygon,DrawPointStyle drawStyle) {
 		StyleMapShapeImpl<Polygon> style = new StyleMapShapeImpl<Polygon>(polygon);
+		style.setStrokeWidth(4);
+		style.setFillColor(null);
+		style.setStrokeColor(drawStyle.getFacetHexColour());
+		return style;
+	}
+	
+	public static StyleMapShape<WKTGeometry> createStyle(WKTGeometry wktGeometry,
+			DrawPointStyle drawStyle) {
+		StyleMapShapeImpl<WKTGeometry> style = new StyleMapShapeImpl<WKTGeometry>(wktGeometry);
 		style.setStrokeWidth(4);
 		style.setFillColor(null);
 		style.setStrokeColor(drawStyle.getFacetHexColour());

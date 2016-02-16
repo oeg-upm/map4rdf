@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtopenmaps.openlayers.client.LonLat;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 
@@ -39,6 +40,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
+import es.upm.fi.dia.oeg.map4rdf.client.util.FeatureClickEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.view.v2.MapLayer;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.GeoResourceSummary;
@@ -48,8 +50,10 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygon;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
+import es.upm.fi.dia.oeg.map4rdf.share.PointBean;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometry;
 
 /**
  * @author Alexander De Leon
@@ -113,6 +117,7 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 		removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 		window.close();
 		summary.closeSummary();
+		getDefaultLayer().unselectFeatures();
 	}
 
 	@Override
@@ -159,11 +164,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 							public void onClick(ClickEvent event) {
 								window.close();
 								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
-								Point centroid=GeoUtils.getCentroid(line);
-								GeoResource newResource = new GeoResource(resource.getUri(), centroid);
+								Point pToOpen = getPointOfMousePosition(resource,line,event);
+								GeoResource newResource = new GeoResource(resource.getUri(), pToOpen);
 								drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, line);
-								window.open(centroid);
+								window.open(pToOpen);
 							}
 						});
 				break;
@@ -176,11 +181,11 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 							public void onClick(ClickEvent event) {
 								window.close();
 								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
-								Point centroid=GeoUtils.getCentroid(polygon);
-								GeoResource newResource = new GeoResource(resource.getUri(), centroid);
+								Point pToOpen = getPointOfMousePosition(resource, polygon ,event);
+								GeoResource newResource = new GeoResource(resource.getUri(), pToOpen);
 								drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 								summary.setGeoResource(resource, polygon);
-								window.open(centroid);
+								window.open(pToOpen);
 							}
 						});
 				break;
@@ -197,14 +202,31 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 								public void onClick(ClickEvent event) {
 									window.close();
 									removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
-									Point centroid=GeoUtils.getCentroid(poly);
-									GeoResource newResource = new GeoResource(resource.getUri(), centroid);
+									Point pToOpen = getPointOfMousePosition(resource, poly,event);
+									GeoResource newResource = new GeoResource(resource.getUri(), pToOpen);
 									drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
 									summary.setGeoResource(resource, poly);
-									window.open(centroid);
+									window.open(pToOpen);
 								}
 							});
 				}
+				break;
+			case WKTGEOMETRY:
+				final WKTGeometry wktGeometry = (WKTGeometry) geometry;
+				getDefaultLayer().drawWKTGeometry(MapShapeStyleFactory.createStyle(wktGeometry,drawStyle),drawStyle).addClickHandler(
+						new ClickHandler() {
+
+							@Override
+							public void onClick(ClickEvent event) {
+								window.close();
+								removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+								Point pToOpen = getPointOfMousePosition(resource,wktGeometry,event);
+								GeoResource newResource = new GeoResource(resource.getUri(), pToOpen);
+								drawGeoResource(newResource, new DrawPointStyle(DrawPointStyle.Style.SELECTED_RESOURCE));
+								summary.setGeoResource(resource, wktGeometry);
+								window.open(pToOpen);
+							}
+						});
 				break;
 			default:
 				//Dont enter because all case are in switch
@@ -228,6 +250,16 @@ public class OpenLayersMapView extends es.upm.fi.dia.oeg.map4rdf.client.view.v2.
 		button.getElement().getStyle().setZIndex(2080);
 		return button;
 	}
-
-
+	
+	private Point getPointOfMousePosition(GeoResource resource,Geometry geometry,ClickEvent event){
+		Point pToOpen = null;
+		if(event instanceof FeatureClickEvent){
+			FeatureClickEvent featureEvent = (FeatureClickEvent)event;
+			LonLat openLonLat = featureEvent.getClickedLonLat();
+			pToOpen = new PointBean(resource.getUri(), openLonLat.lon(), openLonLat.lat(),getDefaultLayer().getOLMap().getProjection());
+		}else{
+			pToOpen = GeoUtils.getCentroid(geometry);
+		}
+		return pToOpen;
+	}
 }

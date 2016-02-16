@@ -195,7 +195,9 @@ public class ViajeroImpl extends CommonDaoImpl implements Map4rdfDao {
 				endpointUri,
 				createGetResourcesQueryAdaptedViajero(boundingBox,
 						constraints, max));
-
+		if(constraints!=null && constraints.isEmpty()){
+			return new ArrayList<GeoResource>();
+		}
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {

@@ -80,7 +80,6 @@ public class GetGeoResourcesHandler implements
 			throw new ActionException("Data access error", e);
 		}
 		ListResult<GeoResource> result = new ListResult<GeoResource>(resources);
-
 		return result;
 	}
 

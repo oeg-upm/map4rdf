@@ -94,6 +94,9 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
+		if(constraints!=null && constraints.isEmpty()){
+			return new ArrayList<GeoResource>();
+		}
 		//String lastFacetType=null;
 		try {
 			ResultSet queryResult = execution.execSelect();
@@ -488,8 +491,8 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
-		if (constraints != null) {
-			query.append("?r ?facetID ?facetValueID.");
+		if (constraints != null && !constraints.isEmpty()) {
+			query.append("?r ?facetID ?facetValueID. ");
 			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
 				query.append("(?facetID IN(");

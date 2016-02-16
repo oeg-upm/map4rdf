@@ -66,6 +66,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoExecuter;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoExecuter.InfoCallback;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoSummary;
+import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.ParametersSummaryMove;
 import es.upm.fi.dia.oeg.map4rdf.client.util.RoutesAddGeoResourceType;
 import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
@@ -217,7 +218,7 @@ public class GeoResourceSummary extends Composite {
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
 		}
-		if(geometry!=null && !geometry.getPoints().isEmpty()){
+		if(GeoUtils.getCentroid(geometry)!=null){
 			routesWidget.setVisible(true);
 			bufferWidget.setVisible(true);
 		}else{

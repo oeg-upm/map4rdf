@@ -18,7 +18,8 @@ public class DrawPointStyle {
 	//Min length hexColours=0;
 	//with Yellow:
 	//private static final String[] hexColours={"#f88296","#b0a420","#e6a9dd","#9cf3dc"};
-	private static final String[] hexColours={"#f88296","#e6a9dd","#9cf3dc"};
+	//private static final String[] hexColours={"#f88296","#e6a9dd","#9cf3dc",};
+	private static final String[] hexColours={"#f88296","#e6a9dd","#9cf3dc","#cc99ff","#d14972","#d149b8","#8f49d1","#4979d1","#49d1c4","#8bd149","#d7e354"};
 	//hexColours.length == relationHexColours.length
 	//with Yellow
 	//private static final String[] relationHexColours={MARKER_RED_ICON,MARKER_YELLOW_ICON,MARKER_LIGHTPURPLE_ICON,MARKER_TURQUEISE_ICON};

@@ -43,6 +43,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 import es.upm.fi.dia.oeg.map4rdf.share.PolygonBean;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometryBean;
 
 /**
  * @author Alexander De Leon
@@ -121,7 +122,10 @@ public class GeoUtils {
 		parseWKTGeotools("", "", "POLYGON ( (0 0, 10 0, 10 10, 0 10, 0 0),( 20 20, 20 40, 40 40, 40 20, 20 20) )", "");
 		parseWKTGeotools("", "", "MULTIPOLYGON(((1 1, 2 1,2 0, 1 1)),((3 3, 4 3,4 2, 3 3)))", "");
 		parseWKTGeotools("", "", "POLYGON((1 1, 2 1,2 0, 1 1))", "");*/
-		return parseWKTGeotools(uri, GMLText, realWKTText, crs);
+		
+		
+		//return parseWKTGeotools(uri, GMLText, realWKTText, crs);
+		return parseToOpenLayersWKT(uri,realWKTText,crs);
 	}
 	private static List<Geometry> transforWKTtoOEG(String uri,String realWKTText,String crs){
 		if(realWKTText.toLowerCase().contains(WKTTypes.Point.toString().toLowerCase())){
@@ -240,6 +244,12 @@ public class GeoUtils {
 	}*/
 	
 	
+	private static List<Geometry> parseToOpenLayersWKT(String uri,String WKTText,String projection){
+		List<Geometry> geometries = new ArrayList<Geometry>();
+		geometries.add(new WKTGeometryBean(uri, WKTText, projection));
+		return geometries;
+	}
+	
 	private static List<Geometry> parseWKTGeotools(String uri ,String GMLText, String WKTText,String projection){
 		try{
 			/*GeoTools.addClassLoader(ClassLoader.getSystemClassLoader());
@@ -268,20 +278,24 @@ public class GeoUtils {
 		}
 		return null;
 	}
+	
 	private static List<Geometry> transformGeoToolsGeometryToOEG(String uri, String WKTText, String projection,
 			com.vividsolutions.jts.geom.Geometry geometry) {
 		List<Geometry> geometrias = new ArrayList<Geometry>();
 		switch (geometry.getGeometryType().toLowerCase()) {
 		case "multipolygon":
 			List<Polygon> polygons= new ArrayList<Polygon>();
+			int poligonos = 0;
 			for(int i=0; i<geometry.getNumGeometries();i++){
 		    	Coordinate [] coordinates = geometry.getGeometryN(i).getCoordinates();
 		    	List<Point> points= new ArrayList<Point>();
+		    	poligonos++;
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
 		    	polygons.add(new PolygonBean(uri, points,projection));
 		    }
+			System.out.println("Se han encontrado "+poligonos+" poligonos.");
 		    geometrias.add(new MultiPolygonBean(uri, polygons,projection));
 			break;
 		case "polygon":

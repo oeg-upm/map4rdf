@@ -45,6 +45,8 @@ public class ParameterNames {
 	
 	public static final String FACETS_FILE = "facets.file";
 	
+	public static final String DRAW_COLOURS_BY = "ui.draw_colours.by";
+	
 	public static final String EDIT_DEPTH = "edit_depth";
 	
 	public static final String RDF_STORE_PATH = "rdf_store_path";

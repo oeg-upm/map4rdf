@@ -62,6 +62,9 @@ public class LocaleUtil {
 				label += " (" + clientLang + ")";
 			}
 		}
+		if(label == null && !resource.getLangs().isEmpty()){
+			label =  resource.getLabel(resource.getLangs().iterator().next());
+		}
 		if (label == null) {
 			label = resource.getDefaultLabel();
 		}

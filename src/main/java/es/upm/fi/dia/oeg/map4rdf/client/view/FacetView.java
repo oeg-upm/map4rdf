@@ -37,6 +37,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.FacetWidget;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.event.FacetValueSelectionChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.event.FacetValueSelectionChangedHandler;
+import es.upm.fi.dia.oeg.map4rdf.share.ConfigurationDrawColoursBy;
 import es.upm.fi.dia.oeg.map4rdf.share.Facet;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetGroup;
 
@@ -48,7 +49,8 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	private FlowPanel panel;
 	private final BrowserResources resources;
 	private FacetSelectionHandler handler;
-	FacetWidget facet;
+	private ConfigurationDrawColoursBy drawColoursBy=ConfigurationDrawColoursBy.getDefault();
+	private FacetWidget facet;
 	@Inject
 	public FacetView(BrowserResources resources) {
 		this.resources = resources;
@@ -59,7 +61,7 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	@Override
 	public void setFacets(List<FacetGroup> facets) {
 		for (final FacetGroup facetDefinition : facets) {
-			facet = new FacetWidget(resources.css());
+			facet = new FacetWidget(resources.css(),drawColoursBy);
 			facet.setHeight(new Integer((100/facets.size())-3).toString()+"%");
 			facet.setLabel(LocaleUtil.getBestLabel(facetDefinition));
 			for (Facet facetValue : facetDefinition.getFacets()) {
@@ -70,10 +72,11 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 
 			facet.addFacetValueSelectionChangedHandler(new FacetValueSelectionChangedHandler() {
 				@Override
-				public void onSelectionChanged(FacetValueSelectionChangedEvent event) {
+				public void onSelectionChanged(FacetValueSelectionChangedEvent event){
 					if (handler != null) {
 						handler.onFacetSelectionChanged(facetDefinition.getUri(),event.getHexColour(), event.getSelectionOptionId(),
-								event.getSelectionValue());
+									event.getSelectionValue());							
+						
 					}
 				}
 			});
@@ -89,6 +92,14 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	@Override
 	public void setFacetSelectionChangedHandler(FacetSelectionHandler handler) {
 		this.handler = handler;
+	}
+
+	@Override
+	public void setConfigurationDrawColours(ConfigurationDrawColoursBy drawColoursBy) {
+		if(this.facet!=null){
+			this.facet.setConfigurationDrawColours(drawColoursBy);
+		}
+		this.drawColoursBy = drawColoursBy;
 	}
 
 	/* ------------- Display API -- */

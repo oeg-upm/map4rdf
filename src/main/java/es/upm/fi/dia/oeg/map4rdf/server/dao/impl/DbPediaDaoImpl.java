@@ -217,7 +217,9 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
-
+		if(constraints!=null && constraints.isEmpty()){
+			return new ArrayList<GeoResource>();
+		}
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
@@ -270,7 +272,7 @@ public class DbPediaDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("?r <" + Geo.lat + "> ?lat. ");
 		query.append("?r <" + Geo.lng + "> ?lng . ");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
 			query.append("?r ?facetID ?facetValueID. ");
 			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
