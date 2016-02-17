@@ -25,7 +25,11 @@
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -66,6 +70,7 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	public void setFacets(List<FacetGroup> facets) {
 		FacetWidget facet;
 		this.facets.clear();
+		Map<String,FacetWidget> facetsWidgetToOrder = new HashMap<String, FacetWidget>();
 		for (final FacetGroup facetDefinition : facets) {
 			facet = new FacetWidget(resources.css(),drawColoursBy);
 			this.facets.add(facet);
@@ -88,7 +93,12 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 				}
 			});
 
-			panel.add(facet);
+			facetsWidgetToOrder.put(LocaleUtil.getBestLabel(facetDefinition), facet);
+		}
+		List<String> orderedList = new ArrayList<String>(facetsWidgetToOrder.keySet());
+		Collections.sort(orderedList);
+		for(int i=0;i<orderedList.size();i++){
+			panel.add(facetsWidgetToOrder.get(orderedList.get(i)));
 		}
 
 	}
