@@ -25,7 +25,6 @@
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
