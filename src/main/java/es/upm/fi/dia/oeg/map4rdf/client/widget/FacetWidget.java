@@ -155,10 +155,21 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 	@Override
 	public void setHeight(String height) {
 		super.setHeight(height);
+		this.getElement().getStyle().setProperty("minHeight",50*selectionOptions.size() ,Unit.PX);
 		scrollPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		scrollPanel.getElement().getStyle().setTop(22, Unit.PX);
 	}
 	
+	public void setHeight(String height, int numberOfElements) {
+		super.setHeight(height);
+		int minHeight = 30+15*numberOfElements;
+		if(minHeight>150){
+			minHeight = 150;
+		}
+		this.getElement().getStyle().setProperty("minHeight",minHeight ,Unit.PX);
+		scrollPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		scrollPanel.getElement().getStyle().setTop(22, Unit.PX);
+	}
 	private void fireSelectionChanged(String id, Boolean value) {
 		if(value && drawColoursBy==ConfigurationDrawColoursBy.FACET){
 			relationFacetIDHexColour.put(id, getFirtsFreeColour());

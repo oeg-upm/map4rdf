@@ -24,10 +24,12 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -50,19 +52,24 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	private final BrowserResources resources;
 	private FacetSelectionHandler handler;
 	private ConfigurationDrawColoursBy drawColoursBy=ConfigurationDrawColoursBy.getDefault();
-	private FacetWidget facet;
+	
+	private List<FacetWidget> facets;
 	@Inject
 	public FacetView(BrowserResources resources) {
 		this.resources = resources;
+		this.facets = new ArrayList<FacetWidget>();
 		initWidget(createUi());
 		addStyleName(resources.css().facets());
 	}
 
 	@Override
 	public void setFacets(List<FacetGroup> facets) {
+		FacetWidget facet;
+		this.facets.clear();
 		for (final FacetGroup facetDefinition : facets) {
 			facet = new FacetWidget(resources.css(),drawColoursBy);
-			facet.setHeight(new Integer((100/facets.size())-3).toString()+"%");
+			this.facets.add(facet);
+			facet.setHeight(new Integer((100/facets.size())-3).toString()+"%",facetDefinition.getFacets().size());
 			facet.setLabel(LocaleUtil.getBestLabel(facetDefinition));
 			for (Facet facetValue : facetDefinition.getFacets()) {
 				String label = LocaleUtil.getBestLabel(facetValue);
@@ -96,8 +103,10 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 
 	@Override
 	public void setConfigurationDrawColours(ConfigurationDrawColoursBy drawColoursBy) {
-		if(this.facet!=null){
-			this.facet.setConfigurationDrawColours(drawColoursBy);
+		if(this.facets!=null && !this.facets.isEmpty()){
+			for(FacetWidget facet:this.facets){
+				facet.setConfigurationDrawColours(drawColoursBy);
+			}
 		}
 		this.drawColoursBy = drawColoursBy;
 	}
@@ -112,7 +121,9 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	/* ---------------- helper methods -- */
 	private Widget createUi() {
 		panel = new FlowPanel();
-		return panel;
+		ScrollPanel parent = new ScrollPanel();
+		parent.add(panel);
+		return parent;
 	}
 
     @Override
@@ -123,6 +134,6 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	@Override
 	public Boolean isEmpty() {
 		
-		return facet==null;
+		return this.facets.isEmpty();
 	}
 }

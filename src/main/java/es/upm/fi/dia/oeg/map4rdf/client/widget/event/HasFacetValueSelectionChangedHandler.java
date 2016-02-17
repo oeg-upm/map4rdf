@@ -29,4 +29,5 @@ import com.google.gwt.event.shared.HasHandlers;
 
 public interface HasFacetValueSelectionChangedHandler extends HasHandlers {
 	void addFacetValueSelectionChangedHandler(FacetValueSelectionChangedHandler handler);
+
 }
