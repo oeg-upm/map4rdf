@@ -55,6 +55,6 @@ public class Map4rdfVocabulary {
 	public static final Property facet = property("facet");
 
 	// Data properties
-	public static final Property orden = property("orden");
+	public static final Property order = property("order");
 
 }

@@ -35,6 +35,7 @@
 <http://code.google.com/p/map4rdf/wiki/ontology#rdfTypeFacet>
 	a map4rdf:FacetGroup;
 	map4rdf:facetPredicate rdf:type;
+	map4rdf:order "1"^^xsd:int;
 	rdfs:label "Type"@en;
 	rdfs:label "Tipo"@es;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Planicie>;

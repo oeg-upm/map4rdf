@@ -39,10 +39,15 @@ public class FacetGroup extends Resource implements Serializable {
 	public FacetGroup(String uri) {
 		super(uri);
 		facets = new ArrayList<Facet>();
+		this.order = 0;
 	}
 
 	FacetGroup() {
 		// for serialization
+		super("");
+		this.order = 0;
+		this.facets = new ArrayList<Facet>();
+		
 	}
 
 	public int getOrder() {

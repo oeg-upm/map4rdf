@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -70,6 +71,7 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 		FacetWidget facet;
 		this.facets.clear();
 		Map<String,FacetWidget> facetsWidgetToOrder = new HashMap<String, FacetWidget>();
+		Map<String,Integer> facetsOrderInt = new HashMap<String, Integer>();
 		for (final FacetGroup facetDefinition : facets) {
 			facet = new FacetWidget(resources.css(),drawColoursBy);
 			this.facets.add(facet);
@@ -91,15 +93,26 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 					}
 				}
 			});
-
 			facetsWidgetToOrder.put(LocaleUtil.getBestLabel(facetDefinition), facet);
+			facetsOrderInt.put(LocaleUtil.getBestLabel(facetDefinition), facetDefinition.getOrder());
 		}
-		List<String> orderedList = new ArrayList<String>(facetsWidgetToOrder.keySet());
-		Collections.sort(orderedList);
-		for(int i=0;i<orderedList.size();i++){
-			panel.add(facetsWidgetToOrder.get(orderedList.get(i)));
+		Map<Integer,List<String>> orderOfFacetsGroups = new HashMap<Integer, List<String>>();
+		for(String uri:facetsOrderInt.keySet()){
+			int order = facetsOrderInt.get(uri);
+			if(!orderOfFacetsGroups.containsKey(order)){
+				orderOfFacetsGroups.put(order, new ArrayList<String>());
+			}
+			orderOfFacetsGroups.get(order).add(uri);
 		}
-
+		List<Integer> orderedListFacetsGroup = new ArrayList<Integer>(orderOfFacetsGroups.keySet());
+		Collections.sort(orderedListFacetsGroup);
+		for(int i=orderedListFacetsGroup.size()-1;i>=0;i--){
+			List<String> orderedList = new ArrayList<String>(orderOfFacetsGroups.get(i));
+			Collections.sort(orderedList);
+			for(int j=0;j<orderedList.size();j++){
+				panel.add(facetsWidgetToOrder.get(orderedList.get(j)));
+			}
+		}
 	}
 	@Override
 	protected void onLoad(){
