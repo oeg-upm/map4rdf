@@ -32,16 +32,6 @@
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Arbusto>;
 .
 
-<http://www.geonames.org/ontology#Feature>
-	a map4rdf:FacetGroup;
-	map4rdf:facetPredicate rdf:type;
-	rdfs:label "Feature"@en;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#NucleoPoblacion>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Caracteristica>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#Distrito>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#Barrio>;
-.
-
 <http://code.google.com/p/map4rdf/wiki/ontology#rdfTypeFacet>
 	a map4rdf:FacetGroup;
 	map4rdf:facetPredicate rdf:type;
@@ -60,9 +50,39 @@
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Acuifero>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Laguna>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Humedal>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#Distrito>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasQuietasNaturales>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasQuietas>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaAbsoluta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Habitats>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Aves>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Suelo>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaSolidosUrbanosIndiferenciado>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMaxima24Horas>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoEnergia>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceTermicidad>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaAbsoluta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceAridez>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadLocalPaisaje>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaVidrio>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPapel>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPlastico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Via>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaAbsoluta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Municipio>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceOmbrotermico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ReservaNatural>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceContinentalidad>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CaracteristicaBiogeografica>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadPaisaje>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoAgua>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#NucleoPoblacion>;
 .
 
 <http://geo.linkeddata.es/ontology/Morfologia>
@@ -140,7 +160,7 @@
 	a map4rdf:FacetGroup;
 	map4rdf:facetPredicate rdf:type;
 	rdfs:label "Stream"@en;
-	rdfs:label "Curso de agua secundario"@es;
+	rdfs:label "Arroyo"@es;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Rivera>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Regato>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Regajo>;
@@ -187,44 +207,6 @@
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaSinDesdoblarSecundaria>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaDoble>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaReducida>;
-.
-
-<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Caracteristica>
-	a map4rdf:FacetGroup;
-	map4rdf:facetPredicate rdf:type;
-	rdfs:label "Característica"@pt;
-	rdfs:label "Feature"@en;
-	rdfs:label "Característica"@es;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaAbsoluta>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Habitats>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Aves>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Suelo>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaSolidosUrbanosIndiferenciado>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMaxima24Horas>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoEnergia>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceTermicidad>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaAbsoluta>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaMediaAnual>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceAridez>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMediaAnual>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadLocalPaisaje>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaVidrio>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaMediaAnual>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaMediaAnual>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPapel>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPlastico>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Via>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaAbsoluta>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Municipio>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceOmbrotermico>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ReservaNatural>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceContinentalidad>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CaracteristicaBiogeografica>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMediaAnual>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadPaisaje>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoAgua>;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ParqueNacional>
@@ -696,12 +678,6 @@
 	rdfs:label "Vía"@es;
 .
 
-<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Caracteristica>
-	rdfs:label "Característica"@pt;
-	rdfs:label "Feature"@en;
-	rdfs:label "Característica"@es;
-.
-
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pendiente>
 	rdfs:label "Encosta"@pt;
 	rdfs:label "Hillside"@en;
@@ -771,10 +747,6 @@
 	rdfs:label "Evapotranspiracion potencial en invierno"@es;
 .
 
-<http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#Distrito>
-	rdfs:label "Distrito"@es;
-.
-
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RegosolEutrico>
 	rdfs:label "Regosol eutrico"@pt;
 	rdfs:label "Eutric regosol"@en;
@@ -794,7 +766,7 @@
 
 <http://geo.linkeddata.es/ontology/Rio>
 	rdfs:label "River"@en;
-	rdfs:label "Curso fluvial"@es;
+	rdfs:label "Río"@es;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceOmbrotermico>
@@ -865,10 +837,6 @@
 <http://geo.linkeddata.es/ontology/Laguna>
 	rdfs:label "Lagoon"@en;
 	rdfs:label "Laguna"@es;
-.
-
-<http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#Barrio>
-	rdfs:label "Barrio"@es;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMediaAnual>
