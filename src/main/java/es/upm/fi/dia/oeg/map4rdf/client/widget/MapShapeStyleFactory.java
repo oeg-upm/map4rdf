@@ -33,27 +33,31 @@ import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometry;
  */
 public class MapShapeStyleFactory {
 
+	private static final int STROKE_Polyline = 3;
+	private static final int STROKE_Polygon = 2;
+	private static final int STROKE_WKTGeometry = 2;
+	
 	public static StyleMapShape<PolyLine> createStyle(PolyLine polyLine) {
 		StyleMapShapeImpl<PolyLine> style = new StyleMapShapeImpl<PolyLine>(polyLine);
-		style.setStrokeWidth(4);
+		style.setStrokeWidth(STROKE_Polyline);
 		return style;
 	}
 	public static StyleMapShape<PolyLine> createStyle(PolyLine polyLine, DrawPointStyle drawStyle) {
 		StyleMapShapeImpl<PolyLine> style = new StyleMapShapeImpl<PolyLine>(polyLine);
-		style.setStrokeWidth(4);
+		style.setStrokeWidth(STROKE_Polyline);
 		style.setStrokeColor(drawStyle.getFacetHexColour());
 		return style;
 	}
 
 	public static StyleMapShape<Polygon> createStyle(Polygon polygon) {
 		StyleMapShapeImpl<Polygon> style = new StyleMapShapeImpl<Polygon>(polygon);
-		style.setStrokeWidth(4);
+		style.setStrokeWidth(STROKE_Polygon);
 		style.setFillColor(null);
 		return style;
 	}
 	public static StyleMapShape<Polygon> createStyle(Polygon polygon,DrawPointStyle drawStyle) {
 		StyleMapShapeImpl<Polygon> style = new StyleMapShapeImpl<Polygon>(polygon);
-		style.setStrokeWidth(4);
+		style.setStrokeWidth(STROKE_Polygon);
 		style.setFillColor(null);
 		style.setStrokeColor(drawStyle.getFacetHexColour());
 		return style;
@@ -62,7 +66,7 @@ public class MapShapeStyleFactory {
 	public static StyleMapShape<WKTGeometry> createStyle(WKTGeometry wktGeometry,
 			DrawPointStyle drawStyle) {
 		StyleMapShapeImpl<WKTGeometry> style = new StyleMapShapeImpl<WKTGeometry>(wktGeometry);
-		style.setStrokeWidth(4);
+		style.setStrokeWidth(STROKE_WKTGeometry);
 		style.setFillColor(null);
 		style.setStrokeColor(drawStyle.getFacetHexColour());
 		return style;
