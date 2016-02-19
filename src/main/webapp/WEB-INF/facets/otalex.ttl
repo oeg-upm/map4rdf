@@ -36,8 +36,9 @@
 	a map4rdf:FacetGroup;
 	map4rdf:facetPredicate rdf:type;
 	map4rdf:order "1"^^xsd:int;
-	rdfs:label "Type"@en;
-	rdfs:label "Tipo"@es;
+	rdfs:label "General"@en;
+	rdfs:label "General"@es;
+	rdfs:label "Geral"@pt;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Planicie>;
 	map4rdf:facet <http://aemet.linkeddata.es/ontology/WeatherStation>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ZonaArtificial>;
@@ -84,15 +85,13 @@
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadPaisaje>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoAgua>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#NucleoPoblacion>;
-.
-
-<http://geo.linkeddata.es/ontology/Morfologia>
-	a map4rdf:FacetGroup;
-	map4rdf:facetPredicate rdf:type;
-	rdfs:label "Fluvial morphology"@en;
-	rdfs:label "Morfologia fluvial"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Garganta>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Barranco>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Rivera>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Regato>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Regajo>;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AreaProtegida>
@@ -114,15 +113,6 @@
 	rdfs:label "Curso natural de agua"@es;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Arroyo>;
 	map4rdf:facet <http://geo.linkeddata.es/ontology/Rio>;
-.
-
-<http://geo.linkeddata.es/ontology/Rio>
-	a map4rdf:FacetGroup;
-	map4rdf:facetPredicate rdf:type;
-	rdfs:label "River"@en;
-	rdfs:label "Curso fluvial"@es;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>;
-	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Suelo>
@@ -155,16 +145,6 @@
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PodzolHaplico>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolHaplico>;
 	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RegosolEutrico>;
-.
-
-<http://geo.linkeddata.es/ontology/Arroyo>
-	a map4rdf:FacetGroup;
-	map4rdf:facetPredicate rdf:type;
-	rdfs:label "Stream"@en;
-	rdfs:label "Arroyo"@es;
-	map4rdf:facet <http://geo.linkeddata.es/ontology/Rivera>;
-	map4rdf:facet <http://geo.linkeddata.es/ontology/Regato>;
-	map4rdf:facet <http://geo.linkeddata.es/ontology/Regajo>;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Evapotranspiracion>
@@ -850,7 +830,7 @@
 	rdfs:label "Aqüífer"@cat;
 	rdfs:label "Aquifer"@en;
 	rdfs:label "Aquifère"@fr;
-	rdfs:label "Embalse de agua subterranea"@es;
+	rdfs:label "Acuifero"@es;
 .
 
 <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Arbusto>

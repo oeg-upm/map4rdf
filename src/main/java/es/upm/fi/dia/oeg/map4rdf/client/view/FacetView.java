@@ -56,6 +56,8 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	private final BrowserResources resources;
 	private FacetSelectionHandler handler;
 	private ConfigurationDrawColoursBy drawColoursBy=ConfigurationDrawColoursBy.getDefault();
+	private ScrollPanel scrollMainPanel;
+	private List<FacetGroup> facetsGroup = new ArrayList<FacetGroup>();
 	
 	private List<FacetWidget> facets;
 	@Inject
@@ -64,18 +66,41 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 		this.facets = new ArrayList<FacetWidget>();
 		initWidget(createUi());
 		addStyleName(resources.css().facets());
+		panel.getElement().getParentElement().getStyle().setProperty("minHeight", "100%");
+		panel.getElement().getStyle().setProperty("minHeight", "100%");
 	}
 
 	@Override
 	public void setFacets(List<FacetGroup> facets) {
+		if(!this.isAttached() || !this.isVisible() || this.getParent()==null || this.getParent().getOffsetHeight()==0){
+			this.facetsGroup = facets;
+			return;
+		}
 		FacetWidget facet;
 		this.facets.clear();
 		Map<String,FacetWidget> facetsWidgetToOrder = new HashMap<String, FacetWidget>();
 		Map<String,Integer> facetsOrderInt = new HashMap<String, Integer>();
+		int totalFacets=0;
+		int maxSizeFacetGroup=totalFacets=0;
+		for(FacetGroup facetDefinition: facets){
+			totalFacets += facetDefinition.getFacets().size();
+			if(facetDefinition.getFacets().size()>maxSizeFacetGroup){
+				maxSizeFacetGroup = facetDefinition.getFacets().size();
+			}
+		}
+		double perCentOfMax = totalFacets / maxSizeFacetGroup;
+		if(perCentOfMax<40.0){
+			perCentOfMax = 40.0;
+		}
+		int totalSizePX = this.getParent().getOffsetHeight();
 		for (final FacetGroup facetDefinition : facets) {
 			facet = new FacetWidget(resources.css(),drawColoursBy);
 			this.facets.add(facet);
-			facet.setHeight(new Integer((100/facets.size())-3).toString()+"%",facetDefinition.getFacets().size());
+			// newSize = (maxPercet * num_of_facets) / max_size_facets_of_facetsGroup;
+			// the big facet group is 40% or more;
+			double newSize = ((double)(perCentOfMax * facetDefinition.getFacets().size())/(double)maxSizeFacetGroup);
+			long newSizePX = Math.round((totalSizePX * newSize)/100.0);
+			facet.setHeight(newSizePX+"px",facetDefinition.getFacets().size());
 			facet.setLabel(LocaleUtil.getBestLabel(facetDefinition));
 			for (Facet facetValue : facetDefinition.getFacets()) {
 				String label = LocaleUtil.getBestLabel(facetValue);
@@ -116,7 +141,10 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	}
 	@Override
 	protected void onLoad(){
-
+		if(facetsGroup != null && !facetsGroup.isEmpty()){
+			setFacets(facetsGroup);
+		}
+		facetsGroup=null;
 	}
 	@Override
 	public void setFacetSelectionChangedHandler(FacetSelectionHandler handler) {
@@ -144,7 +172,9 @@ public class FacetView extends Composite implements FacetPresenter.Display {
 	private Widget createUi() {
 		panel = new FlowPanel();
 		ScrollPanel parent = new ScrollPanel();
+		parent.setHeight("100%");
 		parent.add(panel);
+		scrollMainPanel = parent;
 		return parent;
 	}
 
