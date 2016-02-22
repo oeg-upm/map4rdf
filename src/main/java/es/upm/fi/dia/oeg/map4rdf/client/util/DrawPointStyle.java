@@ -15,15 +15,24 @@ public class DrawPointStyle {
 	private static final String MARKER_GREEN_ICON = "marker_green<leter>.png";
 	private static final String MARKER_ORANGE_ICON = "marker_orange.png";
 	private static final String MARKER_PURPLE_ICON = "marker_purple.png";
+	private static final String MARKER_cc99ff_ICON = "marker_cc99ff_facet.png";
+	private static final String MARKER_8f49d1_ICON = "marker_8f49d1_facet.png";
+	private static final String MARKER_4979d1_ICON = "marker_4979d1_facet.png";
+	private static final String MARKER_49d1c4_ICON = "marker_49d1c4_facet.png";
+	private static final String MARKER_8bd149_ICON = "marker_8bd149_facet.png";
+	private static final String MARKER_d149b8_ICON = "marker_d149b8_facet.png";
+	private static final String MARKER_d7e354_ICON = "marker_d7e354_facet.png";
+	private static final String MARKER_d14972_ICON = "marker_d14972_facet.png";
 	//Min length hexColours=0;
 	//with Yellow:
 	//private static final String[] hexColours={"#f88296","#b0a420","#e6a9dd","#9cf3dc"};
 	//private static final String[] hexColours={"#f88296","#e6a9dd","#9cf3dc",};
-	private static final String[] hexColours={"#f88296","#e6a9dd","#9cf3dc","#cc99ff","#d14972","#d149b8","#8f49d1","#4979d1","#49d1c4","#8bd149","#d7e354"};
+	private static final String[] hexColours={"#f88296","#e6a9dd","#9cf3dc","#cc99ff","#8f49d1","#4979d1","#49d1c4","#8bd149","#d149b8","#d7e354","#d14972"};
 	//hexColours.length == relationHexColours.length
 	//with Yellow
 	//private static final String[] relationHexColours={MARKER_RED_ICON,MARKER_YELLOW_ICON,MARKER_LIGHTPURPLE_ICON,MARKER_TURQUEISE_ICON};
-	private static final String[] relationHexColours={MARKER_RED_ICON,MARKER_LIGHTPURPLE_ICON,MARKER_TURQUEISE_ICON};
+	private static final String[] relationHexColours={MARKER_RED_ICON,MARKER_LIGHTPURPLE_ICON,MARKER_TURQUEISE_ICON,MARKER_cc99ff_ICON,MARKER_8f49d1_ICON
+													,MARKER_4979d1_ICON,MARKER_49d1c4_ICON,MARKER_8bd149_ICON,MARKER_d149b8_ICON,MARKER_d7e354_ICON,MARKER_d14972_ICON};
 	public DrawPointStyle(){
 		this.style=getDefaultStyle();
 		leter=getMinLeter();
