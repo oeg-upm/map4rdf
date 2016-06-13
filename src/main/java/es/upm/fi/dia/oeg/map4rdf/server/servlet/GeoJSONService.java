@@ -1,6 +1,7 @@
 package es.upm.fi.dia.oeg.map4rdf.server.servlet;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -13,11 +14,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
+import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonFactory.Feature;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 
 import es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil;
 import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
@@ -29,6 +36,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.MultiPolygon;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometry;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometryBean;
 
 @Singleton
 public class GeoJSONService extends HttpServlet {
@@ -36,6 +45,7 @@ public class GeoJSONService extends HttpServlet {
 	private static final long serialVersionUID = 4940408910832985953L;
 	private MultipleConfigurations configurations;
 	private static enum GeoJSON_Types{Point,LineString,Polygon,MultiPolygon};
+	private static enum WKTTypes{Point, LineString, Polygon,MultiPoint,MultiPolygon,MultiLineString}
 	private static final String[] reservedParameters = { ConfigurationUtil.CONFIGURATION_ID };
 	private Logger LOG = Logger.getLogger(GeoJSONService.class);
 
@@ -120,12 +130,49 @@ public class GeoJSONService extends HttpServlet {
 				PolyLine polyLine = (PolyLine) geometry;
 				toReturn.put("geometry", getJSONofPolyline(polyLine));
 				break;
+			case WKTGEOMETRY:
+				WKTGeometry wkt = (WKTGeometry)geometry;
+				toReturn.put("geometry", getJSONofWKT(wkt));
+				break;
+			default:
+				break;
 			}
 		}
 		return toReturn;
 	}
 
-	
+	private JSONObject getJSONofWKT(WKTGeometry geometryWKT){
+		JSONObject toReturn = new JSONObject();
+		String wkt = geometryWKT.getWKT();
+		String realWKTText="";
+        int firtsIndex=-1;
+        for(WKTTypes i: WKTTypes.values()){
+        	int index=wkt.toLowerCase().indexOf(i.toString().toLowerCase());
+        	if(index>=0 && (index<firtsIndex || firtsIndex==-1)){
+                firtsIndex=index;
+            }
+        }
+        if(firtsIndex==-1){
+        	return null;
+        }
+        realWKTText=wkt.substring(firtsIndex, wkt.length());
+		com.vividsolutions.jts.geom.GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+		WKTReader reader = new WKTReader(geometryFactory);
+		try {
+			com.vividsolutions.jts.geom.Geometry geometry = reader.read(realWKTText);
+			GeometryJSON gjson = new GeometryJSON();
+			StringWriter writer = new StringWriter();
+			gjson.write(geometry, writer);
+			String json = writer.toString();
+			toReturn = new JSONObject(json);
+		} catch (ParseException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
+		
+		return toReturn;
+	}
 
 	private JSONObject getJSONofPoint(Point geometryPoint) {
 		JSONObject point = new JSONObject();
