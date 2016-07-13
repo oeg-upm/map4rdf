@@ -1,0 +1,889 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix map4rdf: <http://code.google.com/p/map4rdf/wiki/ontology#> .
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadLocalPaisaje>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Unidad local de paisagem"@pt;
+	rdfs:label "Local lanscape unit"@en;
+	rdfs:label "Unidad local de paisaje"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AluvialYColuvial>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ValleAplanado>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AgroforestalMontado>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#BosqueFrondoso>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Resinosa>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Duna>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AgricolaHeterogenea>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#VegetacionEscasa>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PlutonicaEIgnea>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Caliza>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Granito>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RelieveAbrupto>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Cuarcita>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pendiente>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pizarra>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Mixta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CultivoTemporal>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CultivoPermanente>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pasto>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Arbusto>;
+.
+
+<http://code.google.com/p/map4rdf/wiki/ontology#rdfTypeFacet>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	map4rdf:order "1"^^xsd:int;
+	rdfs:label "General"@en;
+	rdfs:label "General"@es;
+	rdfs:label "Geral"@pt;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Planicie>;
+	map4rdf:facet <http://aemet.linkeddata.es/ontology/WeatherStation>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ZonaArtificial>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ValleCerrado>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Albufera>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasContinentales>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Embalse>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasCorrientesNaturales>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasSuperficiales>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Paul>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Acuifero>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Laguna>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Humedal>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasQuietasNaturales>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/AguasQuietas>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaAbsoluta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Habitats>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Aves>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Suelo>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaSolidosUrbanosIndiferenciado>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMaxima24Horas>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoEnergia>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceTermicidad>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaAbsoluta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceAridez>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadLocalPaisaje>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaVidrio>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPapel>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPlastico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Via>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaAbsoluta>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Municipio>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceOmbrotermico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ReservaNatural>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceContinentalidad>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CaracteristicaBiogeografica>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMediaAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadPaisaje>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoAgua>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#NucleoPoblacion>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Garganta>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Barranco>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Rivera>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Regato>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Regajo>;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AreaProtegida>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Área protegida"@pt;
+	rdfs:label "Protected area"@en;
+	rdfs:label "Área protegida"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ParqueNacional>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ParqueNatural>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PaisajeProtegido>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#MonumentoNatural>;
+.
+
+<http://geo.linkeddata.es/ontology/AguasCorrientesNaturales>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Natural flowing water"@en;
+	rdfs:label "Curso natural de agua"@es;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Arroyo>;
+	map4rdf:facet <http://geo.linkeddata.es/ontology/Rio>;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Suelo>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Solo"@pt;
+	rdfs:label "Soil"@en;
+	rdfs:label "Suelo"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolCalcarico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolFerrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolCalcico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolMollico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolDistrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolCromico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolHaplico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#SolonchakGleico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UmbrisolArenico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#VertisolCromico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolGleico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ArenosolHaplico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PlanosolEutrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RegosolDistrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FluvisolEutrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolEutrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolDistrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolEutrico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolVertico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FluvisolCalcarico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolCromico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PodzolHaplico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolHaplico>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RegosolEutrico>;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Evapotranspiracion>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Evapotranspiração"@pt;
+	rdfs:label "Evapotranspiration"@en;
+	rdfs:label "Evapotranspiracion"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPOtono>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPAnual>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPPrimavera>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPInvierno>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPVerano>;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Corine>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Característica Corine"@pt;
+	rdfs:label "Corine Feature"@en;
+	rdfs:label "Característica Corine"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LaminaDeAgua>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#SistemaAgroSilvoPastoril>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ArboladoYMonteMediterraneo>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#DominioAgricolaDeRegadio>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#SuperficieArtificial>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#DominioAgricolaDeSecano>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#DominioCosteroYLitoral>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PastizalYEspacioAbierto>;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Via>
+	a map4rdf:FacetGroup;
+	map4rdf:facetPredicate rdf:type;
+	rdfs:label "Vía"@pt;
+	rdfs:label "Road"@en;
+	rdfs:label "Vía"@es;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaDesdoblada>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaSimple>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaSinDesdoblarPrincipal>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaSinDesdoblarSecundaria>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaDoble>;
+	map4rdf:facet <http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaReducida>;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ParqueNacional>
+	rdfs:label "Parque nacional"@pt;
+	rdfs:label "National park"@en;
+	rdfs:label "Parque nacional"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolCalcarico>
+	rdfs:label "Cambissolo Calcarico"@pt;
+	rdfs:label "Calcaric Cambisol"@en;
+	rdfs:label "Cambisol Calcárico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LaminaDeAgua>
+	rdfs:label "Aguas continentais"@pt;
+	rdfs:label "Continental Waters"@en;
+	rdfs:label "Lámina de agua"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Rivera>
+	rdfs:label "Rivera"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolFerrico>
+	rdfs:label "Luvisol férrico"@pt;
+	rdfs:label "Ferric luvisol"@en;
+	rdfs:label "Luvisol férrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AluvialYColuvial>
+	rdfs:label "Aluviais e coluviais"@pt;
+	rdfs:label "Alluvial and colluvial"@en;
+	rdfs:label "Aluvial y coluvial"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolCalcico>
+	rdfs:label "Luvisol cálcio"@pt;
+	rdfs:label "Calcium luvisol"@en;
+	rdfs:label "Luvisol cálcico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaAbsoluta>
+	rdfs:label "Temperatura mínima absoluta"@pt;
+	rdfs:label "Minimum absolute temperature"@en;
+	rdfs:label "Temperatura mínima absoluta"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolMollico>
+	rdfs:label "Cambissolo Molico"@pt;
+	rdfs:label "Molico Cambisol"@en;
+	rdfs:label "Cambisol Mollico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Habitats>
+	rdfs:label "Rede Natura 2000 habitats"@pt;
+	rdfs:label "Natura 2000 network habitat"@en;
+	rdfs:label "Red Natura 2000 Hábitats"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolDistrico>
+	rdfs:label "Cambissolo Dystric"@pt;
+	rdfs:label "Distric Cambisol"@en;
+	rdfs:label "Cambisol Dístrico"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Regato>
+	rdfs:label "Regato"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolCromico>
+	rdfs:label "Cambissolo Chromico"@pt;
+	rdfs:label "Chromic Cambisol"@en;
+	rdfs:label "Cambisol Crómico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RedNatura2000Aves>
+	rdfs:label "Rede Natura 2000 Aves"@pt;
+	rdfs:label "Natura 2000 bird network"@en;
+	rdfs:label "Red Natura 2000 Aves"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Suelo>
+	rdfs:label "Solo"@pt;
+	rdfs:label "Soil"@en;
+	rdfs:label "Suelo"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPOtono>
+	rdfs:label "Evapotranspiração potencial no outono"@pt;
+	rdfs:label "Autumn potential evapotranspiration"@en;
+	rdfs:label "Evapotranspiracion potencial en otoño"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolHaplico>
+	rdfs:label "Luvisol háplico"@pt;
+	rdfs:label "Haplic luvisol"@en;
+	rdfs:label "Luvisol háplico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaDesdoblada>
+	rdfs:label "Vía com várias faixas"@pt;
+	rdfs:label "Road with several lanes"@en;
+	rdfs:label "Vía desdoblada"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaSolidosUrbanosIndiferenciado>
+	rdfs:label "Taxa de recolha de sólidos urbanos"@pt;
+	rdfs:label "garbage collection rate"@en;
+	rdfs:label "Índice de recogida de sólidos urbanos (indiferenciado)"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Garganta>
+	rdfs:label "Garganta"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaSimple>
+	rdfs:label "Simple via ferroviária"@pt;
+	rdfs:label "Simple track railway"@en;
+	rdfs:label "Ferrocarril vía simple"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMaxima24Horas>
+	rdfs:label "Precipitação máxima em 24 horas"@pt;
+	rdfs:label "Maximum rainfall in 24 hours"@en;
+	rdfs:label "Precipitación máxima en 24 horas"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoEnergia>
+	rdfs:label "Consumo de energia"@pt;
+	rdfs:label "Energy consumption"@en;
+	rdfs:label "Consumo de energía"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#SistemaAgroSilvoPastoril>
+	rdfs:label "Sistema Agro-Silvo-Pastoril"@pt;
+	rdfs:label "Agro-Silvo-Pastoril system"@en;
+	rdfs:label "Sistema Agro-Silvo-Pastoril"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ArboladoYMonteMediterraneo>
+	rdfs:label "Floresta mediterrânica"@pt;
+	rdfs:label "Mediterranean forest"@en;
+	rdfs:label "Arbolado y monte mediterráneo"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#SolonchakGleico>
+	rdfs:label "Solonchak gleico"@pt;
+	rdfs:label "Gleico solonchak"@en;
+	rdfs:label "Solonchak gleico"@es;
+.
+
+<http://geo.linkeddata.es/ontology/AguasQuietas>
+	rdfs:label "Standing water"@en;
+	rdfs:label "Aguas quietas"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ParqueNatural>
+	rdfs:label "Parque natural"@pt;
+	rdfs:label "Natural park"@en;
+	rdfs:label "Parque natural"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceTermicidad>
+	rdfs:label "Índice de termicidade"@pt;
+	rdfs:label "Thermal index"@en;
+	rdfs:label "Índice de termicidad"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaSinDesdoblarPrincipal>
+	rdfs:label "Vía principal-uma faixa"@pt;
+	rdfs:label "Main road"@en;
+	rdfs:label "Vía sin desdoblar principal"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#DominioAgricolaDeRegadio>
+	rdfs:label "Dominío agrícola de regadío"@pt;
+	rdfs:label "Irrigated agricultural domains"@en;
+	rdfs:label "Dominio agrícola de regadío"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ViaSinDesdoblarSecundaria>
+	rdfs:label "Vía secundária"@pt;
+	rdfs:label "Secondary road"@en;
+	rdfs:label "Vía sin desdoblar secundaria"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Paul>
+	rdfs:label "Paúl"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UmbrisolArenico>
+	rdfs:label "Umbrisol arénico"@pt;
+	rdfs:label "Sandy umbrisol"@en;
+	rdfs:label "Umbrisol arénico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#VertisolCromico>
+	rdfs:label "Vertisol crómico"@pt;
+	rdfs:label "Chromic vertisol"@en;
+	rdfs:label "Vertisol crómico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ValleAplanado>
+	rdfs:label "Valle aplanado"@pt;
+	rdfs:label "Flattened valleys"@en;
+	rdfs:label "Valle aplanado"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AgroforestalMontado>
+	rdfs:label "Agro-florestais-Montado"@pt;
+	rdfs:label "Agroforestry-Montado"@en;
+	rdfs:label "Agroforestal-Montado"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaAbsoluta>
+	rdfs:label "Amplitud térmica absoluta"@pt;
+	rdfs:label "Absolute thermal amplitude"@en;
+	rdfs:label "Amplitud térmica absoluta"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPAnual>
+	rdfs:label "Evapotranspiração potencial anual"@pt;
+	rdfs:label "Annual potential evapotranspiration"@en;
+	rdfs:label "Evapotranspiracion potencial anual"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#BosqueFrondoso>
+	rdfs:label "Floresta de folhosas"@pt;
+	rdfs:label "Broadleaf forest"@en;
+	rdfs:label "Bosque forndoso"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Regajo>
+	rdfs:label "Regajo"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolGleico>
+	rdfs:label "Luvisol gleico"@pt;
+	rdfs:label "Gleico luvisol"@en;
+	rdfs:label "Luvisol gleico"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Barranco>
+	rdfs:label "Gully, Ravine"@en;
+	rdfs:label "Barranco"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Resinosa>
+	rdfs:label "Resinoso"@pt;
+	rdfs:label "Resinous"@en;
+	rdfs:label "Resinoso"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMinimaMediaAnual>
+	rdfs:label "Temperatura media anual mínima"@pt;
+	rdfs:label "Minimum average annual temperature"@en;
+	rdfs:label "Temperatura mínima media anual"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ArenosolHaplico>
+	rdfs:label "Arenosol Haplico"@pt;
+	rdfs:label "Arenosol Haplico"@en;
+	rdfs:label "Arenosol Haplico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PlanosolEutrico>
+	rdfs:label "Planosol eutrico"@pt;
+	rdfs:label "Eutric planosol "@en;
+	rdfs:label "Planosol eutrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Duna>
+	rdfs:label "Duna"@pt;
+	rdfs:label "Dune"@en;
+	rdfs:label "Duna"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceAridez>
+	rdfs:label "Índice de Aridez"@pt;
+	rdfs:label "Aridity index"@en;
+	rdfs:label "Índice de aridez"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMediaAnual>
+	rdfs:label "Temperatura media anual"@pt;
+	rdfs:label "Average annual temperature"@en;
+	rdfs:label "Temperatura media anual"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/sector-publico/territorio#NucleoPoblacion>
+	rdfs:label "Núcleo de Población"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RegosolDistrico>
+	rdfs:label "Regosol dístrico"@pt;
+	rdfs:label "Distric regosol"@en;
+	rdfs:label "Regosol dístrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#DominioAgricolaDeSecano>
+	rdfs:label "Dominio agrícola de sequeiro"@pt;
+	rdfs:label "Agricultural field of dry land"@en;
+	rdfs:label "Dominio agrícola de secano"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Embalse>
+	rdfs:label "Reservoir"@en;
+	rdfs:label "Embalse"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AgricolaHeterogenea>
+	rdfs:label "Zona agrícola heterogêneos"@pt;
+	rdfs:label "Heterogeneous agricultural area"@en;
+	rdfs:label "Zona agrícola heterogénea"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadLocalPaisaje>
+	rdfs:label "Unidad local de paisagem"@pt;
+	rdfs:label "Local lanscape unit"@en;
+	rdfs:label "Unidad local de paisaje"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FluvisolEutrico>
+	rdfs:label "Neossolo flúvico eutrico"@pt;
+	rdfs:label "Eutric fluvisol"@en;
+	rdfs:label "Fluvisol eutrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaVidrio>
+	rdfs:label "Taxa de recolha de vidrio"@pt;
+	rdfs:label "Glass collection rate"@en;
+	rdfs:label "Índice de recogida de vidrio"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CambisolEutrico>
+	rdfs:label "Cambissolo Eutrico"@pt;
+	rdfs:label "Eutric Cambisol"@en;
+	rdfs:label "Cambisol Eutrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PaisajeProtegido>
+	rdfs:label "Paisagem protegida"@pt;
+	rdfs:label "Protected landscape"@en;
+	rdfs:label "Paisaje protegido"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#AmplitudTermicaMediaAnual>
+	rdfs:label "Amplitude térmica anual"@pt;
+	rdfs:label "Annual thermal amplitude"@en;
+	rdfs:label "Amplitud térmica anual"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolDistrico>
+	rdfs:label "Leptosol dystric"@pt;
+	rdfs:label "Distric leptosol"@en;
+	rdfs:label "Leptosol dístrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolEutrico>
+	rdfs:label "Leptosol eutric"@pt;
+	rdfs:label "Eutric leptosol"@en;
+	rdfs:label "Leptosol eutrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaMediaAnual>
+	rdfs:label "Temperatura media anual máxima"@pt;
+	rdfs:label "Maximum average annual temperature"@en;
+	rdfs:label "Temperatura máxima media anual"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPapel>
+	rdfs:label "Taxa de recolha de papel"@pt;
+	rdfs:label "Paper collection rate"@en;
+	rdfs:label "Índice de recogida de papel"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceRecogidaPlastico>
+	rdfs:label "Taxa de recolha de plástico"@pt;
+	rdfs:label "Plastic collection rate"@en;
+	rdfs:label "Índice de recogida de plástico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaDoble>
+	rdfs:label "Ferrocarril vía dupla"@pt;
+	rdfs:label "Double track railway"@en;
+	rdfs:label "Ferrocarril vía doble"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#VegetacionEscasa>
+	rdfs:label "vegetação esparsa"@pt;
+	rdfs:label "Sparse vegetation"@en;
+	rdfs:label "Vegetación escasa"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolVertico>
+	rdfs:label "Luvisol vertico"@pt;
+	rdfs:label "Vertico luvisol"@en;
+	rdfs:label "Luvisol vertico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FluvisolCalcarico>
+	rdfs:label "Neossolo flúvico calcaric"@pt;
+	rdfs:label "Fluvisol calcaric"@en;
+	rdfs:label "Fluvisol calcárico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPPrimavera>
+	rdfs:label "Evapotranspiração potencial na primavera"@pt;
+	rdfs:label "Spring potential evapotranspiration"@en;
+	rdfs:label "Evapotranspiracion potencial en primavera"@es;
+.
+
+<http://geo.linkeddata.es/ontology/AguasQuietasNaturales>
+	rdfs:label "Natural standing water"@en;
+	rdfs:label "Aguas quietas naturales"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PlutonicaEIgnea>
+	rdfs:label "Rochas plutónicas e rochas igneas"@pt;
+	rdfs:label "Plutonic and igneous rocks"@en;
+	rdfs:label "Rocas plutónicas e ígneas"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Caliza>
+	rdfs:label "Calcários"@pt;
+	rdfs:label "Limestone"@en;
+	rdfs:label "Caliza"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#FerrocarrilViaReducida>
+	rdfs:label "Reduzida via ferroviária"@pt;
+	rdfs:label "Reduced track railway"@en;
+	rdfs:label "Ferrocarril vía reducida"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Granito>
+	rdfs:label "Granito"@pt;
+	rdfs:label "Granite"@en;
+	rdfs:label "Granito"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Arroyo>
+	rdfs:label "Stream"@en;
+	rdfs:label "Curso de agua secundario"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LuvisolCromico>
+	rdfs:label "Luvisol crómico"@pt;
+	rdfs:label "Chromic luvisol"@en;
+	rdfs:label "Luvisol crómico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RelieveAbrupto>
+	rdfs:label "Relevo abrupto"@pt;
+	rdfs:label "Abrupt relief"@en;
+	rdfs:label "Relieve abrupto"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Cuarcita>
+	rdfs:label "Quartzito"@pt;
+	rdfs:label "Quartzite"@en;
+	rdfs:label "Cuarcita"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Via>
+	rdfs:label "Vía"@pt;
+	rdfs:label "Road"@en;
+	rdfs:label "Vía"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pendiente>
+	rdfs:label "Encosta"@pt;
+	rdfs:label "Hillside"@en;
+	rdfs:label "Pendiente"@es;
+.
+
+<http://geo.linkeddata.es/ontology/AguasSuperficiales>
+	rdfs:label "Surface water"@en;
+	rdfs:label "Masa de agua superficial"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pizarra>
+	rdfs:label "Ardósia"@pt;
+	rdfs:label "Slate"@en;
+	rdfs:label "Pizarra"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioPrincipal>
+	rdfs:label "Rio principal"@pt;
+	rdfs:label "Main river"@en;
+	rdfs:label "Río principal"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RioSecundario>
+	rdfs:label "Rio secundario"@pt;
+	rdfs:label "Secondary river"@en;
+	rdfs:label "Río secundario"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Mixta>
+	rdfs:label "Zona mista"@pt;
+	rdfs:label "Mixed area"@en;
+	rdfs:label "Zona mixta"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PodzolHaplico>
+	rdfs:label "Podzol haplico"@pt;
+	rdfs:label "Haplic podzol"@en;
+	rdfs:label "Podzol háplico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#TemperaturaMaximaAbsoluta>
+	rdfs:label "Temperatura máxima absoluta"@pt;
+	rdfs:label "Maximum absolute temperature"@en;
+	rdfs:label "Temperatura máxima absoluta"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Albufera>
+	rdfs:label "Albufera"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#DominioCosteroYLitoral>
+	rdfs:label "Domínio costeira e litoral"@pt;
+	rdfs:label "Domain coastal and littoral"@en;
+	rdfs:label "Dominio costero y litoral"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#LeptosolHaplico>
+	rdfs:label "Leptosol háplico"@pt;
+	rdfs:label "Haplic leptosol"@en;
+	rdfs:label "Leptosol háplico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPInvierno>
+	rdfs:label "Evapotranspiração potencial no inverno"@pt;
+	rdfs:label "Winter potential evapotranspiration"@en;
+	rdfs:label "Evapotranspiracion potencial en invierno"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#RegosolEutrico>
+	rdfs:label "Regosol eutrico"@pt;
+	rdfs:label "Eutric regosol"@en;
+	rdfs:label "Regosol eutrico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Municipio>
+	rdfs:label "Município"@pt;
+	rdfs:label "Municipality"@en;
+	rdfs:label "Municipio"@es;
+.
+
+<http://geo.linkeddata.es/ontology/AguasCorrientesNaturales>
+	rdfs:label "Natural flowing water"@en;
+	rdfs:label "Curso natural de agua"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Rio>
+	rdfs:label "River"@en;
+	rdfs:label "Río"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceOmbrotermico>
+	rdfs:label "Índice Ombrothermic"@pt;
+	rdfs:label "Ombrothermic index"@en;
+	rdfs:label "Índice ombrotérmico"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ReservaNatural>
+	rdfs:label "Reserva natural"@pt;
+	rdfs:label "Natural reserve"@en;
+	rdfs:label "Reserva natural"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CultivoTemporal>
+	rdfs:label "Culturas temporárias"@pt;
+	rdfs:label "Temporary crops"@en;
+	rdfs:label "Cultivo temporal"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CultivoPermanente>
+	rdfs:label "Culturas permanentes"@pt;
+	rdfs:label "Permanent crops"@en;
+	rdfs:label "Cultivo permanente"@es;
+.
+
+<http://geo.linkeddata.es/ontology/AguasContinentales>
+	rdfs:label "Inland water"@en;
+	rdfs:label "Aguas continentales"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ETPVerano>
+	rdfs:label "Evapotranspiração potencial no verão"@pt;
+	rdfs:label "Summer potential evapotranspiration"@en;
+	rdfs:label "Evapotranspiracion potencial en verano"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#IndiceContinentalidad>
+	rdfs:label "Índice de continentalidade"@pt;
+	rdfs:label "Continentality index"@en;
+	rdfs:label "Índice de continentalidad"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#CaracteristicaBiogeografica>
+	rdfs:label "Recurso biogeográfico"@pt;
+	rdfs:label "Biogeographic Feature"@en;
+	rdfs:label "Característica Biogeográfica"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Pasto>
+	rdfs:label "Pastagen"@pt;
+	rdfs:label "Pasture land"@en;
+	rdfs:label "Pasto"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PastizalYEspacioAbierto>
+	rdfs:label "Pastagem e espaço aberto"@pt;
+	rdfs:label "Grassland and open space"@en;
+	rdfs:label "Pastizal y espacio abierto"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#MonumentoNatural>
+	rdfs:label "Monumento natural"@pt;
+	rdfs:label "Natural monument"@en;
+	rdfs:label "Monumento natural"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Laguna>
+	rdfs:label "Lagoon"@en;
+	rdfs:label "Laguna"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#PrecipitacionMediaAnual>
+	rdfs:label "A precipitação media anual"@pt;
+	rdfs:label "Annual average rainfall"@en;
+	rdfs:label "Precipitación media anual"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Acuifero>
+	rdfs:label "Aqüífer"@cat;
+	rdfs:label "Aquifer"@en;
+	rdfs:label "Aquifère"@fr;
+	rdfs:label "Acuifero"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Arbusto>
+	rdfs:label "Matos"@pt;
+	rdfs:label "Bush"@en;
+	rdfs:label "Arbusto"@es;
+.
+
+<http://geo.linkeddata.es/ontology/Humedal>
+	rdfs:label "Wetland"@en;
+	rdfs:label "Humedal"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#UnidadPaisaje>
+	rdfs:label "Unidad de paisagem"@pt;
+	rdfs:label "Landscape unit"@en;
+	rdfs:label "Unidad de paisaje"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ConsumoAgua>
+	rdfs:label "Consumo de água"@pt;
+	rdfs:label "Water consumption"@en;
+	rdfs:label "Consumo de agua"@es;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#Planicie>
+	rdfs:label "Planície"@pt;
+	rdfs:label "Planicie"@es;
+	rdfs:label "Plain"@en;
+.
+
+<http://aemet.linkeddata.es/ontology/WeatherStation>
+	rdfs:label "Estação meteorológica"@pt;
+	rdfs:label "Estación meteorológica"@es;
+	rdfs:label "Weather station"@en;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ZonaArtificial>
+	rdfs:label "Zona artificial"@pt;
+	rdfs:label "Zona artificial"@es;
+	rdfs:label "Artifical surface"@en;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#ValleCerrado>
+	rdfs:label "Vale fechado"@pt;
+	rdfs:label "Valle cerrado"@es;
+	rdfs:label "Closed valley"@en;
+.
+
+<http://vocab.linkeddata.es/datosabiertos/def/medio-ambiente/otalex#SuperficieArtificial>
+	rdfs:label "Superfícies artificiais"@pt;
+	rdfs:label "Superficie artificial"@es;
+	rdfs:label "Artificial surfaces"@en;
+.
+
+

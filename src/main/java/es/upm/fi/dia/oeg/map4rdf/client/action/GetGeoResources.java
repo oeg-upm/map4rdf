@@ -35,13 +35,13 @@ public class GetGeoResources extends GetGeoResourcesBase implements Action<ListR
 	
 	private static final long serialVersionUID = 3283308574724600274L;
 
-	GetGeoResources() {
+	private GetGeoResources() {
 		// for serialization
-		super();
+		super("",null);
 	}
 
-	public GetGeoResources(BoundingBox boundingBox) {
-		super(boundingBox);
+	public GetGeoResources(String configID,BoundingBox boundingBox) {
+		super(configID,boundingBox);
 	}
 
 }

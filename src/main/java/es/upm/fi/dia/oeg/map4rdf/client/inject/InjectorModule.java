@@ -24,9 +24,12 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.client.inject;
 
+
 import net.customware.gwt.presenter.client.DefaultEventBus;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.gin.AbstractPresenterModule;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDImpl;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.Maplet;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.stats.StatisticsMaplet;
 import es.upm.fi.dia.oeg.map4rdf.client.maplet.stats.StatisticsPresenter;
@@ -39,6 +42,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.presenter.GeoprocessingPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.MapPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.ResultsPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.RoutesPresenter;
+import es.upm.fi.dia.oeg.map4rdf.client.presenter.SelectConfigurationPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.view.BufferView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.DashboardView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.FacetView;
@@ -47,6 +51,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.view.GeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.OpenLayersMapView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.ResultsView;
 import es.upm.fi.dia.oeg.map4rdf.client.view.RoutesView;
+import es.upm.fi.dia.oeg.map4rdf.client.view.SelectConfigurationView;
 
 /**
  * @author Alexander De Leon
@@ -55,11 +60,15 @@ public class InjectorModule extends AbstractPresenterModule {
 
 	@Override
 	protected void configure() {
-
+		
 		// Events
 		bind(EventBus.class).to(DefaultEventBus.class);
-
+		
+		//Bind variables
+		bind(ConfIDInterface.class).to(ConfIDImpl.class).asEagerSingleton();
+		
 		// MVP
+		bindDisplay(SelectConfigurationPresenter.Display.class, SelectConfigurationView.class);
 		bindDisplay(DashboardPresenter.Display.class, DashboardView.class);
         bindDisplay(FacetPresenter.Display.class, FacetView.class);
         bindDisplay(FiltersPresenter.Display.class, FiltersView.class);

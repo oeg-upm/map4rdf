@@ -31,9 +31,9 @@ public class ParameterNames {
 
     public static final String ADMIN = "admin";
     
-	public static final String ENDPOINT_URL = "endpoint.url.generic";
-	
-	public static final String ENDPOINT_URL_GEOSPARQL = "endpoint.url.geosparql";
+    public static final String ENDPOINT_URL = "endpoint.url.generic";
+    
+    public static final String ENDPOINT_URL_GEOSPARQL = "endpoint.url.geosparql";
 
 	public static final String GEOMETRY_MODEL = "geometry.model";
 
@@ -42,6 +42,10 @@ public class ParameterNames {
 	public static final String LOGO_IMG_SRC = "ui.logo_src";
 
 	public static final String FACETS_AUTO = "facets.automatic";
+	
+	public static final String FACETS_FILE = "facets.file";
+	
+	public static final String DRAW_COLOURS_BY = "ui.draw_colours.by";
 	
 	public static final String EDIT_DEPTH = "edit_depth";
 	
@@ -57,8 +61,6 @@ public class ParameterNames {
 	
 	public static final String SPHERICAL_MERCATOR = "spherical_mercator";
 	
-	public static final String WIKIPEDIA_PARSE_URL = "wikipedia_parse_url";
-	
 	public static final String SUMMARY_WIDGETS = "summary_widgets";
 	
 	public static final String TWITTER_STATUS_URL = "twitter_status_url";
@@ -67,6 +69,10 @@ public class ParameterNames {
 	
 	public static final String ADDITIONAL_INFO = "additional_info";
 	
+	public static final String CONFIGURATION_DESCRIPTION = "configuration.description";
 	
-
+	public static final String CONFIGURATION_IMAGE = "configuration.ui.image";
+	
+	public static final String CONFIGURATION_LABELS = "configuration.labels";
+	
 }

@@ -30,16 +30,17 @@ import net.customware.gwt.dispatch.shared.Action;
 /**
  * @author Filip
  */
-public class GetConfigurationParameter implements Serializable, Action<SingletonResult<String>> {
+public class GetConfigurationParameter extends MultipleConfigurationAction implements Serializable, Action<SingletonResult<String>> {
 
 	private static final long serialVersionUID = 1889519421319093371L;
 	private String name;
-
-	public GetConfigurationParameter() {
+	private GetConfigurationParameter() {
 		//serialization
+		super("");
 	}
 
-	public GetConfigurationParameter(String name) {
+	public GetConfigurationParameter(String configID, String name) {
+		super(configID);
 		this.name = name;
 	}
 	

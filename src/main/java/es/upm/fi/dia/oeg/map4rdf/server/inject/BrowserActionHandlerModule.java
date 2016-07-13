@@ -28,13 +28,15 @@ import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAddInfoConfig;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObs;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAemetObsForProperty;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetAllConfigurationsDescription;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResources;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigLogotype;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourceOverlays;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResources;
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsFormattedFileUrl;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePoints;
@@ -42,17 +44,19 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticDatasets;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticYears;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectLabel;
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetWebNMasUnoResource;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetViajeroResource;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetAemetObsForPropertyHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetAemetObsHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetAllConfigurationsDescriptionsHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetConfigLogotypeHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetFacetDefinitionsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourceOverlaysHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetBufferGeoResourcesHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetAddInfoConfigHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetConfigurationParameterHandler;
-import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesAsKmlUrlHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesAsFormattedFileUrlHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetGeoResourcesHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetMapsConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetMultipleConfigurationParametersHandler;
@@ -61,7 +65,7 @@ import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticDatasetsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetStatisticYearsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectDescriptionsHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.GetSubjectLabelHandler;
-import es.upm.fi.dia.oeg.map4rdf.server.command.GetWebNMasUnoResourceHandler;
+import es.upm.fi.dia.oeg.map4rdf.server.command.GetViajeroResourceHandler;
 import es.upm.fi.dia.oeg.map4rdf.server.command.SaveRdfFileHandler;
 /**
  * @author Alexander De Leon
@@ -78,7 +82,7 @@ public class BrowserActionHandlerModule extends ActionHandlerModule {
 		super.bindHandler(GetGeoResource.class, GetGeoResourceHandler.class);
 		super.bindHandler(GetSubjectDescriptions.class, GetSubjectDescriptionsHandler.class);
 		super.bindHandler(GetSubjectLabel.class,GetSubjectLabelHandler.class);
-		super.bindHandler(GetGeoResourcesAsKmlUrl.class,GetGeoResourcesAsKmlUrlHandler.class);
+		super.bindHandler(GetGeoResourcesAsFormattedFileUrl.class,GetGeoResourcesAsFormattedFileUrlHandler.class);
 		super.bindHandler(SaveRdfFile.class,SaveRdfFileHandler.class);
 		super.bindHandler(GetConfigurationParameter.class,GetConfigurationParameterHandler.class);
 		super.bindHandler(GetRoutePoints.class,GetRoutePointsHandler.class);
@@ -88,6 +92,9 @@ public class BrowserActionHandlerModule extends ActionHandlerModule {
 		super.bindHandler(GetMapsConfiguration.class, GetMapsConfigurationHandler.class);
 		super.bindHandler(GetAemetObsForProperty.class, GetAemetObsForPropertyHandler.class);
 		super.bindHandler(GetAemetObs.class, GetAemetObsHandler.class);
-		super.bindHandler(GetWebNMasUnoResource.class, GetWebNMasUnoResourceHandler.class);
+		super.bindHandler(GetViajeroResource.class, GetViajeroResourceHandler.class);
+		super.bindHandler(GetAllConfigurationsDescription.class, GetAllConfigurationsDescriptionsHandler.class);
+		super.bindHandler(GetConfigLogotype.class, GetConfigLogotypeHandler.class);
+		
 	}
 }

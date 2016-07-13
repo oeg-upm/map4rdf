@@ -45,8 +45,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsKmlUrl;
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourcesAsFormattedFileUrl;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterClearHandler;
@@ -73,6 +74,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 public class MapPresenter extends ControlPresenter<MapPresenter.Display> implements FacetConstraintsChangedHandler, AreaFilterModeChangeHandler, AreaFilterClearHandler, CloseMapMainPopupHandler, FacetReloadHandler {
 
 	private Set<FacetConstraint> facetConstraints;
+	private final ConfIDInterface configID;
 	private final DispatchAsync dispatchAsync;
 	private WidgetFactory widgetFactory;
 	
@@ -99,15 +101,18 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		Vector getFilterVector();
 		
 		HasClickHandlers getKmlButton();
+		
+		HasClickHandlers getGeoJSONButton();
 
 		
 	}
 
 	@Inject
-	public MapPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory) {
+	public MapPresenter(ConfIDInterface configID,Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory) {
 		super(display, eventBus);
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
+		this.configID = configID;
 		eventBus.addHandler(FacetReloadEvent.getType(), this);
 		eventBus.addHandler(FacetConstraintsChangedEvent.getType(), this);
 		eventBus.addHandler(AreaFilterModeChangeEvent.getType(), this);
@@ -169,7 +174,7 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 		getDisplay().getKmlButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				GetGeoResourcesAsKmlUrl action = new GetGeoResourcesAsKmlUrl(getVisibleBox());
+				GetGeoResourcesAsFormattedFileUrl action = new GetGeoResourcesAsFormattedFileUrl(configID.getConfigID(),getVisibleBox(),GetGeoResourcesAsFormattedFileUrl.ServiceType.KML);
 				action.setFacetConstraints(facetConstraints);
 				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
 					@Override
@@ -179,7 +184,25 @@ public class MapPresenter extends ControlPresenter<MapPresenter.Display> impleme
 
 					@Override
 					public void onSuccess(SingletonResult<String> result) {
-						Window.open(GWT.getModuleBaseURL() + result.getValue(), "kml", null);
+						Window.open(GWT.getModuleBaseURL() + result.getValue(), "resources.kml", null);
+					}
+				});
+			}
+		});
+		getDisplay().getGeoJSONButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				GetGeoResourcesAsFormattedFileUrl action = new GetGeoResourcesAsFormattedFileUrl(configID.getConfigID(),getVisibleBox(),GetGeoResourcesAsFormattedFileUrl.ServiceType.GEOJSON);
+				action.setFacetConstraints(facetConstraints);
+				dispatchAsync.execute(action, new AsyncCallback<SingletonResult<String>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						widgetFactory.getDialogBox().showError(caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(SingletonResult<String> result) {
+						Window.open(GWT.getModuleBaseURL() + result.getValue(), "resources.json", null);
 					}
 				});
 			}

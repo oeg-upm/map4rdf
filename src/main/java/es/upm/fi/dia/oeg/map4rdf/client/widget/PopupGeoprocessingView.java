@@ -9,12 +9,13 @@ import java.util.Map;
 
 import net.customware.gwt.presenter.client.EventBus;
 
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -102,12 +103,12 @@ public class PopupGeoprocessingView extends Composite{
 		this.searchBox.setWidth(String.valueOf((int)(0.8*width))+"px");
 		InlineHTML inline=new InlineHTML("<a>"+browserMessages.searchAResource()+"</a>");
 		this.mainPanel.add(closeButton);
-		DOM.setStyleAttribute(closeButton.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(closeButton.getElement(), "top", "1px");
-		DOM.setStyleAttribute(closeButton.getElement(), "left", "");
-		DOM.removeElementAttribute(closeButton.getElement(),"left");
-		DOM.setStyleAttribute(closeButton.getElement(), "right", "1px");
-		DOM.setStyleAttribute(closeButton.getElement(), "zIndex", "2080");
+		closeButton.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		closeButton.getElement().getStyle().setTop(1, Unit.PX);
+		closeButton.getElement().getStyle().setProperty("left", "");
+		closeButton.getElement().getStyle().clearLeft();
+		closeButton.getElement().getStyle().setRight(1, Unit.PX);
+		closeButton.getElement().getStyle().setZIndex(2080);
 		this.mainPanel.add(new InlineHTML("<br>"));
 		this.mainPanel.add(new InlineHTML("<br>"));
 		this.mainPanel.add(inline);	

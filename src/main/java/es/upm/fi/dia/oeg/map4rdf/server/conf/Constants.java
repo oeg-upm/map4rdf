@@ -30,17 +30,21 @@ package es.upm.fi.dia.oeg.map4rdf.server.conf;
  */
 public class Constants {
 
-	public static final String CONFIGURATION_FILE = "/WEB-INF/configuration.properties";
+	public static final String CONFIGURATIONS_FOLDER = "/WEB-INF/configurations/";
+	
+	public static final String GLOBAL_CONFIGURATION = "/WEB-INF/configuration.properties";
 
 	public static final String ADDITIONAL_INFO_CONFIG_FOLDER = "/WEB-INF/additional_info/";
 	
-	public static final String FACET_CONFIGURATION_FILE = "/WEB-INF/facets.ttl";
-	
-	public static final String MAPS_CONFIGURATION_FILE = "/WEB-INF/maps/maps.properties";
+	public static final String FACETS_FOLDER = "/WEB-INF/facets/";
 	
 	public static final String SPHERICAL_MAPS_FOLDER="/WEB-INF/maps/spherical_maps/";
 	
 	public static final String FLAT_MAPS_FOLDER="/WEB-INF/maps/flat_maps/";
+	
+	public final static String LOGOS_FOLDER="logos/";
+	
+	public final static String DESCIPTIONS_LOGOS_FOLDER=LOGOS_FOLDER+"descriptions/";
         
 	public static enum GeometryModel {
 		/**
@@ -66,17 +70,24 @@ public class Constants {
 		/**
 		 * The GeoSPARQL model used by OGC.
 		 * Documentation URL: 
+		 * Endpoint: Strabon
 		 * */
-		GEOSPARQL,
+		GEOSPARQL_STRABON,
+		/**
+		 * The GeoSPARQL model used by OGC.
+		 * Documentation URL: 
+		 * Endpoint: Virtuoso
+		 * */
+		GEOSPARQL_VIRTUOSO,
 		/**
 		 * The AEMET subproject model.
 		 * 
 		 */
 		AEMET,
 		/**
-		 * The WebNMasUno subproject model.
+		 * The Viajero subproject model.
 		 * */
-		WEBNMASUNO;
+		VIAJERO;
 	}
 
 }

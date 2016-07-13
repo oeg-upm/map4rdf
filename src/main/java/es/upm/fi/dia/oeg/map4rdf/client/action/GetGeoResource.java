@@ -30,15 +30,19 @@ import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 /**
  * @author Alexander De Leon
  */
-public class GetGeoResource implements Action<SingletonResult<GeoResource>> {
+public class GetGeoResource extends MultipleConfigurationAction implements Action<SingletonResult<GeoResource>> {
 
+	private static final long serialVersionUID = -9119017333394987893L;
+	
 	private String uri;
 
-	GetGeoResource() {
+	private GetGeoResource() {
 		// for serilization
+		super("");
 	}
 
-	public GetGeoResource(String uri) {
+	public GetGeoResource(String configID,String uri) {
+		super(configID);
 		this.uri = uri;
 	}
 

@@ -43,6 +43,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
 import es.upm.fi.dia.oeg.map4rdf.share.PolygonBean;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinateBean;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometryBean;
 
 /**
  * @author Alexander De Leon
@@ -55,6 +56,7 @@ public class GeoUtils {
 	public static double getDistance(TwoDimentionalCoordinate point1, TwoDimentionalCoordinate point2) {
 		return Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2));
 	}
+	//TODO remove unused comments
 	public static List<Geometry> getWKTGeometries(String uri ,String GMLText, String WKTText,String projection){
 		String crs=projection;
 		/*if(GMLText.contains("srsName")){
@@ -120,7 +122,10 @@ public class GeoUtils {
 		parseWKTGeotools("", "", "POLYGON ( (0 0, 10 0, 10 10, 0 10, 0 0),( 20 20, 20 40, 40 40, 40 20, 20 20) )", "");
 		parseWKTGeotools("", "", "MULTIPOLYGON(((1 1, 2 1,2 0, 1 1)),((3 3, 4 3,4 2, 3 3)))", "");
 		parseWKTGeotools("", "", "POLYGON((1 1, 2 1,2 0, 1 1))", "");*/
-		return parseWKTGeotools(uri, GMLText, realWKTText, crs);
+		
+		
+		//return parseWKTGeotools(uri, GMLText, realWKTText, crs);
+		return parseToOpenLayersWKT(uri,realWKTText,crs);
 	}
 	private static List<Geometry> transforWKTtoOEG(String uri,String realWKTText,String crs){
 		if(realWKTText.toLowerCase().contains(WKTTypes.Point.toString().toLowerCase())){
@@ -149,7 +154,7 @@ public class GeoUtils {
 						points.add(new PointBean(uri, point.getX(), point.getY(),point.getProjection()));
 					}
 					if(!points.isEmpty()){
-						geometries.add(new PolyLineBean(uri, points));
+						geometries.add(new PolyLineBean(uri, points,points.get(0).getProjection()));
 					}
 				}
 			}
@@ -170,7 +175,7 @@ public class GeoUtils {
 						points.add(new PointBean(uri, point.getX(), point.getY(),point.getProjection()));
 					}
 					if(!points.isEmpty()){
-						geometries.add(new PolygonBean(uri, points));
+						geometries.add(new PolygonBean(uri, points,crs));
 					}
 				}
 			}
@@ -227,13 +232,10 @@ public class GeoUtils {
 			toReturnX=targetPoint.getX();
 			toReturnY=targetPoint.getY();
 		} catch (NoSuchAuthorityCodeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TransformException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -241,6 +243,12 @@ public class GeoUtils {
 		return new double[]{toReturnX, toReturnY};
 	}*/
 	
+	
+	private static List<Geometry> parseToOpenLayersWKT(String uri,String WKTText,String projection){
+		List<Geometry> geometries = new ArrayList<Geometry>();
+		geometries.add(new WKTGeometryBean(uri, WKTText, projection));
+		return geometries;
+	}
 	
 	private static List<Geometry> parseWKTGeotools(String uri ,String GMLText, String WKTText,String projection){
 		try{
@@ -270,22 +278,25 @@ public class GeoUtils {
 		}
 		return null;
 	}
+	
 	private static List<Geometry> transformGeoToolsGeometryToOEG(String uri, String WKTText, String projection,
 			com.vividsolutions.jts.geom.Geometry geometry) {
-		// TODO Auto-generated method stub
 		List<Geometry> geometrias = new ArrayList<Geometry>();
 		switch (geometry.getGeometryType().toLowerCase()) {
 		case "multipolygon":
 			List<Polygon> polygons= new ArrayList<Polygon>();
+			int poligonos = 0;
 			for(int i=0; i<geometry.getNumGeometries();i++){
 		    	Coordinate [] coordinates = geometry.getGeometryN(i).getCoordinates();
 		    	List<Point> points= new ArrayList<Point>();
+		    	poligonos++;
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
-		    	polygons.add(new PolygonBean(uri, points));
+		    	polygons.add(new PolygonBean(uri, points,projection));
 		    }
-		    geometrias.add(new MultiPolygonBean(uri, polygons));
+			System.out.println("Se han encontrado "+poligonos+" poligonos.");
+		    geometrias.add(new MultiPolygonBean(uri, polygons,projection));
 			break;
 		case "polygon":
 			for(int i=0; i<geometry.getNumGeometries();i++){
@@ -294,7 +305,7 @@ public class GeoUtils {
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
-		    	geometrias.add(new PolygonBean(uri, points));
+		    	geometrias.add(new PolygonBean(uri, points,projection));
 		    }
 			break;
 		case "multilinestring":
@@ -305,7 +316,7 @@ public class GeoUtils {
 		    	for(int j=0;j<coordinates.length;j++){
 		    		points.add(new PointBean(uri,coordinates[j].x, coordinates[j].y, projection));
 		    	}
-		    	geometrias.add(new PolyLineBean(uri, points));
+		    	geometrias.add(new PolyLineBean(uri, points,projection));
 		    }
 			break;
 		case "point":

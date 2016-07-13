@@ -36,8 +36,8 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetSubjectDescriptions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.server.dao.DaoException;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
 import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
 
 /**
@@ -45,37 +45,44 @@ import es.upm.fi.dia.oeg.map4rdf.share.SubjectDescription;
  */
 public class GetSubjectDescriptionsHandler implements
 		ActionHandler<GetSubjectDescriptions, ListResult<SubjectDescription>> {
-	
-	private final Map4rdfDao dao;
-	private Logger logger = Logger.getLogger(GetSubjectDescriptionsHandler.class);
+
+	private MultipleConfigurations configurations;
+	private Logger logger = Logger
+			.getLogger(GetSubjectDescriptionsHandler.class);
+
 	@Override
 	public Class<GetSubjectDescriptions> getActionType() {
 		return GetSubjectDescriptions.class;
 	}
-	
+
 	@Inject
-	public GetSubjectDescriptionsHandler(Map4rdfDao dao) {
-		this.dao = dao;
+	public GetSubjectDescriptionsHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
-	public ListResult<SubjectDescription> execute(GetSubjectDescriptions action,
-			ExecutionContext context) throws ActionException {
-	
-			List<SubjectDescription> descriptions;
-			try {
-				descriptions = dao.getSubjectDescription(action.getSubject());
-			} catch (DaoException e) {
-				logger.error(e);
-				return new ListResult<SubjectDescription>();
-			}
-			return new ListResult<SubjectDescription>(descriptions);
+	public ListResult<SubjectDescription> execute(
+			GetSubjectDescriptions action, ExecutionContext context)
+			throws ActionException {
+		if (!configurations.existsConfiguration(action.getConfigID())) {
+			throw new ActionException("Bad Config ID");
+		}
+		List<SubjectDescription> descriptions;
+		try {
+			descriptions = configurations
+					.getConfiguration(action.getConfigID()).getMap4rdfDao()
+					.getSubjectDescription(action.getSubject());
+		} catch (DaoException e) {
+			logger.error(e);
+			return new ListResult<SubjectDescription>();
+		}
+		return new ListResult<SubjectDescription>(descriptions);
 	}
 
 	@Override
 	public void rollback(GetSubjectDescriptions action,
-			ListResult<SubjectDescription> result,
-			ExecutionContext context) throws ActionException {
-		
+			ListResult<SubjectDescription> result, ExecutionContext context)
+			throws ActionException {
+
 	}
 }

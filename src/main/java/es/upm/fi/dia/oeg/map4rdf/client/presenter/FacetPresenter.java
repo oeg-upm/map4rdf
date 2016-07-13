@@ -36,14 +36,21 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitions;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetFacetDefinitionsResult;
+import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetConstraintsChangedEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FacetPresenter.Display.FacetSelectionHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
+import es.upm.fi.dia.oeg.map4rdf.share.ConfigurationDrawColoursBy;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetConstraint;
 import es.upm.fi.dia.oeg.map4rdf.share.FacetGroup;
+import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
  * @author Alexander De Leon
@@ -63,8 +70,9 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 		// TODO this should be decoupled from the model
 		void setFacets(List<FacetGroup> facets);
 		void setFacetSelectionChangedHandler(FacetSelectionHandler handler);
+		void setConfigurationDrawColours(ConfigurationDrawColoursBy drawColoursBy);
 	}
-
+	private final ConfIDInterface configID;
 	private final DispatchAsync dispatchAsync;
 	private final List<FacetConstraint> constraints = new ArrayList<FacetConstraint>();
 	private WidgetFactory widgetFactory;
@@ -75,8 +83,9 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 	}
 	
 	@Inject
-	public FacetPresenter(Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
+	public FacetPresenter(ConfIDInterface configID,Display display, EventBus eventBus, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
 		super(display, eventBus);
+		this.configID = configID;
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
 		this.messages = messages;
@@ -105,7 +114,7 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 	}
 
 	void loadFacets() {
-		dispatchAsync.execute(new GetFacetDefinitions(), new AsyncCallback<GetFacetDefinitionsResult>() {
+		dispatchAsync.execute(new GetFacetDefinitions(configID.getConfigID()), new AsyncCallback<GetFacetDefinitionsResult>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -130,9 +139,43 @@ public class FacetPresenter extends ControlPresenter<FacetPresenter.Display> {
 
 	@Override
 	protected void onRevealDisplay() {
-		if (getDisplay().isEmpty()) {
-			loadFacets();
+		if(configID.existsConfigID()){
+			if (getDisplay().isEmpty()) {
+				loadConfigurationsParams();
+			}
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					if (getDisplay().isEmpty()) {
+						loadConfigurationsParams();
+					}
+				}
+			});
 		}
+		
 	}
 	
+	private void loadConfigurationsParams(){
+		dispatchAsync.execute(new GetConfigurationParameter(configID.getConfigID(), ParameterNames.DRAW_COLOURS_BY), new AsyncCallback<SingletonResult<String>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				widgetFactory.getDialogBox().showError(messages.errorCommunication()+" Error:"+caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(SingletonResult<String> result) {
+				if (getDisplay().isEmpty()) {
+					if(ConfigurationDrawColoursBy.isValid(result.getValue())){
+						display.setConfigurationDrawColours(ConfigurationDrawColoursBy.valueOf(result.getValue()));
+					}else{
+						display.setConfigurationDrawColours(ConfigurationDrawColoursBy.getDefault());
+					}
+					loadFacets();
+				}
+			}
+		});
+	}
 }

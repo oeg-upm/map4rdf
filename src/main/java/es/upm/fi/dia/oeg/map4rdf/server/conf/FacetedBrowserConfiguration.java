@@ -80,7 +80,7 @@ public class FacetedBrowserConfiguration {
 				FacetGroup facetGroup = new FacetGroup(predicate.getURI());
 				addLabels(facetGroupResource, facetGroup);
 
-				Statement orderStmt = facetGroupResource.getProperty(Map4rdfVocabulary.orden);
+				Statement orderStmt = facetGroupResource.getProperty(Map4rdfVocabulary.order);
 				if (orderStmt != null) {
 					facetGroup.setOrder(orderStmt.getInt());
 				}

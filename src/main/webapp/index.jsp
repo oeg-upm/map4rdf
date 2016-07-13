@@ -1,10 +1,18 @@
-<%@page import="es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration"%>
+<%@page import="es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.ConfigurationContainer"%>
+<%@page import="es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations"%>
 <%@page import="es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames"%>
+<%@page import="es.upm.fi.dia.oeg.map4rdf.client.util.ConfigurationUtil" %>
 <%
 	String googleMapsKey="";
 	if(request.getParameter("GoogleKey")==null){
-		Configuration conf = (Configuration) pageContext.getServletContext().getAttribute(Configuration.class.getName());
-		googleMapsKey = conf.getConfigurationParamValue(ParameterNames.GOOGLE_MAPS_API_KEY);
+		String configID = request.getParameter(ConfigurationUtil.CONFIGURATION_ID);
+		if(configID!=null && !configID.isEmpty()){
+			MultipleConfigurations globalConf = (MultipleConfigurations) pageContext.getServletContext().getAttribute(MultipleConfigurations.class.getName());
+			ConfigurationContainer configCont = globalConf.getConfiguration(configID);
+			if(config!=null){
+				googleMapsKey = configCont.getConfigurationParamValue(ParameterNames.GOOGLE_MAPS_API_KEY);	
+			}
+		}
 	}else{
 		googleMapsKey = request.getParameter("GoogleKey");
 	}
@@ -15,13 +23,12 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="gwt:property" content="locale=<%=request.getLocale()%>">
     <title>Map4RDF</title>
-    <!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js" ></script-->
     <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.js"></script>
     <script src="http://openlayers.org/api/2.13/OpenLayers.js"></script>
     <script src="OpenStreetMapsByFilip.js"></script>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?gwt=1&amp;file=api&amp;v=3.6&amp;sensor=true&amp;key=<%=googleMapsKey%>" ></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?gwt=1&amp;file=api&amp;v=3.9&amp;sensor=true&amp;key=<%=googleMapsKey%>" ></script>
     <script type="text/javascript" src="es.upm.fi.dia.oeg.map4rdf.map4rdf/es.upm.fi.dia.oeg.map4rdf.map4rdf.nocache.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/1.1.0/proj4js-compressed.js"></script>
+    <script type="text/javascript" src="proj4js-compressed.js"></script>
     <script type="text/javascript" src="http://spatialreference.org/ref/epsg/23030/proj4js/"></script>
   </head>
 

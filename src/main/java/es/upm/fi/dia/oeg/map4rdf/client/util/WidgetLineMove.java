@@ -1,6 +1,6 @@
 package es.upm.fi.dia.oeg.map4rdf.client.util;
 
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -11,18 +11,18 @@ public class WidgetLineMove {
 	private LeftTopPosition initialWidgetPosition;
 	private LeftTopPosition finalWidgetPosition;
 	private Integer steps;
-	private String unit;
-	public WidgetLineMove(Widget widget, LeftTopPosition finalWidgetPosition, String unit){
+	private Unit unit;
+	public WidgetLineMove(Widget widget, LeftTopPosition finalWidgetPosition, Unit unit){
 		this.widget=widget;
 		this.finalWidgetPosition=finalWidgetPosition;
 		this.unit=unit;
 		this.steps=null;
 	}
 	public void initWidgetLineMove(int steps) {
-		this.steps=steps;		
+		this.steps=steps;
 		this.initialWidgetPosition=new LeftTopPosition(
-				Integer.parseInt(DOM.getStyleAttribute(widget.getElement(), "left").replace(unit, "")), 
-				Integer.parseInt(DOM.getStyleAttribute(widget.getElement(), "top").replace(unit, "")));
+				Integer.parseInt(widget.getElement().getStyle().getLeft().toLowerCase().replace(unit.toString().toLowerCase(), "")), 
+				Integer.parseInt(widget.getElement().getStyle().getTop().toLowerCase().replace(unit.toString().toLowerCase(), "")));
 	}
 	public void doStep(int i) throws Exception{
 		if(steps==null){
@@ -36,8 +36,8 @@ public class WidgetLineMove {
 			int left=(int)(initialWidgetPosition.getLeft()+(i*moveLeft));
 			double moveTop=(double)(finalWidgetPosition.getTop()-initialWidgetPosition.getTop())/(double)steps;
 			int top=(int)(initialWidgetPosition.getTop()+(i*moveTop));
-			DOM.setStyleAttribute(widget.getElement(), "left", left+unit);
-			DOM.setStyleAttribute(widget.getElement(), "top", top+unit);
+			widget.getElement().getStyle().setLeft(left, unit);
+			widget.getElement().getStyle().setTop(top, unit);
 		}
 	}
 }

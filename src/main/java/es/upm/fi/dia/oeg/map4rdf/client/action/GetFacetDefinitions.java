@@ -30,10 +30,21 @@ import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 /**
  * @author Alexander De Leon
  */
-public class GetFacetDefinitions implements Action<GetFacetDefinitionsResult> {
+public class GetFacetDefinitions extends MultipleConfigurationAction implements Action<GetFacetDefinitionsResult> {
+	
+	private static final long serialVersionUID = 7287563280517659717L;
+
+	private GetFacetDefinitions() {
+		super("");
+		//For serialization
+	}
+	
+	public GetFacetDefinitions(String configID) {
+		super(configID);
+	}
 
 	private BoundingBox boundingBox;
-
+	
 	public BoundingBox getBoundingBox() {
 		return boundingBox;
 	}

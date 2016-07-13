@@ -27,7 +27,7 @@ package es.upm.fi.dia.oeg.map4rdf.share;
 public interface MapShape {
 
 	enum Type {
-		POINT, POLYLINE, POLYGON, CIRCLE,MULTIPOLYGON;
+		POINT, POLYLINE, POLYGON, CIRCLE,MULTIPOLYGON,WKTGEOMETRY;
 	}
 
 	Type getType();

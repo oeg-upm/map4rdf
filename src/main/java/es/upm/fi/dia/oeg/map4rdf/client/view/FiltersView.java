@@ -32,10 +32,10 @@ import java.util.List;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -55,7 +55,10 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FilterDateChangeEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.FiltersPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
@@ -79,6 +82,8 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	private final BrowserMessages messages;
 	private final BrowserResources resources;
 	private final EventBus eventBus;
+	private final DispatchAsync dispatchAsync;
+	private ConfIDInterface configID;
 	private WidgetFactory widgetFactory;
 	
 	private FlowPanel panel;
@@ -89,28 +94,43 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 	
 	
 	@Inject
-	public FiltersView(BrowserMessages messages, BrowserResources resources,DispatchAsync dispatchAsync, EventBus eventBus,
+	public FiltersView(ConfIDInterface configID,BrowserMessages messages, BrowserResources resources,DispatchAsync dispatchAsync, EventBus eventBus,
 			WidgetFactory widgetFactory) {
 		this.resources = resources;
 		this.messages = messages;
 		this.eventBus = eventBus;
 		this.widgetFactory = widgetFactory;
+		this.dispatchAsync = dispatchAsync;
+		this.configID = configID;
 		this.dateFilters = new ArrayList<DateFilter>();
 		initWidget(createUi());
-		dispatchAsync.execute(new GetConfigurationParameter(ParameterNames.GEOMETRY_MODEL), new AsyncCallback<SingletonResult<String>>() {
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+		
+	}
+	private void initAsync(){
+		dispatchAsync.execute(new GetConfigurationParameter(configID.getConfigID(),ParameterNames.GEOMETRY_MODEL), new AsyncCallback<SingletonResult<String>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 			}
 			@Override
 			public void onSuccess(SingletonResult<String> result) {
-				if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(result.getValue())){
+				if(SharedGeometryModels.VIAJERO.equalsIgnoreCase(result.getValue())){
 					addYearDatePicker();
 				}	
 			}
 			
 		});
 	}
-
 
 	/* ------------- Display API -- */
 	@Override
@@ -160,7 +180,8 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 		panel.add(dateFilterPanel);
 	    DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd-MM-yyyy");
 	    DateBox dateBox = new DateBox(new DatePickerWithYearSelector(), new Date(), new DateBox.DefaultFormat(dateFormat));
-	    final ListBox comboBox=new ListBox(false);
+	    final ListBox comboBox=new ListBox();
+	    comboBox.setMultipleSelect(false);
 	    comboBox.addItem(messages.equalsTo(),DateFilter.DateFilterType.EQUAL.name());
 	    comboBox.addItem(messages.beforeTo(),DateFilter.DateFilterType.BEFORE.name());
 	    comboBox.addItem(messages.afterTo(),DateFilter.DateFilterType.AFTER.name());
@@ -205,7 +226,7 @@ public class FiltersView extends Composite implements FiltersPresenter.Display {
 				dateFilterPanel.add(new Label(message));
 				dateFilterPanel.add(new Label(dateTimeFormater(dateFilter.getDate())));
 				Image removeImage = new Image(resources.eraserIcon());
-				DOM.setStyleAttribute(removeImage.getElement(), "cursor", "pointer");
+				removeImage.getElement().getStyle().setCursor(Cursor.POINTER);
 				dateFilterPanel.add(removeImage);
 				addRemoveFilterEvent(removeImage, filters, dateFilterPanel, dateFilter);
 				filters.add(dateFilterPanel);

@@ -29,8 +29,8 @@ import name.alexdeleon.lib.gwtblocks.client.event.ToggleHandler;
 import name.alexdeleon.lib.gwtblocks.client.widget.togglebutton.ToggleButton;
 import net.customware.gwt.presenter.client.EventBus;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -104,7 +104,7 @@ public class DataToolBar extends Composite {
 			button.add(icon);
 			button.add(new Label(name));
 			setWidget(button);
-			DOM.setStyleAttribute(getElement(), "float", "left");
+			getElement().getStyle().setFloat(Style.Float.LEFT);
 		}
 
 	}

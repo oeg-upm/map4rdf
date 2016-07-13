@@ -36,14 +36,14 @@ public class AdditionalInfoExecuter {
 		}
 		
 	}
-	public static void getAdditionalInfo(final DispatchAsync dispatchAsync,final GeoResource resource,final InfoCallback callback){
+	public static void getAdditionalInfo(final String configID,final DispatchAsync dispatchAsync,final GeoResource resource,final InfoCallback callback){
 		addInfoConfig=null;
 		final int myId=id++;
 		doCallbacks.put(myId, true);
 		if(id==100){
 			id=0;
 		}
-		dispatchAsync.execute(new GetAddInfoConfig(resource), new AsyncCallback<SingletonResult<GetAddInfoConfigResult>>() {
+		dispatchAsync.execute(new GetAddInfoConfig(configID,resource), new AsyncCallback<SingletonResult<GetAddInfoConfigResult>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Map<String,String> toReturn = new HashMap<String, String>();

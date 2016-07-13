@@ -37,12 +37,12 @@ public class PolyLineBean extends PolygonBean implements PolyLine {
 		super();
 	}
 
-	public PolyLineBean(String uri, List<Point> points) {
-		super(uri, points);
+	public PolyLineBean(String uri, List<Point> points,String projection) {
+		super(uri, points,projection);
 	}
 
-	public PolyLineBean(String uri, Point... points) {
-		super(uri, points);
+	public PolyLineBean(String uri,String projection, Point... points) {
+		super(uri,projection, points);
 	}
 
 	@Override

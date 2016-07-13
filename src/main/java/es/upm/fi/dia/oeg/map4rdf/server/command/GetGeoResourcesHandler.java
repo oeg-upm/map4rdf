@@ -32,11 +32,10 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResources;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
@@ -48,29 +47,32 @@ public class GetGeoResourcesHandler implements
 
 	private static final List<GeoResource> EMPTY_RESULT = Collections
 			.emptyList();
-	private final Map4rdfDao dao;
-	private final String defaultProjection;
+	private MultipleConfigurations configurations;
 
 	@Inject
-	public GetGeoResourcesHandler(Map4rdfDao dao,@Named(ParameterNames.DEFAULT_PROJECTION) String defaultProjection) {
-		this.dao = dao;
-		this.defaultProjection = defaultProjection;
+	public GetGeoResourcesHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
 	public ListResult<GeoResource> execute(GetGeoResources action,
 			ExecutionContext context) throws ActionException {
-
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
 		List<GeoResource> resources;
 		try {
 			if (action.getFacetConstraints() == null) {
 				resources = EMPTY_RESULT;
 			} else {
-				if(action.getBoundingBox()!=null && 
+				String defaultProjection= configurations.getConfiguration(action.getConfigID()).getConfigurationParamValue(ParameterNames.DEFAULT_PROJECTION);
+				if(action.getBoundingBox()!=null &&
 						!action.getBoundingBox().getProjection().toLowerCase().trim().equals(defaultProjection.toLowerCase().trim())){
-					throw new ActionException("Bounding box projection of GetGeoResources (action) isn't equals to server projection");
+						throw new ActionException("Bounding box projection of GetGeoResources (action) isn't equals to server projection");
 				}
-				resources = dao.getGeoResources(action.getBoundingBox(),
+				//TODO Add Query Limit to config file.
+				resources = configurations.getConfiguration(action.getConfigID())
+						.getMap4rdfDao().getGeoResources(action.getBoundingBox(),
 						action.getFacetConstraints(), 1000);
 			}
 
@@ -78,7 +80,6 @@ public class GetGeoResourcesHandler implements
 			throw new ActionException("Data access error", e);
 		}
 		ListResult<GeoResource> result = new ListResult<GeoResource>(resources);
-
 		return result;
 	}
 

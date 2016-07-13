@@ -94,6 +94,9 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
+		if(constraints!=null && constraints.isEmpty()){
+			return new ArrayList<GeoResource>();
+		}
 		//String lastFacetType=null;
 		try {
 			ResultSet queryResult = execution.execSelect();
@@ -252,12 +255,24 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	public PolyLine getPolyline(String uri) throws DaoException {
 		List<Point> points = getGeometryPoints(uri);
-		return points.isEmpty() ? null : new PolyLineBean(uri, points);
+		String projection;
+		if(points==null || points.isEmpty()){
+			projection = defaultProjection;
+		}else{
+			projection = points.get(0).getProjection();
+		}
+		return points.isEmpty() ? null : new PolyLineBean(uri,projection);
 	}
 
 	public Polygon getPolygon(String uri) throws DaoException {
 		List<Point> points = getGeometryPoints(uri);
-		return points.isEmpty() ? null : new PolygonBean(uri, points);
+		String projection;
+		if(points==null || points.isEmpty()){
+			projection = defaultProjection;
+		}else{
+			projection = points.get(0).getProjection();
+		}
+		return points.isEmpty() ? null : new PolygonBean(uri, points,projection);
 	}
 
 	public List<Point> getGeometryPoints(String uri) throws DaoException {
@@ -476,14 +491,17 @@ public class GeoLinkedDataDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
+			query.append("?r ?facetID ?facetValueID. ");
+			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
-				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
-				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
-				query.append("} UNION");
+				query.append("(?facetID IN(");
+				query.append("<"+constraint.getFacetId()+">)");
+				query.append(" && ?facetValueID IN(");
+				query.append("<"+constraint.getFacetValueId()+">)) || ");
 			}
-			query.delete(query.length() - 5, query.length());
+			query.delete(query.length() - 3, query.length());
+			query.append(").");
 		}
 		//filters
 		if (boundingBox!=null) {

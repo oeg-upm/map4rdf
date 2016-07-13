@@ -46,83 +46,98 @@ import es.upm.fi.dia.oeg.map4rdf.client.inject.Injector;
 import es.upm.fi.dia.oeg.map4rdf.client.navigation.Places;
 
 /**
- *
+ * 
  * 
  * @author Alexander De Leon
  */
 public class Browser implements EntryPoint {
 	Injector injector = null;
+
 	@Override
 	public void onModuleLoad() {
 		try {
-		injector = GWT.create(Injector.class);
+			injector = GWT.create(Injector.class);
 		} catch (Exception e) {
 			injector = null;
 			Window.alert("An several exception ocurred when load the webpage. "
-					+ " Exception: "+e.getMessage() + "."
+					+ " Exception: " + e.getMessage() + "."
 					+ "Please contact with System Admin");
+			return;
 		}
-		AppController controller = new AppController(injector.getBrowserUi(), injector.getEventBus());
-		controller.addPresenter(injector.getDashboard(),Places.DASHBOARD);
-		
+		AppController controller = new AppController(injector.getBrowserUi(),
+				injector.getEventBus());
+		controller.addPresenter(injector.getDashboard(), Places.DASHBOARD);
+		controller.addPresenter(injector.getSelectConfigurationPresenter(), Places.SELECT_CONFIG);
 		controller.bind();
 		
 		RootLayoutPanel.get().add(controller.getDisplay().asWidget());
+		
 		TokenFormatter tokenFormatter = new TokenFormatter() {
-			private HashMap<String, PlaceRequest> tokenPlaces=new HashMap<String,PlaceRequest>();
-			private HashMap<PlaceRequest, String> placeTokens=new HashMap<PlaceRequest,String>();
+			private HashMap<String, PlaceRequest> tokenPlaces = new HashMap<String, PlaceRequest>();
+			private HashMap<PlaceRequest, String> placeTokens = new HashMap<PlaceRequest, String>();
+
 			@Override
 			public PlaceRequest toPlaceRequest(String token)
 					throws TokenFormatException {
-				
+
 				PlaceRequest toReturn;
-				if(tokenPlaces.containsKey(token)){
-					toReturn=tokenPlaces.get(token);
-				}else{
+				if (tokenPlaces.containsKey(token)) {
+					toReturn = tokenPlaces.get(token);
+				} else {
 					toReturn = new PlaceRequest(token);
 					tokenPlaces.put(token, toReturn);
 					placeTokens.put(toReturn, token);
 				}
 				return toReturn;
 			}
-			
+
 			@Override
 			public String toHistoryToken(PlaceRequest placeRequest)
 					throws TokenFormatException {
 				String token;
-				if(placeTokens.containsKey(placeRequest)){
-					token=placeTokens.get(placeRequest);
-				}else{
-					token=placeRequest.getName();
+				if (placeTokens.containsKey(placeRequest)) {
+					token = placeTokens.get(placeRequest);
+				} else {
+					token = placeRequest.getName();
 					tokenPlaces.put(token, placeRequest);
 					placeTokens.put(placeRequest, token);
 				}
-				
+
 				return token;
 			}
 		};
-		PlaceManager placeManager = new DefaultPlaceManager(injector.getEventBus(), tokenFormatter) {
+		PlaceManager placeManager = new DefaultPlaceManager(
+				injector.getEventBus(), tokenFormatter) {
 		};
-		if (History.getToken() == null || History.getToken().length() == 0) {
-			// Go to the default place
-			injector.getEventBus().fireEvent(new PlaceChangedEvent(Places.DEFAULT));
-		}
-		// Trigger history tokens.
-		
-		String parameters[] = Window.Location.getQueryString().substring(1).split("&");
-		for (String param : parameters) {
-			final String[] parts = param.split("=");
-			if (parts[0].equals("uri")) {
-				Timer timer = new Timer() {		
-					@Override
-					public void run() {
-						LoadResourceEvent.fire(parts[1], injector.getEventBus());
-					}
-				};
-				timer.schedule(2000);
+		if(!injector.getConfigID().existsConfigID()){
+			injector.getEventBus().fireEvent(new PlaceChangedEvent(Places.SELECT_CONFIG));
+		}else{
+			if (History.getToken() == null || History.getToken().length() == 0) {
+				// Go to the default place
+				injector.getEventBus().fireEvent(
+					new PlaceChangedEvent(Places.DEFAULT));
+			}
+			// Trigger history tokens.
+			// ONLY IS VALID IF THE APP HAVE VALID CONFIG ID
+			String parameters[] = Window.Location.getQueryString().substring(1)
+					.split("&");
+			for (String param : parameters) {
+				final String[] parts = param.split("=");
+				if (parts[0].equals("uri")) {
+					//TODO remove timer and use events.
+					Timer timer = new Timer() {
+						@Override
+						public void run() {
+							LoadResourceEvent
+									.fire(parts[1], injector.getEventBus());
+						}
+					};
+					timer.schedule(2000);
+				}
 			}
 		}
-        placeManager.fireCurrentPlace();
+		placeManager.fireCurrentPlace();
 
 	}
+		
 }

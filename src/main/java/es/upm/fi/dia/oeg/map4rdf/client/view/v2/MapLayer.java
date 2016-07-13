@@ -22,6 +22,8 @@ package es.upm.fi.dia.oeg.map4rdf.client.view.v2;
 
 
 
+import org.gwtopenmaps.openlayers.client.Map;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasWidgets;
 
@@ -31,6 +33,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometry;
 
 /**
  * @author Alexander De Leon
@@ -47,6 +50,8 @@ public interface MapLayer {
 
 	HasClickHandlers drawCircle(StyleMapShape<Circle> circle, String text);
 	
+	HasClickHandlers drawWKTGeometry(StyleMapShape<WKTGeometry> createStyle, DrawPointStyle drawStyle);
+	
 	void removePolylines();
 	
 	void removePointsStyle(DrawPointStyle pointStyle);
@@ -57,10 +62,15 @@ public interface MapLayer {
 	
 	MapView getMapView();
 
+	Map getOLMap();
+	
+	void unselectFeatures();
+	
 	interface PopupWindow extends HasWidgets {
 
 		void open(Point location);
 
 		void close();
 	}
+	
 }

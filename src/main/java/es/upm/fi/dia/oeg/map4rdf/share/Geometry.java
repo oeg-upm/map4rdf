@@ -32,5 +32,7 @@ import java.util.Collection;
 public interface Geometry extends HasUri, MapShape {
 
 	Collection<Point> getPoints();
+	
+	String getProjection();
 
 }

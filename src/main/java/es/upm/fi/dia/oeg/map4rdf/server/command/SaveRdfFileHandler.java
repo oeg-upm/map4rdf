@@ -28,9 +28,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-
-import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 
@@ -41,9 +38,7 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SaveRdfFile;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.Configuration;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.GetServletContext;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 
 /**
@@ -52,8 +47,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
 public class SaveRdfFileHandler implements
 		ActionHandler<SaveRdfFile, SingletonResult<String> > {
 
-	private ServletContext servletContext;
-	private Configuration config;
+	private MultipleConfigurations configurations;
 	private Logger logger = Logger.getLogger(SaveRdfFileHandler.class);
 	@Override
 	public Class<SaveRdfFile> getActionType() {
@@ -61,36 +55,37 @@ public class SaveRdfFileHandler implements
 	}
 	
 	@Inject
-	public SaveRdfFileHandler(GetServletContext getServletContext) {
-		super();
-		servletContext = getServletContext.getServletContext();
-		InputStream propIn = servletContext.getResourceAsStream(Constants.CONFIGURATION_FILE);
-        try {
-            config = new Configuration(propIn);
-        } catch (IOException ex) {
-        	logger.error(ex);
-        }
+	public SaveRdfFileHandler(MultipleConfigurations configurations) {
+		this.configurations = configurations;
 	}
 
 	@Override
 	public SingletonResult<String> execute(SaveRdfFile action,
 			ExecutionContext context) throws ActionException {
-		
-		String path = config.getConfigurationParamValue(ParameterNames.RDF_STORE_PATH);
-		
-		File file = new File(path + action.getFileName());
+		if(!configurations.existsConfiguration(action.getConfigID())){
+			throw new ActionException("Bad Config ID");
+		}
+		String path = configurations.getConfiguration(action.getConfigID())
+				.getConfigurationParamValue(ParameterNames.RDF_STORE_PATH);
+		if(!path.endsWith(File.separator)){
+			path = path+File.separator;
+		}
+		File file = new File(path +action.getConfigID()+File.separator+ action.getFileName());
     	if (file.exists()) {
     		logger.error("When save Edited rdf file, the file exists.");
     		return new SingletonResult<String>("The file exists");
     	}else{
     		try {
-    			File dirs= new File(path);
-    			dirs.mkdirs();
+    			File dirs= new File(path+action.getConfigID()+File.separator);
+    			if(!dirs.exists()){
+    				dirs.mkdirs();
+    			}
 				if(!file.createNewFile()){
+					return new SingletonResult<String>("Cant create the file.");
 				}
 			} catch (IOException e) {
 				logger.error("Can not save edited rdf file: ",e);
-				return new SingletonResult<String>("Cant create the file");
+				return new SingletonResult<String>("Cant create the file.");
 			}
     	}	
     	
@@ -103,7 +98,7 @@ public class SaveRdfFileHandler implements
 	    	
 		} catch (IOException e) {
 			logger.error("Can not save edited rdf file. Buffered ERROR: ",e);
-			return new SingletonResult<String>("Buffered ERROR");
+			return new SingletonResult<String>("BufferedWriter ERROR when save the content.");
 		}
 		
 		return new SingletonResult<String>("");

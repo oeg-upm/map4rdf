@@ -42,6 +42,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetGeoResourceOverlays;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticDatasets;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetStatisticYears;
 import es.upm.fi.dia.oeg.map4rdf.client.action.ListResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.AreaFilterChangedHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.MapletEvent;
@@ -90,15 +91,17 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 		void startProcessing();
 
 	}
-
+	
+	private final ConfIDInterface configID;
 	private final DispatchAsync dispatchAsync;
 	private StatisticDefinition currentStatistic;
 	private final MapLayer mapLayer;
 	private WidgetFactory widgetFactory;
 	private BrowserMessages messages;
 	@Inject
-	public StatisticsPresenter(Display view, EventBus eventBus, MapPresenter mapPresenter, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
+	public StatisticsPresenter(ConfIDInterface configID, Display view, EventBus eventBus, MapPresenter mapPresenter, DispatchAsync dispatchAsync, WidgetFactory widgetFactory, BrowserMessages messages) {
 		super(view, eventBus);
+		this.configID=configID;
 		this.dispatchAsync = dispatchAsync;
 		this.widgetFactory = widgetFactory;
 		this.messages = messages;
@@ -121,7 +124,7 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 
 			@Override
 			public void myMapletActivated(MapletEvent event) {
-				dispatchAsync.execute(new GetStatisticDatasets(), new AsyncCallback<ListResult<Resource>>() {
+				dispatchAsync.execute(new GetStatisticDatasets(configID.getConfigID()), new AsyncCallback<ListResult<Resource>>() {
 
 					@Override
 					public void onSuccess(ListResult<Resource> result) {
@@ -160,7 +163,7 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 		currentStatistic = statistic;
 		
 		refreshTimeline();
-		GetStatisticYears action = new GetStatisticYears(statistic.getDataset());
+		GetStatisticYears action = new GetStatisticYears(configID.getConfigID(),statistic.getDataset());
 		getDisplay().startProcessing();
 		dispatchAsync.execute(action, new AsyncCallback<ListResult<Year>>() {
 			@Override
@@ -179,7 +182,7 @@ public class StatisticsPresenter extends ControlPresenter<StatisticsPresenter.Di
 	}
 
 	private void drawStatistics() {
-		GetGeoResourceOverlays action = new GetGeoResourceOverlays(mapLayer.getMapView().getVisibleBox());
+		GetGeoResourceOverlays action = new GetGeoResourceOverlays(configID.getConfigID(),mapLayer.getMapView().getVisibleBox());
 		action.setStatisticDefinition(currentStatistic);
 		getDisplay().startProcessing();
 		dispatchAsync.execute(action, new AsyncCallback<ListResult<GeoResourceOverlay>>() {

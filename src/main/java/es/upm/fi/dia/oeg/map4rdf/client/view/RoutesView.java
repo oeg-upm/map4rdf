@@ -2,20 +2,20 @@ package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.gwtopenmaps.openlayers.client.LonLat;
 
-
-
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.dispatch.client.DispatchAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,7 +36,6 @@ import com.google.gwt.maps.client.services.DirectionsService;
 import com.google.gwt.maps.client.services.DirectionsStatus;
 import com.google.gwt.maps.client.services.DirectionsWaypoint;
 import com.google.gwt.maps.client.services.TravelMode;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -59,6 +58,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePoints;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetRoutePointsResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.RoutesAddPointEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.RoutesAddPointHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
@@ -70,6 +70,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.util.GeoResourceGeometry;
+import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.util.PanelWithGeoResourceGeometry;
 import es.upm.fi.dia.oeg.map4rdf.client.util.RouteSelectedCallback;
@@ -89,6 +90,8 @@ import es.upm.fi.dia.oeg.map4rdf.share.TwoDimentionalCoordinate;
 
 
 public class RoutesView extends ResizeComposite implements RoutesPresenter.Display, RoutesAddPointHandler{
+	
+	private final ConfIDInterface configID;
 	private DispatchAsync dispatchAsync;
 	private EventBus eventBus;
 	private MapPresenter mapPresenter;
@@ -128,8 +131,9 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 	private List<Widget> disableWidgetsIfNoDriving;
 	
 	@Inject
-	public RoutesView(EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
+	public RoutesView(ConfIDInterface configID, EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
 			BrowserMessages browserMessages, WidgetFactory widgetFactory) {
+		this.configID = configID;
 		this.dispatchAsync = dispatchAsync;
 		this.eventBus=eventBus;
 		this.mapPresenter = mapPresenter;
@@ -183,8 +187,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				traceRoute();
 			}
 		});
-		DOM.setStyleAttribute(traceRoute.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(traceRoute.getElement(), "right", "20px");
+		traceRoute.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		traceRoute.getElement().getStyle().setRight(20, Unit.PX);
 		Grid optionsGrid=initializeOptionsGrid();
 		optionsDisPanel=new DisclosurePanel(browserMessages.moreOptions());
 		optionsDisPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
@@ -233,7 +237,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		label= new Label(browserMessages.avoidTolls());
 		disableWidgetsIfNoDriving.add(label);
 		grid.setWidget(4, 0,label);
-		travelListBox = new ListBox(false);
+		travelListBox = new ListBox();
+		travelListBox.setMultipleSelect(false);
 		for(int i=0;i<travelsModeInOrder.length;i++){
 			travelListBox.addItem(travelsModeInOrder[i]);
 		}
@@ -252,7 +257,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			}
 		});
 		grid.setWidget(0, 1, travelListBox);
-		ListBox listBox=new ListBox(false);
+		ListBox listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		BooleanBoxChangeHandler changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), routeAlternatives);
 		listBox.addItem(browserMessages.yes());
 		listBox.addItem(browserMessages.no());
@@ -263,7 +269,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			listBox.setSelectedIndex(1);
 		}
-		listBox=new ListBox(false);
+		listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), optimizeWaypoints);
 		listBox.addItem(browserMessages.yes());
 		listBox.addItem(browserMessages.no());
@@ -274,7 +281,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			listBox.setSelectedIndex(1);
 		}
-		listBox=new ListBox(false);
+		listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), avoidHighways);
 		disableWidgetsIfNoDriving.add(listBox);
 		listBox.addItem(browserMessages.yes());
@@ -286,7 +294,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}else{
 			listBox.setSelectedIndex(1);
 		}
-		listBox=new ListBox(false);
+		listBox=new ListBox();
+		listBox.setMultipleSelect(false);
 		disableWidgetsIfNoDriving.add(listBox);
 		changeHandler=new BooleanBoxChangeHandler(listBox, browserMessages.yes(), avoidTolls);
 		listBox.addItem(browserMessages.yes());
@@ -382,12 +391,10 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		mapPresenter.getDisplay().getDefaultLayer().getMapView().closeWindow();
 		List<Point> points = new ArrayList<Point>();
 		for(GeoResourceGeometry geoRG : route){
-			for(Point point:geoRG.getGeometry().getPoints()){
-				LonLat openPoint= OpenLayersAdapter.getLatLng(point);
-				openPoint.transform(point.getProjection(), "EPSG:4326");
-				TwoDimentionalCoordinate twoCoor=OpenLayersAdapter.getTwoDimentionalCoordinate(openPoint,"EPSG:4326");
-				points.add(new PointBean(point.getUri(), twoCoor.getX(),twoCoor.getY(),"EPSG:4326"));
-			}
+			LonLat openPoint= OpenLayersAdapter.getLatLng(GeoUtils.getCentroid(geoRG.getGeometry()));
+			openPoint.transform(geoRG.getGeometry().getProjection(), "EPSG:4326");
+			TwoDimentionalCoordinate twoCoor=OpenLayersAdapter.getTwoDimentionalCoordinate(openPoint,"EPSG:4326");
+			points.add(new PointBean(geoRG.getGeometry().getUri(), twoCoor.getX(),twoCoor.getY(),"EPSG:4326"));
 		}
 		if(route.size()<2){
 			widgetFactory.getDialogBox().showError(browserMessages.error2OrMorePoints());
@@ -396,7 +403,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			return;
 		}
 		mapPresenter.getDisplay().startProcessing();
-		GetRoutePoints action = new GetRoutePoints(points);
+		GetRoutePoints action = new GetRoutePoints(configID.getConfigID(),points);
 		dispatchAsync.execute(action, new AsyncCallback<GetRoutePointsResult>() {
 
 			@Override
@@ -415,7 +422,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 				if(points.isEmpty()){
 					executeGoogleDirections();
 				}else{
-					Geometry geometry = new PolyLineBean(null, points);
+					Geometry geometry = new PolyLineBean(null, points, points.get(0).getProjection());
 					GeoResource geoResource = new GeoResource(null,geometry);
 					listGeoResource.add(geoResource);
 					mapPresenter.getDisplay().stopProcessing();
@@ -615,9 +622,9 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		anchor.setTarget("_blank");
 		anchorContainer.add(anchor);
 		anchorContainer.setSize("170px","100%");
-		DOM.setStyleAttribute(anchorContainer.getElement(), "wordWrap", "break-word");
-		DOM.setStyleAttribute(anchorContainer.getElement(), "textAlign", "center");
-		DOM.setStyleAttribute(anchor.getElement(), "textAlign","center");
+		anchorContainer.getElement().getStyle().setProperty("wordWrap", "break-word");
+		anchorContainer.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		anchor.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		char leter=DrawPointStyle.getMinLeter();
 		if(row<DrawPointStyle.getLeterSize()){
 			leter=(char)(DrawPointStyle.getMinLeter()+row);
@@ -626,6 +633,8 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		}
 		DrawPointStyle style= new DrawPointStyle(leter);
 		List<GeoResource> list= new ArrayList<GeoResource>();
+		GeoResource centroidResource = new GeoResource(resource.getUri(),GeoUtils.getCentroid(geometry));
+		list.add(centroidResource);
 		list.add(resource);
 		mapPresenter.drawGeoResources(list, style);
 		routesWidget.setWidget(row, 0, new Image(GWT.getModuleBaseURL()+style.getImageURL()));
@@ -635,7 +644,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		Button button = new Button();
 		button.setSize("32px", "28px");
 		button.getElement().appendChild(new Image(browserResources.eraserIcon()).getElement());
-		DOM.setStyleAttribute(button.getElement(),"left" , "0px");
+		button.getElement().getStyle().setLeft(0, Unit.PX);
 		routesWidget.setWidget(row, 2, button);
 		ClickHandler handler = new ClickHandler() {
 			
@@ -707,23 +716,18 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		JsArray<DirectionsWaypoint> waypointsJsArray = (JsArray<DirectionsWaypoint>) (DirectionsWaypoint.createArray());
 		for(int i=0;i<route.size();i++){
 			GeoResourceGeometry geoResourceGeometry = route.get(i);
-			Collection<Point> collection = geoResourceGeometry.getGeometry().getPoints();
-			Point[] array = collection.toArray(new Point[geoResourceGeometry.getGeometry().getPoints().size()]);
-			for(int j=0;j<array.length;j++){
-				Point point=array[j];
-				LonLat openPoint= OpenLayersAdapter.getLatLng(point);
-				openPoint.transform(point.getProjection(), "EPSG:4326");
-				LatLng latLng= LatLng.newInstance(openPoint.lat(),openPoint.lon());
-				DirectionsWaypoint waypoint=DirectionsWaypoint.newInstance();
-				waypoint.setLocation(latLng);
-				if(i==0 && j==0){
-					request.setOrigin(latLng);
-				} else if(i==route.size()-1 && j==array.length-1){
-					request.setDestination(latLng);
-				}else{
-					waypointsJsArray.push(waypoint);
-				}
-				
+			Point point=GeoUtils.getCentroid(geoResourceGeometry.getGeometry());
+			LonLat openPoint= OpenLayersAdapter.getLatLng(point);
+			openPoint.transform(point.getProjection(), "EPSG:4326");
+			LatLng latLng= LatLng.newInstance(openPoint.lat(),openPoint.lon());
+			DirectionsWaypoint waypoint=DirectionsWaypoint.newInstance();
+			waypoint.setLocation(latLng);
+			if(i==0){
+				request.setOrigin(latLng);
+			} else if(i==route.size()-1){
+				request.setDestination(latLng);
+			}else{
+				waypointsJsArray.push(waypoint);
 			}
 		}
 		request.setTravelMode(travelMode);
@@ -797,7 +801,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 			Double lng=directionRoute.getOverview_Path().get(j).getLongitude();
 			points.add(new PointBean("", lng, lat,"EPSG:4326"));
 		}	
-		Geometry geometry = new PolyLineBean(null, points);
+		Geometry geometry = new PolyLineBean(null, points,"EPSG:4326");
 		GeoResource geoResource = new GeoResource(null,geometry);
 		List<GeoResource> list=new ArrayList<GeoResource>();
 		list.add(geoResource);
@@ -812,7 +816,7 @@ public class RoutesView extends ResizeComposite implements RoutesPresenter.Displ
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		Label errorLabel=new Label(error);
 		errorLabel.setHeight("70px");
-		DOM.setStyleAttribute(errorLabel.getElement(),"textAlign", "Center");
+		errorLabel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		panel.add(errorLabel);
 		panel.setCellVerticalAlignment(errorLabel, HasVerticalAlignment.ALIGN_TOP);
 		Button button=new Button(browserMessages.close());

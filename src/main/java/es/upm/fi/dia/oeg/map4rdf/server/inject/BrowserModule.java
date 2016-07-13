@@ -25,18 +25,6 @@
 package es.upm.fi.dia.oeg.map4rdf.server.inject;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
-
-import es.upm.fi.dia.oeg.map4rdf.server.conf.Constants;
-import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.Map4rdfDao;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.AemetDaoImpl;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.DbPediaDaoImpl;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoLinkedDataDaoImpl;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.GeoSparqlDaoImpl;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.VCardDaoImpl;
-import es.upm.fi.dia.oeg.map4rdf.server.dao.impl.WebNMasUnoImpl;
 
 /**
  * @author Alexander De Leon
@@ -47,27 +35,4 @@ public class BrowserModule extends AbstractModule {
 	protected void configure() {
 	};
 
-	@Provides
-	Map4rdfDao provideDao(@Named(ParameterNames.GEOMETRY_MODEL) Constants.GeometryModel model,
-			@Named(ParameterNames.ENDPOINT_URL) String endpointUri,
-			@Named(ParameterNames.DEFAULT_PROJECTION) String defaultProjection,
-			@Named(ParameterNames.ENDPOINT_URL_GEOSPARQL) String endpointGeoSparqlUri) {
-		switch (model) {
-		case OEG:
-			return new GeoLinkedDataDaoImpl(endpointUri,defaultProjection);
-		case DBPEDIA:
-			return new DbPediaDaoImpl(endpointUri,defaultProjection);
-		case VCARD:
-			return new VCardDaoImpl(endpointUri,defaultProjection);
-		case GEOSPARQL:
-			return new GeoSparqlDaoImpl(endpointUri,endpointGeoSparqlUri,defaultProjection);
-		case AEMET:
-			return new AemetDaoImpl(endpointUri,defaultProjection);
-		case WEBNMASUNO:
-			return new WebNMasUnoImpl(endpointUri,defaultProjection);
-		default:
-			// make compiler happys
-			return null;
-		}
-	}
 }

@@ -25,6 +25,9 @@
 package es.upm.fi.dia.oeg.map4rdf.client;
 
 
+import net.customware.gwt.dispatch.client.DispatchAsync;
+import net.customware.gwt.presenter.client.EventBus;
+
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -33,9 +36,12 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.controllers.AppController;
+import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.Header;
+import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
 
 /**
  * @author Alexander De Leon
@@ -43,18 +49,17 @@ import es.upm.fi.dia.oeg.map4rdf.client.widget.Header;
 public class BrowserUi extends ResizeComposite implements AppController.Display {
 
 	private final LayoutPanel appView;
-
 	@Inject
-	public BrowserUi(BrowserResources resources) {
+	public BrowserUi(BrowserResources resources, BrowserMessages messages, ConfIDInterface configID, DispatchAsync dispatchAsync, EventBus eventBus, WidgetFactory widgetFactory) {
 		appView = new LayoutPanel();
-		initWidget(createUi(resources));
+		initWidget(createUi(resources,messages,configID,dispatchAsync,eventBus,widgetFactory));
                 
 		StyleInjector.inject(resources.css().getText());
 	}
 
-	private Widget createUi(BrowserResources resources) {
+	private Widget createUi(BrowserResources resources,BrowserMessages messages, ConfIDInterface configID, DispatchAsync dispatchAsync, EventBus eventBus, WidgetFactory widgetFactory) {
 		DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
-		panel.addNorth(new Header(resources), 88);
+		panel.addNorth(new Header(resources, messages, configID, dispatchAsync, eventBus, widgetFactory), 88);
 		//panel.addSouth(new es.upm.fi.dia.oeg.map4rdf.client.widget.Footer(resources), 25);
 		panel.add(appView);
 

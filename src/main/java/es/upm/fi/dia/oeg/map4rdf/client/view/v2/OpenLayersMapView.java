@@ -37,9 +37,11 @@ import org.gwtopenmaps.openlayers.client.Bounds;
 import org.gwtopenmaps.openlayers.client.geometry.Geometry;
 import org.gwtopenmaps.openlayers.client.geometry.Polygon;
 
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
@@ -49,7 +51,10 @@ import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfiguration;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMapsConfigurationResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParametersResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.FacetReloadEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserMessages;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
@@ -80,7 +85,7 @@ public class OpenLayersMapView implements MapView {
 	private Map map;
 	private MapWidget mapWidget;
 	private final OpenLayersMapLayer defaultLayer;
-	private AbsolutePanel panel;
+	protected AbsolutePanel panel;
 	private LayerSwitcher layerSwitcher;
 	private EventBus eventBus;
 	private String defaultProjection;
@@ -89,8 +94,10 @@ public class OpenLayersMapView implements MapView {
 	// drawing
 	private FilterAreaLayer filterAreaLayer;
 	private WidgetFactory widgetFactory;
+	private final ConfIDInterface configID;
 	
-	public OpenLayersMapView(WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
+	public OpenLayersMapView(ConfIDInterface configID,WidgetFactory widgetFactory, DispatchAsync dispatchAsync,EventBus eventBus,BrowserResources browserResources, BrowserMessages browserMessages) {
+		this.configID = configID;
 		this.browserResources=browserResources;
 		this.eventBus=eventBus;
 		this.widgetFactory = widgetFactory;
@@ -100,12 +107,27 @@ public class OpenLayersMapView implements MapView {
 		defaultLayer = (OpenLayersMapLayer) createLayer("default");
 		addNotice();
 		filterAreaLayer = new FilterAreaLayer(map);
+		this.dispatchAsync=dispatchAsync;
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+		
+		
+	}
+	private void initAsync(){
 		List<String> toGet=new ArrayList<String>();
 		for(String i:getParameters){
 			toGet.add(i);
 		}
-		GetMultipleConfigurationParameters action = new GetMultipleConfigurationParameters(toGet);
-		this.dispatchAsync=dispatchAsync;
+		GetMultipleConfigurationParameters action = new GetMultipleConfigurationParameters(configID.getConfigID(),toGet);
 		dispatchAsync.execute(action, new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
 			@Override
@@ -120,7 +142,6 @@ public class OpenLayersMapView implements MapView {
 			}
 		
 		});
-		
 	}
 
 	private void addNotice() {
@@ -213,13 +234,13 @@ public class OpenLayersMapView implements MapView {
 				eventBus.fireEvent(new FacetReloadEvent());
 			}
 		});
-		DOM.setStyleAttribute(image.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(image.getElement(), "top", "62px");
-		DOM.setStyleAttribute(image.getElement(), "left", "8px");
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
-		DOM.setStyleAttribute(image.getElement(), "zIndex", "2080");
+		image.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		image.getElement().getStyle().setTop(62, Unit.PX);
+		image.getElement().getStyle().setLeft(8, Unit.PX);
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
+		image.getElement().getStyle().setZIndex(2080);
 		panel.add(image);
-		DOM.setStyleAttribute(panel.getElement(), "zIndex", "0");
+		panel.getElement().getStyle().setZIndex(0);
 	}
 	
 	private void createAsyncUi(java.util.Map<String,String> parameters){
@@ -251,7 +272,7 @@ public class OpenLayersMapView implements MapView {
 				widgetFactory.getDialogBox().showError(
 						browserMessages.configParameterCantBeParse(ParameterNames.MAP_ZOOM_LEVEL, "integer"));
 			}
-			dispatchAsync.execute(new GetMapsConfiguration(), new AsyncCallback<GetMapsConfigurationResult>() {
+			dispatchAsync.execute(new GetMapsConfiguration(configID.getConfigID()), new AsyncCallback<GetMapsConfigurationResult>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					widgetFactory.getDialogBox().showError(

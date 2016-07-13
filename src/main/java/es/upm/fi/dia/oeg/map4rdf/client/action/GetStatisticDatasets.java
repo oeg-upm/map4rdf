@@ -32,8 +32,15 @@ import es.upm.fi.dia.oeg.map4rdf.share.Resource;
  * 
  * @author Alexander De Leon
  */
-public class GetStatisticDatasets implements Action<ListResult<Resource>> {
-
-	// empty
-
+public class GetStatisticDatasets extends MultipleConfigurationAction implements Action<ListResult<Resource>> {
+	
+	private static final long serialVersionUID = 3036938713870862629L;
+	
+	private GetStatisticDatasets(){
+		super("");
+		//For serialization
+	}
+	public GetStatisticDatasets(String configID) {
+		super(configID);
+	}
 }

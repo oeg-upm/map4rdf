@@ -31,9 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -46,6 +47,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.event.FacetValueSelectionChangedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.event.FacetValueSelectionChangedHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.event.HasFacetValueSelectionChangedHandler;
+import es.upm.fi.dia.oeg.map4rdf.share.ConfigurationDrawColoursBy;
 
 /**
  * @author Alexander De Leon
@@ -71,7 +73,10 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 	private Stylesheet stylesheet;
 	private static int[] freeHexColour;
 	private Map<String,Integer> relationFacetIDHexColour;
-	public FacetWidget() {
+	private ConfigurationDrawColoursBy drawColoursBy = ConfigurationDrawColoursBy.getDefault();
+	
+	public FacetWidget(ConfigurationDrawColoursBy drawColoursBy) {
+		this.drawColoursBy = drawColoursBy;
 		selectionOptions = new HashMap<String, CheckBox>();
 		if(freeHexColour==null){
 			freeHexColour= new int[DrawPointStyle.getHexColours().length];
@@ -83,8 +88,8 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 		initWidget(createUi());
 	}
 
-	public FacetWidget(Stylesheet stylesheet) {
-		this();
+	public FacetWidget(Stylesheet stylesheet,ConfigurationDrawColoursBy drawColoursBy1) {
+		this(drawColoursBy1);
 		setStylesheet(stylesheet);
 	}
 	public void setLabel(String label) {
@@ -150,21 +155,32 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 	@Override
 	public void setHeight(String height) {
 		super.setHeight(height);
-		DOM.setStyleAttribute(scrollPanel.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(scrollPanel.getElement(), "top", "22px");
+		this.getElement().getStyle().setProperty("minHeight",50*selectionOptions.size() ,Unit.PX);
+		scrollPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		scrollPanel.getElement().getStyle().setTop(22, Unit.PX);
 	}
 	
+	public void setHeight(String height, int numberOfElements) {
+		super.setHeight(height);
+		int minHeight = 30+15*numberOfElements;
+		if(minHeight>150){
+			minHeight = 150;
+		}
+		this.getElement().getStyle().setProperty("minHeight",minHeight ,Unit.PX);
+		scrollPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		scrollPanel.getElement().getStyle().setTop(22, Unit.PX);
+	}
 	private void fireSelectionChanged(String id, Boolean value) {
-		if(value){
+		if(value && drawColoursBy==ConfigurationDrawColoursBy.FACET){
 			relationFacetIDHexColour.put(id, getFirtsFreeColour());
-			DOM.setStyleAttribute(selectionOptions.get(id).getElement(), "background", DrawPointStyle.getHexColours()[relationFacetIDHexColour.get(id)]);
+			selectionOptions.get(id).getElement().getStyle().setProperty("background", DrawPointStyle.getHexColours()[relationFacetIDHexColour.get(id)]);
 		}else{
 			if(relationFacetIDHexColour.containsKey(id)){
 				removeHexColour(relationFacetIDHexColour.get(id));
 			}
-			DOM.setStyleAttribute(selectionOptions.get(id).getElement(), "background", "");
+			selectionOptions.get(id).getElement().getStyle().setProperty("background", "");
 		}
-		if(relationFacetIDHexColour.get(id)!=null){
+		if(relationFacetIDHexColour.get(id)!=null && drawColoursBy==ConfigurationDrawColoursBy.FACET){
 			fireEvent(new FacetValueSelectionChangedEvent(DrawPointStyle.getHexColours()[relationFacetIDHexColour.get(id)],id, value));
 		}else{
 			fireEvent(new FacetValueSelectionChangedEvent("", id, value));
@@ -184,7 +200,7 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 		});
 		return sortedList;
 	}
-	private static synchronized int getFirtsFreeColour(){
+	private synchronized int getFirtsFreeColour(){
 		int menor=Integer.MAX_VALUE;
 		int firtsFreeColour=0;
 		for(int i=0;i<freeHexColour.length;i++){
@@ -196,12 +212,18 @@ public class FacetWidget extends ResizeComposite implements HasFacetValueSelecti
 		freeHexColour[firtsFreeColour]++;
 		return firtsFreeColour;	
 	}
-	private static synchronized void removeHexColour(int positionHexColour){
+	private synchronized void removeHexColour(int positionHexColour){
 		if(positionHexColour>=0 && positionHexColour<freeHexColour.length){
 			freeHexColour[positionHexColour]--;
 			if(freeHexColour[positionHexColour]<0){
 				freeHexColour[positionHexColour]=0;
 			}
 		}
+	}
+
+	public void setConfigurationDrawColours(
+			ConfigurationDrawColoursBy drawColoursBy2) {
+		this.drawColoursBy=drawColoursBy2;
+		
 	}
 }

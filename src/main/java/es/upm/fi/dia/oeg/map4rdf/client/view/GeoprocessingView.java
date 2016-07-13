@@ -1,6 +1,7 @@
 package es.upm.fi.dia.oeg.map4rdf.client.view;
 
 import net.customware.gwt.dispatch.client.DispatchAsync;
+import net.customware.gwt.presenter.client.EventBus;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -11,6 +12,9 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetConfigurationParameter;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.BufferPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.DashboardPresenter;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.GeoprocessingPresenter;
@@ -32,13 +36,28 @@ public class GeoprocessingView  extends ResizeComposite implements Geoprocessing
 		String routesResourceBox();
 	}
 	@Inject
-	public GeoprocessingView(RoutesPresenter routesPresenter, BufferPresenter bufferPresenter, BrowserMessages browserMessages, DispatchAsync dispatchAsync){
+	public GeoprocessingView(final ConfIDInterface configID,RoutesPresenter routesPresenter, BufferPresenter bufferPresenter, BrowserMessages browserMessages, final DispatchAsync dispatchAsync, EventBus eventBus){
 		this.routesPresenter=routesPresenter;
 		this.bufferPresenter=bufferPresenter;
 		this.browserMessages=browserMessages;
 		routesPresenter.getDisplay().setGeoprocessingDisplay(this);
 		bufferPresenter.getDisplay().setGeoprocessingDisplay(this);
-		dispatchAsync.execute(new GetConfigurationParameter(ParameterNames.SUMMARY_WIDGETS), new AsyncCallback<SingletonResult<String>>() {
+		if(configID.existsConfigID()){
+			initAsync(configID.getConfigID(), dispatchAsync);
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync(configID, dispatchAsync);
+				}
+			});
+		}
+		panel = new TabLayoutPanel(22, Unit.PX);
+		initWidget(panel);
+	}
+	private void initAsync(String configID, DispatchAsync dispatchAsync){
+		dispatchAsync.execute(new GetConfigurationParameter(configID,ParameterNames.SUMMARY_WIDGETS), new AsyncCallback<SingletonResult<String>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 			}
@@ -46,14 +65,12 @@ public class GeoprocessingView  extends ResizeComposite implements Geoprocessing
 			@Override
 			public void onSuccess(SingletonResult<String> value) {	
 				if(value.getValue()!=null && !value.getValue().isEmpty()){
-					initWidget(createUi(value.getValue()));
+					createAsyncUi(value.getValue());
 				}
 			}
 		});
-		
 	}
-	private Widget createUi(String widgets) {
-		panel = new TabLayoutPanel(22, Unit.PX);
+	private void createAsyncUi(String widgets) {
 		if(widgets!=null){
 			if(widgets.contains(WidgetsNames.ROUTES)){
 				panel.add(routesPresenter.getDisplay().asWidget(),browserMessages.routes());
@@ -64,7 +81,6 @@ public class GeoprocessingView  extends ResizeComposite implements Geoprocessing
 				panel.selectTab(bufferPresenter.getDisplay().asWidget());
 			}
 		}
-		return panel;
 	}
 	@Override
 	public Widget asWidget() {

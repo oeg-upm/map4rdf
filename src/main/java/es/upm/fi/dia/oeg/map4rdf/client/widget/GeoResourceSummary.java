@@ -26,10 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -47,10 +49,13 @@ import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParameters;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetMultipleConfigurationParametersResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.CloseMapMainPopupEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.DashboardDoSelectedResultWidgetEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.EditResourceEvent;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfiguration;
+import es.upm.fi.dia.oeg.map4rdf.client.event.OnSelectedConfigurationHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetAddEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetDoSelectedEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.ResultWidgetRemoveEvent;
@@ -61,6 +66,7 @@ import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoExecuter;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoExecuter.InfoCallback;
 import es.upm.fi.dia.oeg.map4rdf.client.util.AdditionalInfoSummary;
+import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.ParametersSummaryMove;
 import es.upm.fi.dia.oeg.map4rdf.client.util.RoutesAddGeoResourceType;
 import es.upm.fi.dia.oeg.map4rdf.client.util.WidgetsNames;
@@ -76,7 +82,7 @@ import es.upm.fi.dia.oeg.map4rdf.share.conf.SharedGeometryModels;
  */
 public class GeoResourceSummary extends Composite {
 
-	
+	private final ConfIDInterface configID;
 	private BrowserMessages messages;
 	private BrowserResources resources;
 	private WidgetFactory widgetFactory;
@@ -104,7 +110,7 @@ public class GeoResourceSummary extends Composite {
 	private Widget wikipediaResultWidget;
 	private Widget wikipediaWidget;
 	private String twitterURL;
-	private String wikipediaParseURL;
+	private String wikipediaParseURL=GWT.getModuleBaseURL()+"parseWikipedia?URL=";
 	private Map<String,String> additionalsInfo;
 	private DispatchAsync dispatchAsync;
 	private Panel centerPanel;
@@ -113,7 +119,8 @@ public class GeoResourceSummary extends Composite {
 	public final String SUMMARY_WIDGETS_NAMES = WidgetsNames.ALL_IN_ORDER;
 	private int moveType;
 	
-	public GeoResourceSummary(DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, WidgetFactory widgetFactory) {
+	public GeoResourceSummary(ConfIDInterface configID,DispatchAsync dispatchAsync,EventBus eventBus,BrowserMessages messages, BrowserResources appResources, WidgetFactory widgetFactory) {
+		this.configID = configID;
 		this.messages = messages;
 		this.resources=appResources;
 		this.eventBus = eventBus;
@@ -121,12 +128,26 @@ public class GeoResourceSummary extends Composite {
 		allWidgetsWithName=new HashMap<String, Widget>();
 		allWidgetInOrder=new ArrayList<Widget>();
 		this.dispatchAsync=dispatchAsync;
+		if(configID.existsConfigID()){
+			initAsync();
+		}else{
+			eventBus.addHandler(OnSelectedConfiguration.getType(), new OnSelectedConfigurationHandler() {
+				
+				@Override
+				public void onSelectecConfiguration(String configID) {
+					initAsync();
+				}
+			});
+		}
+		
+		initWidget(createUi());
+	}
+	private void initAsync(){
 		List<String> parameters= new ArrayList<String>();
-		parameters.add(ParameterNames.WIKIPEDIA_PARSE_URL);
 		parameters.add(ParameterNames.SUMMARY_WIDGETS);
 		parameters.add(ParameterNames.TWITTER_STATUS_URL);
 		parameters.add(ParameterNames.GEOMETRY_MODEL);
-		dispatchAsync.execute(new GetMultipleConfigurationParameters(parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
+		dispatchAsync.execute(new GetMultipleConfigurationParameters(configID.getConfigID(),parameters), new AsyncCallback<GetMultipleConfigurationParametersResult>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -137,14 +158,6 @@ public class GeoResourceSummary extends Composite {
 
 			@Override
 			public void onSuccess(GetMultipleConfigurationParametersResult result) {
-				String wiki=result.getResults().get(ParameterNames.WIKIPEDIA_PARSE_URL);
-				if(wiki!=null && !wiki.isEmpty()){
-					wikipediaParseURL=wiki;
-				}else{
-					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
-							GeoResourceSummary.this.messages.configParameterNullOrEmpty(ParameterNames.WIKIPEDIA_PARSE_URL));
-							
-				}
 				String summaryWidgets=result.getResults().get(ParameterNames.SUMMARY_WIDGETS);
 				if(summaryWidgets==null || summaryWidgets.isEmpty()){
 					GeoResourceSummary.this.widgetFactory.getDialogBox().showError(
@@ -169,9 +182,7 @@ public class GeoResourceSummary extends Composite {
 				}
 			}
 		});
-		initWidget(createUi());
 	}
-
 	public void setGeoResource(final GeoResource resource, Geometry geometry) {
 		//TODO Analyze if it is easy to implement closeProperSummary depend on configuration param.
 		openOrCloseSummary(false);
@@ -181,7 +192,7 @@ public class GeoResourceSummary extends Composite {
 		centerPanel.add(getCenterImage());
 	
 		AdditionalInfoExecuter.cancelAllCallbacks();
-		AdditionalInfoExecuter.getAdditionalInfo(dispatchAsync, resource, new InfoCallback() {
+		AdditionalInfoExecuter.getAdditionalInfo(configID.getConfigID(), dispatchAsync, resource, new InfoCallback() {
 			@Override
 			public void success(AdditionalInfoSummary additionalInfo) {
 				summary.clearAdditionalInfo();
@@ -190,8 +201,8 @@ public class GeoResourceSummary extends Composite {
 					centerPanel.clear();
 					Image image= new Image(GWT.getModuleBaseURL()
 							+ additionalInfo.getImage());
-					DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
-					DOM.setStyleAttribute(image.getElement(), "position", "absolute");
+					image.getElement().getStyle().setCursor(Cursor.POINTER);
+					image.getElement().getStyle().setPosition(Position.ABSOLUTE);
 					image.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
@@ -207,10 +218,10 @@ public class GeoResourceSummary extends Composite {
 			eventBus.fireEvent(new ResultWidgetRemoveEvent(wikipediaResultWidget));
 			wikipediaResultWidget=null;
 		}
-		if (geometry.getType() == MapShape.Type.POINT) {
+		if(GeoUtils.getCentroid(geometry)!=null){
 			routesWidget.setVisible(true);
 			bufferWidget.setVisible(true);
-		} else {
+		}else{
 			routesWidget.setVisible(false);
 			bufferWidget.setVisible(false);
 		}
@@ -252,19 +263,19 @@ public class GeoResourceSummary extends Composite {
 		int centerTop=intSizeImages;
 		left=centerLeft+left;
 		top=centerTop-top;
-		DOM.setStyleAttribute(widget.getElement(), "left", left+"px");
-		DOM.setStyleAttribute(widget.getElement(), "top", top+"px");
+		widget.getElement().getStyle().setLeft(left, Unit.PX);
+		widget.getElement().getStyle().setTop(top, Unit.PX);
 	}
 	private Widget createUi() {
 		mainPanel= new FlowPanel();
 		mainPanel.setSize(sizeAllTable, sizeAllTable);
 		Image image=new Image(resources.summaryBackGround());
 		image.setSize(sizeAllTable, sizeAllTable);
-		DOM.setStyleAttribute(mainPanel.getElement(), "background", image.getElement().getStyle().getBackgroundImage()+" no-repeat scroll 0px 0px transparent");
+		mainPanel.getElement().getStyle().setProperty("background", image.getElement().getStyle().getBackgroundImage()+" no-repeat scroll 0px 0px transparent");
 		mainPanel.add(centerPanel=getCenter());
-		DOM.setStyleAttribute(centerPanel.getElement(),"position", "absolute");
-		DOM.setStyleAttribute(centerPanel.getElement(),"left", sizeImages);
-		DOM.setStyleAttribute(centerPanel.getElement(),"top", sizeImages);
+		centerPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		centerPanel.getElement().getStyle().setLeft(intSizeImages, Unit.PX);
+		centerPanel.getElement().getStyle().setTop(intSizeImages, Unit.PX);
 		return mainPanel;
 	}
 	
@@ -306,43 +317,43 @@ public class GeoResourceSummary extends Composite {
 		widget=getInfo();
 		infoWidget=widget;
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getWikipedia();
 		wikipediaWidget=widget;
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getSetToBuffer();
 		bufferWidget=widget;
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getTwitter();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getClose();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getEdit();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getAddToRoutes();
 		routesWidget=widget;
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getRDF();
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		widget=getStatistics();
 		statisticsWidget=widget;
 		allWidgetsWithName.put(summaryArrayWidgets[i++], widget);
-		DOM.setStyleAttribute(widget.getElement(),"position", "absolute");
+		widget.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		
 		return mainPanel;
 	}
@@ -350,7 +361,7 @@ public class GeoResourceSummary extends Composite {
 		Image image= new Image(resources.statsSummaryIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.statistics());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -365,7 +376,7 @@ public class GeoResourceSummary extends Composite {
 		Image image= new Image(resources.infoIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.infoResource());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -379,7 +390,7 @@ public class GeoResourceSummary extends Composite {
 		Image image= new Image(resources.wikipediaIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.wikipediaTitle());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -394,7 +405,7 @@ public class GeoResourceSummary extends Composite {
 		Image image= new Image(resources.editIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.edit());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -419,10 +430,10 @@ public class GeoResourceSummary extends Composite {
 	}
 	private GeoResourceSummaryInfo getSummary(String geometryModel){
 		if(SharedGeometryModels.AEMET.equalsIgnoreCase(geometryModel)){
-			return new GeoResourceSummaryInfoAemet(dispatchAsync, resources, messages, widgetFactory);
+			return new GeoResourceSummaryInfoAemet(configID,dispatchAsync, resources, messages, widgetFactory);
 		}
-		if(SharedGeometryModels.WEBNMASUNO.equalsIgnoreCase(geometryModel)){
-			return new GeoResourceSummaryInfoWEBNmas1(dispatchAsync,eventBus, resources, messages);
+		if(SharedGeometryModels.VIAJERO.equalsIgnoreCase(geometryModel)){
+			return new GeoResourceSummaryInfoViajero(configID,dispatchAsync,eventBus, resources, messages);
 		}
 		return new GeoResourceSummaryInfoDefault(messages, resources);
 	}
@@ -430,7 +441,7 @@ public class GeoResourceSummary extends Composite {
 		Image image=new Image(resources.routesIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.addToRoutes());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -445,7 +456,7 @@ public class GeoResourceSummary extends Composite {
 		Image image=new Image(resources.bufferIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.setToBuffer());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -465,7 +476,7 @@ public class GeoResourceSummary extends Composite {
 	private Widget getCenterImage(){
 		Image image=new Image(resources.transparentImage());
 		image.setSize(sizeImages, sizeImages);
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -490,7 +501,7 @@ public class GeoResourceSummary extends Composite {
 		Image image=new Image(resources.closeIcon());
 		image.setSize(sizeImages, sizeImages);
 		image.setTitle(messages.close());
-		DOM.setStyleAttribute(image.getElement(), "cursor", "pointer");
+		image.getElement().getStyle().setCursor(Cursor.POINTER);
 		image.addClickHandler(new ClickHandler() {
 			
 			@Override

@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -31,6 +30,7 @@ import com.google.inject.Inject;
 
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResources;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetBufferGeoResourcesResult;
+import es.upm.fi.dia.oeg.map4rdf.client.conf.ConfIDInterface;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointEvent;
 import es.upm.fi.dia.oeg.map4rdf.client.event.BufferSetPointHandler;
 import es.upm.fi.dia.oeg.map4rdf.client.presenter.BufferPresenter;
@@ -45,13 +45,14 @@ import es.upm.fi.dia.oeg.map4rdf.client.util.GeoUtils;
 import es.upm.fi.dia.oeg.map4rdf.client.util.LocaleUtil;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.PopupGeoprocessingView;
 import es.upm.fi.dia.oeg.map4rdf.client.widget.WidgetFactory;
-import es.upm.fi.dia.oeg.map4rdf.share.BoundingBox;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.Geometry;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoprocessingType;
+import es.upm.fi.dia.oeg.map4rdf.share.Point;
 
 public class BufferView extends ResizeComposite implements BufferPresenter.Display,BufferSetPointHandler{
 	private DispatchAsync dispatchAsync;
+	private final ConfIDInterface configID;
 	private MapPresenter mapPresenter;
 	private ResultsPresenter resultsPresenter;
 	private DashboardPresenter dashboardPresenter;
@@ -71,13 +72,14 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	private Panel resultsBufferWidget;
 	private final DrawPointStyle pointStyle=new DrawPointStyle(DrawPointStyle.Style.NEXT_POINTS);
 	private GeoResource resource;
-	private Geometry geometry;
+	private Point centroid;
 	private enum DistanceTypes{
 		Km,m;
 	}
 	@Inject
-	public BufferView(EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
+	public BufferView(ConfIDInterface configID, EventBus eventBus,MapPresenter mapPresenter,ResultsPresenter resultsPresenter, DispatchAsync dispatchAsync, BrowserResources browserResources,
 			BrowserMessages browserMessages, WidgetFactory widgetFactory){
+		this.configID = configID;
 		this.dispatchAsync = dispatchAsync;
 		this.mapPresenter=mapPresenter;
 		this.resultsPresenter=resultsPresenter;
@@ -152,7 +154,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		buttonErase.addClickHandler(handler);
 		anchorResource = new Anchor();
 		anchorResource.setSize("140px", "40px");
-		DOM.setStyleAttribute(anchorResource.getElement(), "wordWrap", "break-word");
+		anchorResource.getElement().getStyle().setProperty("wordWrap", "break-word");
 		panelAnchorResource= new FlowPanel();
 		panelAnchorResource.add(anchorResource);
 		panelAnchorResource.setWidth("142px");
@@ -175,7 +177,8 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				}
 			}
 		});
-		distanceTypeBox = new ListBox(false);
+		distanceTypeBox = new ListBox();
+		distanceTypeBox.setMultipleSelect(false);
 		for(DistanceTypes i:DistanceTypes.values()){
 			distanceTypeBox.addItem(i.name());
 		}
@@ -201,7 +204,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 		anchorResource.setText("");
 		anchorResource.setHref("");
 		this.resource=null;
-		this.geometry=null;
+		this.centroid=null;
 		mapPresenter.removePointsStyle(pointStyle);
 		resourcePanel.clear();
 		resourcePanel.add(addResourcePanel);
@@ -214,7 +217,7 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 
 	private void drawPoints() {
 		
-		if(resource!=null && geometry!=null){
+		if(resource!=null && centroid!=null){
 			mapPresenter.getDisplay().getDefaultLayer().getMapView().closeWindow();
 			mapPresenter.removePointsStyle(pointStyle);
 			double radiousKM=convertStringToDoubleRadiousKM(distanceTextBox.getValue(), DistanceTypes.valueOf(distanceTypeBox.getValue(distanceTypeBox.getSelectedIndex())));
@@ -223,20 +226,18 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 				return;
 			}
 			mapPresenter.getDisplay().startProcessing();
-			BoundingBox boundingBox = GeoUtils.computeBoundingBox(geometry.getPoints(), "EPSG:4326");
-			GetBufferGeoResources action= new GetBufferGeoResources(resource.getUri(), boundingBox.getCenter(), radiousKM);
+			GetBufferGeoResources action= new GetBufferGeoResources(configID.getConfigID(),resource.getUri(), centroid, radiousKM);
 			dispatchAsync.execute(action, new AsyncCallback<GetBufferGeoResourcesResult>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
 					
 					mapPresenter.getDisplay().stopProcessing();
-					widgetFactory.getDialogBox().showError(browserMessages.errorCommunication());
+					widgetFactory.getDialogBox().showError(browserMessages.errorCommunication()+": "+caught.getMessage());
 				}
 			
 				@Override
 				public void onSuccess(GetBufferGeoResourcesResult result) {
-					
 					mapPresenter.drawGeoResources(result.getListGeoResources(),pointStyle);
 					mapPresenter.getDisplay().stopProcessing();
 					mapPresenter.setVisibleBox(result.getBoundingBox());
@@ -310,15 +311,18 @@ public class BufferView extends ResizeComposite implements BufferPresenter.Displ
 	}
 	
 	private void setGeoResource(GeoResource resource, Geometry geometry){
+		this.resource=resource;
+		this.centroid=GeoUtils.getCentroid(resource.getFirstGeometry());
 		mapPresenter.removePointsStyle(new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		List<GeoResource> geoResources=new ArrayList<GeoResource>();
+		GeoResource newResource = new GeoResource(resource.getUri(),centroid);
+		geoResources.add(newResource);
 		geoResources.add(resource);
 		mapPresenter.drawGeoResources(geoResources,new DrawPointStyle(DrawPointStyle.Style.CENTER_NEXT_POINTS));
 		String label=LocaleUtil.getBestLabel(resource);
 		anchorResource.setText(label);
 		anchorResource.setHref(resource.getUri());
-		this.resource=resource;
-		this.geometry=geometry;
+		
 		resourcePanel.clear();
 		resourcePanel.add(removeResourcePanel);
 	}

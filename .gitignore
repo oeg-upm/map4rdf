@@ -7,12 +7,10 @@
 target/*
 context.xml
 *.war
-src/main/webapp/WEB-INF/classes/*
-src/main/webapp/WEB-INF/lib/*
 src/main/gwt-unitCache/*
 src/main/webapp/WEB-INF/deploy/*
 src/main/webapp/es.upm.fi.dia.oeg.map4rdf.map4rdf/*
 src/main/webapp/META-INF/maven/*
 .gwt/*
 gwt-unitCache/
-/target
+/target/

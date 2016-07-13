@@ -24,6 +24,7 @@
  */
 package es.upm.fi.dia.oeg.map4rdf.server.dao.impl;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Literal;
+
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParameterNames;
@@ -62,15 +64,16 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 
 	private static final Logger LOG = Logger.getLogger(GeoSparqlDaoImpl.class);
 	private final String geoSparqlEndpoint;
-	
-	
+	private final EndpointType endpointType;
 	@Inject
-	public GeoSparqlDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,@Named(ParameterNames.ENDPOINT_URL_GEOSPARQL)String geoSparqlEndpoointUrl ,String defaultProjection) {
+	public GeoSparqlDaoImpl(@Named(ParameterNames.ENDPOINT_URL) String endpointUri,@Named(ParameterNames.ENDPOINT_URL_GEOSPARQL)String geoSparqlEndpoointUrl ,String defaultProjection,EndpointType type) {
 		super(endpointUri,defaultProjection);
 		this.geoSparqlEndpoint=geoSparqlEndpoointUrl;
-		
+		this.endpointType = type;
 	}
-
+	
+	public enum EndpointType {STRABON, VIRTUOSO};
+	
 	@Override
 	public List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, int max)
 			throws DaoException {
@@ -82,7 +85,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			throws DaoException {
 		return getGeoResources(boundingBox, constraints, null);
 	}
-
+	
 	private List<GeoResource> getGeoResources(BoundingBox boundingBox, Set<FacetConstraint> constraints, Integer max)
 			throws DaoException {
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
@@ -91,11 +94,14 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			execution = QueryExecutionFactory.sparqlService(endpointUri,
 					createGetResourcesQuery(boundingBox, constraints, max));
 		}else if (this.endpointUri == null || this.endpointUri.isEmpty()){
-			execution = QueryExecutionFactory.sparqlService(endpointUri,
+			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint,
 					createGetALLGeoSparqlResourcesQuery(boundingBox, constraints, max));
 		}else{
-			execution = QueryExecutionFactory.sparqlService(endpointUri,
+			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint,
 					createGetGeoSparqlResourcesQuery(boundingBox, constraints, max));
+		}
+		if(constraints!=null && constraints.isEmpty()){
+			return new ArrayList<GeoResource>();
 		}
 		try {
 			ResultSet queryResult = execution.execSelect();
@@ -105,11 +111,17 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 					String uri = solution.getResource("r").getURI();
 					String geoUri = solution.getResource("geosparqlwkt").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
-					//TODO: Remove this if when we can obtain crs in endpoint.
-					//if(wkt.toLowerCase().contains("crs84")){
+					String projection = null;
+					if(solution.contains("crs")){
+						projection = solution.getLiteral("crs").getString();
+					}
 					GeoResource resource = result.get(uri);
+					if(projection!=null || isThisWKTofThisProjection(wkt, defaultProjection)){
+						if(projection==null){
+							projection = defaultProjection;
+						}
 					if (resource == null) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:23030");
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
 						if(!geometries.isEmpty()){
 							resource = new GeoResource(uri, geometries.get(0));
 							for(int i=1;i<geometries.size();i++){
@@ -118,7 +130,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 							result.put(uri, resource);
 						}
 					} else if (!resource.hasGeometry(geoUri)) {
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:23030");
+						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
 						if(!geometries.isEmpty()){
 							for(int i=0;i<geometries.size();i++){
 								resource.addGeometry(geometries.get(i));
@@ -131,7 +143,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 						String facetValueID=solution.getResource("facetValueID").getURI();
 						resource.setFacetConstraint(new FacetConstraint(facetID, facetValueID));
 					}
-					//}
+					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: " + e.getMessage());
 				} catch (Exception e) {
@@ -140,6 +152,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<GeoResource>(result.values());
 		} catch (Exception e) {
+			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
@@ -163,17 +176,22 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 				try {
 					String geoUri = solution.getResource("geosparql").getURI();
 					String wkt = solution.getLiteral("wkt").getString();
-					//TODO: Remove this "if" when we can obtain crs in endpoint.
-					if(wkt.toLowerCase().contains("crs84")){
-						//TODO: Solve problem with only accept EPSG:4326
-						List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,"EPSG:4326");
-						if(!geometries.isEmpty()){
-							resource = new GeoResource(uri, geometries.get(0));
-							for(int i=1;i<geometries.size();i++){
-								resource.addGeometry(geometries.get(i));
-							}
+					String projection = null;
+					if(solution.contains("crs")){
+						projection = solution.getLiteral("crs").getString();
+					}
+					if(projection!=null || isThisWKTofThisProjection(wkt, defaultProjection)){
+						if(projection==null){
+							projection = defaultProjection;
 						}
-						getOtherInfo(uri, resource, solution);
+					List<Geometry> geometries=GeoUtils.getWKTGeometries(geoUri, "", wkt,projection);
+					if(!geometries.isEmpty()){
+						resource = new GeoResource(uri, geometries.get(0));
+						for(int i=1;i<geometries.size();i++){
+							resource.addGeometry(geometries.get(i));
+						}
+					}
+					getOtherInfo(uri, resource, solution);
 					}
 				} catch (NumberFormatException e) {
 					LOG.warn("Invalid Latitud or Longitud value: ",e);
@@ -206,8 +224,12 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		queryBuffer.append("?x <" + predicateUri + "> ?class . ");
 		queryBuffer.append("optional {?class <" + RDFS.label + "> ?label . }");
 		queryBuffer.append("}");
-		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
-
+		QueryExecution execution;
+		if(endpointUri==null || endpointUri.isEmpty()){
+			execution = QueryExecutionFactory.sparqlService(geoSparqlEndpoint, queryBuffer.toString());
+		}else{
+			execution = QueryExecutionFactory.sparqlService(endpointUri, queryBuffer.toString());
+		}
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
@@ -227,13 +249,14 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			}
 			return new ArrayList<Facet>(result.values());
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOG.error(e);
 			throw new DaoException("Unable to execute SPARQL query", e);
 		} finally {
 			execution.close();
 		}
-	}
-
+	}	
+	
 	@Override
 	public List<Year> getYears(String datasetUri) throws DaoException {
 		//Nothing to do.
@@ -290,21 +313,25 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		if(constraints!=null){
-			query.append("SELECT distinct ?r ?geosparqlwkt ?wkt ?facetID ?facetValueID ");
+			query.append("SELECT distinct ?r ?geosparqlwkt ?crs ?wkt ?facetID ?facetValueID ");
 		}else{
-			query.append("SELECT distinct ?r ?geosparqlwkt ?wkt ");
+			query.append("SELECT distinct ?r ?geosparqlwkt ?crs ?wkt ");
 		}
 		query.append("WHERE { ");
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("OPTIONAL{?geosparqlwkt geosparql:crs ?crs}.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
+			query.append("?r ?facetID ?facetValueID. ");
+			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
-				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
-				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
-				query.append("} UNION");
+				query.append("(?facetID IN(");
+				query.append("<"+constraint.getFacetId()+">)");
+				query.append(" && ?facetValueID IN(");
+				query.append("<"+constraint.getFacetValueId()+">)) || ");
 			}
-			query.delete(query.length() - 5, query.length());
+			query.delete(query.length() - 3, query.length());
+			query.append(").");
 		}
 		//filters
 		if (boundingBox!=null) {
@@ -321,23 +348,27 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		if(constraints!=null){
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ?facetID ?facetValueID ");
 		}else{
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ");
 		}
 		query.append("WHERE { ");
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("OPTIONAL{?geosparqlwkt geosparql:crs ?crs}.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
+			query.append("?r ?facetID ?facetValueID. ");
+			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
-				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
-				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
-				query.append("} UNION");
+				query.append("(?facetID IN(");
+				query.append("<"+constraint.getFacetId()+">)");
+				query.append(" && ?facetValueID IN(");
+				query.append("<"+constraint.getFacetValueId()+">)) || ");
 			}
-			query.delete(query.length() - 5, query.length());
+			query.delete(query.length() - 3, query.length());
+			query.append(").");
 		}
 		//filters
 		if (boundingBox!=null) {
@@ -363,27 +394,31 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
 		if(constraints!=null){
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ?facetID ?facetValueID ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ?facetID ?facetValueID ");
 		}else{
-			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?wkt ?seeAlso ");
+			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ");
 		}
 		query.append("WHERE { ");
 		/*query.append("?r <http://www.opengis.net/ont/geosparql/geometry>  ?geosparqlgml.");
 		query.append("?geosparqlgml <http://www.opengis.net/ont/geosparql/asGML>  ?gml.");*/
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkt.");
+		query.append("OPTIONAL {?geosparqlwkt geosparql:crs ?crs}.");
 		query.append("?geosparqlwkt geosparql:asWKT  ?wkt.");
 		//query.append("?geosparqlwkt <"+RDF.type+"> ?geoType.");
 		//query.append("{?geo" + "<"+ Geo.lat + ">" +  " ?lat;"  + "<" + Geo.lng + ">" + " ?lng" + ".}");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label }. ");
 		query.append("OPTIONAL { ?r <" +RDFS.seeAlso + "> ?seeAlso}. ");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
+			query.append("?r ?facetID ?facetValueID. ");
+			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
-				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
-				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">");
-				query.append("} UNION");
+				query.append("(?facetID IN(");
+				query.append("<"+constraint.getFacetId()+">)");
+				query.append(" && ?facetValueID IN(");
+				query.append("<"+constraint.getFacetValueId()+">)) || ");
 			}
-			query.delete(query.length() - 5, query.length());
+			query.delete(query.length() - 3, query.length());
+			query.append(").");
 		}
 		//filters
 		//NORMAL endpoint not applicable geosparql filters
@@ -399,6 +434,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("SELECT ?label ?geosparql ?wkt ?seeAlso ");
 		query.append("WHERE { ");
 		query.append("<" + uri + "> geosparql:hasGeometry ?geosparql. ");
+		query.append("OPTIONAL {?geosparql geosparql:crs ?crs}.");
 		query.append("?geosparql geosparql:asWKT ?wkt.");
 		query.append("OPTIONAL { <" + uri + "> <" + RDFS.label + "> ?label } .");
 		query.append("OPTIONAL { <" + uri + "> <" + RDFS.seeAlso + "> ?seeAlso}. ");
@@ -410,13 +446,56 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("?r geosparql:hasGeometry  ?geosparqlwkttocompare.");
 		query.append("?geosparqlwkttocompare geosparql:asWKT  ?wkttocompare.");
 		query.append(" FILTER(");
-		query.append("strdf:intersects(\"POLYGON((");
+		switch (endpointType) {
+		case STRABON:
+			query.append("strdf:intersects(");
+			break;
+		case VIRTUOSO:
+			query.append("bif:st_intersects(");
+			break;
+		default:
+			query.append("strdf:intersects(");
+			break;
+		}
+		query.append("\"POLYGON((");
 		query.append(boundingBox.getTop().getX()+" "+boundingBox.getTop().getY()+", ");
 		query.append(boundingBox.getRight().getX()+" "+boundingBox.getRight().getY()+", ");
 		query.append(boundingBox.getBottom().getX()+" "+boundingBox.getBottom().getY()+", ");
 		query.append(boundingBox.getLeft().getX()+" "+boundingBox.getLeft().getY()+", ");
 		query.append(boundingBox.getTop().getX()+" "+boundingBox.getTop().getY());
-		query.append("))\"^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
+		query.append("))\"");
+		switch (endpointType) {
+		case STRABON:
+			query.append("^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
+			break;
+		case VIRTUOSO:
+			query.append("^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
+			break;
+		default:
+			query.append("^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
+			break;
+		}
 		return query;
+	}
+	
+	private boolean isThisWKTofThisProjection(String wkt, String projection){
+		if(projection!=null && wkt!=null){
+			if(projection.length()!=9){
+				return false;
+			}else{
+				String containsLowerCase;
+				if(projection.toLowerCase().equals("epsg:4326")){
+					containsLowerCase = "crs84";
+				}else{
+					containsLowerCase = "epsg/0/"+projection.split(":")[1];
+				}
+				if(!wkt.toLowerCase().contains("crs") && !wkt.toLowerCase().contains("epsg")){
+					return true;
+				}
+				return wkt.toLowerCase().contains(containsLowerCase);
+			}
+		}else{
+			return projection == null && wkt == null;
+		}
 	}
 }

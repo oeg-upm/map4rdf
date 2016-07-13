@@ -3,7 +3,6 @@ package es.upm.fi.dia.oeg.map4rdf.client.widget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -62,8 +61,7 @@ public class Map4RDFMessageDialogBox extends DialogBox {
 		panel.add(ok);
 
 		setWidget(panel);
-		
-		DOM.setStyleAttribute(this.getElement(), "zIndex", "10000");
+		this.getElement().getStyle().setZIndex(10000);
 	}
 	public void setLabel(String label){
 		mainLabel.setText(label);

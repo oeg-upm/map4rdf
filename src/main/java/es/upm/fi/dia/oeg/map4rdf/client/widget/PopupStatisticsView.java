@@ -11,6 +11,9 @@ import java.util.Set;
 import name.alexdeleon.lib.gwtblocks.client.widget.loading.LoadingWidget;
 import net.customware.gwt.presenter.client.EventBus;
 
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,7 +23,6 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -96,13 +98,13 @@ public class PopupStatisticsView extends Composite{
 		this.width=width;
 		this.height=height;
 		initWidget(createUi());
-		DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
+		loadingWidget.getElement().getStyle().setProperty("diplay", "");
 		Timer timer=new Timer(){
 
 			@Override
 			public void run() {
 				initAsync();
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
+				loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
 			}
 			
 		};
@@ -124,19 +126,23 @@ public class PopupStatisticsView extends Composite{
 		closeButton.getElement().appendChild(new Image(browserResources.closeButton()).getElement());
 		closeButton.setTitle(browserMessages.close());
 		panel.add(closeButton);
-		DOM.setStyleAttribute(closeButton.getElement(), "position", "absolute");
-		DOM.setStyleAttribute(closeButton.getElement(), "top", "1px");
-		DOM.setStyleAttribute(closeButton.getElement(), "left", "");
-		DOM.removeElementAttribute(closeButton.getElement(),"left");
-		DOM.setStyleAttribute(closeButton.getElement(), "right", "1px");
-		DOM.setStyleAttribute(closeButton.getElement(), "zIndex", "2080");
+		closeButton.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		closeButton.getElement().getStyle().setTop(1, Unit.PX);
+		closeButton.getElement().getStyle().setProperty("left", "");
+		closeButton.getElement().getStyle().clearLeft();
+		closeButton.getElement().getStyle().setRight(1, Unit.PX);
+		closeButton.getElement().getStyle().setZIndex(2080);
 		mainGrid = new Grid(4,1);
 		Grid chooseGrid = new Grid(2,4);
 		statisticsGrid = new Grid(1,1);
-		statisticsBox= new ListBox(false);
-		dimensionsXBox = new ListBox(false);
-		dimensionsYBox = new ListBox(false);
-		aggrBox = new ListBox(false);
+		statisticsBox= new ListBox();
+		statisticsBox.setMultipleSelect(false);
+		dimensionsXBox = new ListBox();
+		dimensionsXBox.setMultipleSelect(false);
+		dimensionsYBox = new ListBox();
+		dimensionsYBox.setMultipleSelect(false);
+		aggrBox = new ListBox();
+		aggrBox.setMultipleSelect(false);
 		aggrBox.setVisible(false);
 		aggrBox.addItem("SUM");
 		aggrBox.addItem("COUNT");
@@ -164,12 +170,12 @@ public class PopupStatisticsView extends Composite{
 			@Override
 			public void onChange(final ChangeEvent event) {
 				statisticsGrid.clear();
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
+				loadingWidget.getElement().getStyle().setProperty("display","");
 				Timer timer=new Timer(){
 					@Override
 					public void run() {
 						handlerStatisticChange(event);
-						DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
+						loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
 					}
 				};
 				timer.schedule(50);
@@ -180,13 +186,13 @@ public class PopupStatisticsView extends Composite{
 			@Override
 			public void onChange(final ChangeEvent event) {
 				statisticsGrid.clear();
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
+				loadingWidget.getElement().getStyle().setProperty("display","");
 				Timer timer=new Timer(){
 
 					@Override
 					public void run() {
 						handlerDimensionXChange(event);
-						DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
+						loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
 					}
 					
 				};
@@ -198,13 +204,13 @@ public class PopupStatisticsView extends Composite{
 			@Override
 			public void onChange(final ChangeEvent event) {
 				statisticsGrid.clear();
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
+				loadingWidget.getElement().getStyle().setProperty("display", "");
 				Timer timer=new Timer(){
 
 					@Override
 					public void run() {
 						handlerDimensionYChange(event);
-						DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
+						loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
 					}
 					
 				};
@@ -216,13 +222,13 @@ public class PopupStatisticsView extends Composite{
 			@Override
 			public void onChange(final ChangeEvent event) {
 				statisticsGrid.clear();
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
+				loadingWidget.getElement().getStyle().setProperty("display", "");
 				Timer timer=new Timer(){
 
 					@Override
 					public void run() {
 						handlerAggrChange(event);
-						DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
+						loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
 					}
 					
 				};
@@ -236,14 +242,14 @@ public class PopupStatisticsView extends Composite{
 		return panel;
 	}
 	private void initCharts(){
-		DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "#A4A4A4");
+		chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("#A4A4A4");
 		Image image=new Image(browserResources.chartPieIcon());
 		image.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "");
+				chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("");
 				selectedChart=0;
-				DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "#A4A4A4");
+				chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("#A4A4A4");
 				if(selectedStatistic!=null && selectedDimensionX!=null && selectedDimensionY!=null){
 					handlerChartChange();
 				}
@@ -254,9 +260,9 @@ public class PopupStatisticsView extends Composite{
 		image.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "");
+				chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("");
 				selectedChart=1;
-				DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "#A4A4A4");
+				chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("#A4A4A4");
 				if(selectedStatistic!=null && selectedDimensionX!=null && selectedDimensionY!=null){
 					handlerChartChange();
 				}
@@ -267,9 +273,9 @@ public class PopupStatisticsView extends Composite{
 		image.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "");
+				chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("");
 				selectedChart=2;
-				DOM.setStyleAttribute(chartGrid.getCellFormatter().getElement(0, selectedChart),"background", "#A4A4A4");
+				chartGrid.getCellFormatter().getElement(0, selectedChart).getStyle().setBackgroundColor("#A4A4A4");
 				if(selectedStatistic!=null && selectedDimensionX!=null && selectedDimensionY!=null){
 					handlerChartChange();
 				}
@@ -289,12 +295,15 @@ public class PopupStatisticsView extends Composite{
 			}else{
 				mainPanel.add(mainGrid);
 				mainPanel.add(loadingWidget);
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
-				DOM.setStyleAttribute(loadingWidget.getElement(), "position", "absolute");
-				DOM.setStyleAttribute(loadingWidget.getElement(), "top", "50%");
-				DOM.setStyleAttribute(loadingWidget.getElement(), "left", "50%");
-				DOM.setStyleAttribute(loadingWidget.getElement(), "margin", "-16px 0 0 -80px");
-				DOM.setStyleAttribute(loadingWidget.getElement(), "zIndex", "2080");
+				loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
+				loadingWidget.getElement().getStyle().setPosition(Position.ABSOLUTE);
+				loadingWidget.getElement().getStyle().setTop(50, Unit.PC);
+				loadingWidget.getElement().getStyle().setLeft(50, Unit.PC);
+				loadingWidget.getElement().getStyle().setMarginTop(-16, Unit.PX);
+				loadingWidget.getElement().getStyle().setMarginRight(0, Unit.PX);
+				loadingWidget.getElement().getStyle().setMarginBottom(0, Unit.PX);
+				loadingWidget.getElement().getStyle().setMarginLeft(-80, Unit.PX);
+				loadingWidget.getElement().getStyle().setZIndex(2080);
 			}
 		} else {
 			mainPanel.add(new Label(browserMessages.errorCommunication()));
@@ -354,13 +363,13 @@ public class PopupStatisticsView extends Composite{
 	}
 	private void handlerChartChange(){
 		statisticsGrid.clear();
-		DOM.setStyleAttribute(loadingWidget.getElement(), "display", "");
+		loadingWidget.getElement().getStyle().setProperty("display", "");
 		Timer timer=new Timer(){
 
 			@Override
 			public void run() {
 				drawStatistic();
-				DOM.setStyleAttribute(loadingWidget.getElement(), "display", "none");
+				loadingWidget.getElement().getStyle().setDisplay(Display.NONE);
 			}
 			
 		};

@@ -59,7 +59,10 @@ public class FacetConstraint implements Serializable {
 	public String getHexColour(){
 		return hexColour;
 	}
-
+	@Override
+	public String toString(){
+		return facetId+" || "+facetValueId;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

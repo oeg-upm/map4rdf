@@ -5,12 +5,17 @@ import net.customware.gwt.dispatch.shared.Action;
 
 
 
-public class GetAddInfoConfig implements Action<SingletonResult<GetAddInfoConfigResult>>{
+public class GetAddInfoConfig extends MultipleConfigurationAction implements Action<SingletonResult<GetAddInfoConfigResult>>{
+	
+	private static final long serialVersionUID = 724086590101872113L;
+	
 	private GeoResource resource;
-	public GetAddInfoConfig(GeoResource resource){
+	public GetAddInfoConfig(String configID, GeoResource resource){
+		super(configID);
 		this.resource=resource;
 	}
-	GetAddInfoConfig(){	
+	private GetAddInfoConfig(){	
+		super("");
 	}
 	public GeoResource getResource() {
 		return resource;

@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAddInfoConfigResult;
 import es.upm.fi.dia.oeg.map4rdf.client.action.GetAddInfoConfig;
 import es.upm.fi.dia.oeg.map4rdf.client.action.SingletonResult;
-import es.upm.fi.dia.oeg.map4rdf.server.conf.AddInfoConfigServer;
+import es.upm.fi.dia.oeg.map4rdf.server.conf.multiple.MultipleConfigurations;
 import es.upm.fi.dia.oeg.map4rdf.share.GeoResource;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.ParametersNamesAddInfo;
 import es.upm.fi.dia.oeg.map4rdf.share.conf.util.AdditionalInfo;
@@ -25,10 +25,10 @@ import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.DispatchException;
 
 public class GetAddInfoConfigHandler implements ActionHandler<GetAddInfoConfig, SingletonResult<GetAddInfoConfigResult>>{
-	private AddInfoConfigServer addInfoConfigServer;
+	private MultipleConfigurations configurations;
 	@Inject
-	public GetAddInfoConfigHandler(AddInfoConfigServer addInfoConfigServer){
-		this.addInfoConfigServer=addInfoConfigServer;
+	public GetAddInfoConfigHandler(MultipleConfigurations configurations){
+		this.configurations=configurations;
 	}
 	@Override
 	public Class<GetAddInfoConfig> getActionType() {
@@ -39,7 +39,10 @@ public class GetAddInfoConfigHandler implements ActionHandler<GetAddInfoConfig, 
 	public SingletonResult<GetAddInfoConfigResult> execute(GetAddInfoConfig action,
 			ExecutionContext context) throws DispatchException {
 		List<AdditionalInfo> toReturn= new ArrayList<AdditionalInfo>();
-		for(AdditionalInfo info:addInfoConfigServer.getAdditionalsInfo()){
+		if(!configurations.existsConfiguration(action.getConfigID()) && configurations.getConfiguration(action.getConfigID()).getAddInfoConfigServer()!=null){
+			return new SingletonResult<GetAddInfoConfigResult>(new GetAddInfoConfigResult(toReturn));
+		}
+		for(AdditionalInfo info:configurations.getConfiguration(action.getConfigID()).getAddInfoConfigServer().getAdditionalsInfo()){
 			try {
 				URL u = new URL(info.getEndpoint()+parseQuery(info.getQuery(),info.getInputParameters(), action.getResource()));
 				URLConnection conn = u.openConnection();

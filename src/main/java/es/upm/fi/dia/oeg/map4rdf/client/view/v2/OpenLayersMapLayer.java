@@ -28,8 +28,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.gwtopenmaps.openlayers.client.Map;
+import org.gwtopenmaps.openlayers.client.Projection;
 import org.gwtopenmaps.openlayers.client.Size;
 import org.gwtopenmaps.openlayers.client.Style;
+import org.gwtopenmaps.openlayers.client.control.MousePosition;
+import org.gwtopenmaps.openlayers.client.control.MousePositionOptions;
+import org.gwtopenmaps.openlayers.client.control.MousePositionOutput;
 import org.gwtopenmaps.openlayers.client.control.SelectFeature;
 import org.gwtopenmaps.openlayers.client.event.MapMoveListener;
 import org.gwtopenmaps.openlayers.client.event.MapZoomListener;
@@ -45,6 +49,8 @@ import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.GwtEvent;
@@ -56,12 +62,14 @@ import com.google.gwt.user.client.ui.Widget;
 import es.upm.fi.dia.oeg.map4rdf.client.resource.BrowserResources;
 import es.upm.fi.dia.oeg.map4rdf.client.style.StyleMapShape;
 import es.upm.fi.dia.oeg.map4rdf.client.util.DrawPointStyle;
+import es.upm.fi.dia.oeg.map4rdf.client.util.FeatureClickEvent;
 import es.upm.fi.dia.oeg.map4rdf.share.Circle;
 import es.upm.fi.dia.oeg.map4rdf.share.OpenLayersAdapter;
 import es.upm.fi.dia.oeg.map4rdf.share.Point;
 import es.upm.fi.dia.oeg.map4rdf.share.PointBean;
 import es.upm.fi.dia.oeg.map4rdf.share.PolyLine;
 import es.upm.fi.dia.oeg.map4rdf.share.Polygon;
+import es.upm.fi.dia.oeg.map4rdf.share.WKTGeometry;
 
 /**
  * @author Alexander De Leon
@@ -81,7 +89,9 @@ public class OpenLayersMapLayer implements MapLayer,
 	private final BrowserResources browserResources;
 	private List<VectorFeature> polylines;
 	private java.util.Map<DrawPointStyle.Style, List<VectorFeature>> points;
-
+	private LonLat lastLonLatClicked;
+	private SelectFeature selectFeatureControl;
+	
 	public OpenLayersMapLayer(OpenLayersMapView owner, Map map, String name,
 			BrowserResources browserResources) {
 		this.owner = owner;
@@ -98,8 +108,20 @@ public class OpenLayersMapLayer implements MapLayer,
 		for (DrawPointStyle.Style i : DrawPointStyle.Style.values()) {
 			points.put(i, new ArrayList<VectorFeature>());
 		}
+		//Adds the custom mouse position to the map
+        MousePositionOutput mpOut = new MousePositionOutput() {
+            @Override
+            public String format(LonLat lonLat, Map map) {
+                lastLonLatClicked = lonLat;
+                return "";
+            }
+        };
+ 
+        MousePositionOptions mpOptions = new MousePositionOptions();
+        mpOptions.setFormatOutput(mpOut); // rename to setFormatOutput
+ 
+        map.addControl(new MousePosition(mpOptions));
 	}
-
 	@Override
 	public HasClickHandlers draw(Point point, DrawPointStyle pointStyle) {
 		LonLat ll = new LonLat(point.getX(), point.getY());
@@ -203,7 +225,15 @@ public class OpenLayersMapLayer implements MapLayer,
 				(new org.gwtopenmaps.openlayers.client.geometry.Polygon(
 						new LinearRing[] { ring })), style, null);
 	}
-
+	
+	@Override
+	public HasClickHandlers drawWKTGeometry(
+			StyleMapShape<WKTGeometry> wktGeometryStyle, DrawPointStyle drawStyle) {
+		Geometry geometry = org.gwtopenmaps.openlayers.client.geometry.Geometry.fromWKT(wktGeometryStyle.getMapShape().getWKT());
+		geometry.transform(new Projection(wktGeometryStyle.getMapShape().getProjection()), new Projection(map.getProjection()));
+		return addFeature(geometry,getStyle(wktGeometryStyle),drawStyle);
+	}
+	
 	@Override
 	public PopupWindow createPopupWindow() {
 
@@ -243,10 +273,8 @@ public class OpenLayersMapLayer implements MapLayer,
 						if(getPopupLeft()!=null && getPopupLeft()!="" && !getPopupLeft().isEmpty() && getPopupTop()!=null && getPopupTop()!="" && !getPopupTop().isEmpty()){
 							int popupLeft=Integer.parseInt(getPopupLeft().replace("px", ""));
 							int popupTop=Integer.parseInt(getPopupTop().replace("px", ""));
-						DOM.setStyleAttribute(popupPanel.getElement(), "left",
-								String.valueOf(popupLeft-(width/2))+"px");// + "px");
-						DOM.setStyleAttribute(popupPanel.getElement(), "top",
-								String.valueOf(popupTop-(height/2))+"px");// + "px");
+						popupPanel.getElement().getStyle().setLeft(popupLeft-(width/2), Unit.PX);
+						popupPanel.getElement().getStyle().setTop(popupTop-(height/2), Unit.PX);
 						}
 					}
 				};
@@ -254,8 +282,8 @@ public class OpenLayersMapLayer implements MapLayer,
 				LonLat popupPosition = OpenLayersAdapter.getLatLng(location);
 				popupPosition.transform(location.getProjection(), map.getProjection());
 				popup = new Popup("exclusive-mapresources-popup",
-						popupPosition, new Size(width, height),
-						DOM.getInnerHTML(panel.getElement()), false);
+						popupPosition, new Size(width, height),panel.getElement().getInnerHTML()
+						, false);
 
 				map.addPopupExclusive(popup);
 				popupPanel = new FlowPanel();
@@ -266,18 +294,12 @@ public class OpenLayersMapLayer implements MapLayer,
 				if(getPopupLeft()!=null && getPopupLeft()!="" && getPopupTop()!=null && getPopupTop()!=""){
 					int popupLeft=Integer.parseInt(getPopupLeft().replace("px", ""));
 					int popupTop=Integer.parseInt(getPopupTop().replace("px", ""));
-				
-					DOM.setStyleAttribute(popupPanel.getElement(), "position",
-						"absolute");
-					DOM.setStyleAttribute(popupPanel.getElement(), "left",
-						String.valueOf(popupLeft-(width/2))+"px");// + "px");
-					DOM.setStyleAttribute(popupPanel.getElement(), "top",
-						String.valueOf(popupTop-(height/2))+"px");// + "px");
+					popupPanel.getElement().getStyle().setPosition(Position.ABSOLUTE);
+					popupPanel.getElement().getStyle().setLeft(popupLeft-(width/2), Unit.PX);
+					popupPanel.getElement().getStyle().setTop(popupTop-(height/2), Unit.PX);
 				}
-				DOM.setStyleAttribute(popupPanel.getElement(), "zIndex", "2024");
-				DOM.setElementAttribute(popupPanel.getElement(), "id",
-						"map4rdf-popup-new");
-
+				popupPanel.getElement().getStyle().setZIndex(2024);
+				popupPanel.getElement().setAttribute("id", "map4rdf-popup-new");
 				replace();
 			}
 
@@ -324,6 +346,11 @@ public class OpenLayersMapLayer implements MapLayer,
 		return;
 	}-*/;
 
+	private native void consoleLog(Object toLog)/*-{
+		$wnd.console.log(toLog);
+		console.log(toLog);
+	}-*/;
+	
 	@Override
 	public void clear() {
 		for (VectorFeature feature : features) {
@@ -377,6 +404,7 @@ public class OpenLayersMapLayer implements MapLayer,
 		vectorLayer.addVectorFeatureSelectedListener(this);
 		vectorLayer.addVectorFeatureUnselectedListener(this);
 		SelectFeature selectFeature = new SelectFeature(vectorLayer);
+		selectFeatureControl = selectFeature;
 		selectFeature.setClickOut(false);
 		selectFeature.setToggle(true);
 		selectFeature.setMultiple(false);
@@ -412,8 +440,15 @@ public class OpenLayersMapLayer implements MapLayer,
 			}else{
 				polylines.add(feature);
 			}
+		}else{
+			if(pointStyle!=null){
+				points.get(pointStyle.getStyle()).add(feature);
+			}else{
+				points.get(DrawPointStyle.getDefaultStyle()).add(feature);
+			}
 		}
-		if(geometry instanceof org.gwtopenmaps.openlayers.client.geometry.Polygon){
+		/*TODO: REVIEW THIS OLD CODE AND TEST IF THE NEW CODE THROW ERRORS
+		if(geometry instanceof org.gwtopenmaps.openlayers.client.geometry.Polygon ){
 			if(pointStyle!=null){
 				points.get(pointStyle.getStyle()).add(feature);
 			}else{
@@ -426,7 +461,8 @@ public class OpenLayersMapLayer implements MapLayer,
 			} else {
 				points.get(DrawPointStyle.getDefaultStyle()).add(feature);
 			}
-		}
+		}*/
+		
 		vectorLayer.addFeature(feature);
 		features.add(feature);
 		return new FeatureHasClickHandlerWrapper(featureId);
@@ -477,9 +513,10 @@ public class OpenLayersMapLayer implements MapLayer,
 				.getAttributeAsString("map4rdf_id"));
 		if (clickHandlers != null) {
 			for (ClickHandler handler : clickHandlers) {
-				handler.onClick(null);
+				handler.onClick(new FeatureClickEvent(lastLonLatClicked));
 			}
 		}
+		
 	}
 
 	@Override
@@ -527,6 +564,15 @@ public class OpenLayersMapLayer implements MapLayer,
 		polylines.clear();
 	}
 
-	
+	@Override
+	public Map getOLMap() {
+		return map;
+	}
+	@Override
+	public void unselectFeatures() {
+		for(VectorFeature feature: vectorLayer.getSelectedFeatures()){
+			selectFeatureControl.unSelect(feature);
+		}
+	}
 
 }

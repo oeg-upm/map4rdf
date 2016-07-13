@@ -189,6 +189,9 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		HashMap<String, GeoResource> result = new HashMap<String, GeoResource>();
 		QueryExecution execution = QueryExecutionFactory.sparqlService(endpointUri,
 				createGetResourcesQuery(boundingBox, constraints, max));
+		if(constraints!=null && constraints.isEmpty()){
+			return new ArrayList<GeoResource>();
+		}
 		try {
 			ResultSet queryResult = execution.execSelect();
 			while (queryResult.hasNext()) {
@@ -241,14 +244,17 @@ public class AemetDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		query.append("?position <" + Geo.lat + "> ?lat. ");
 		query.append("?position <" + Geo.lng + "> ?lng . ");
 		query.append("OPTIONAL { ?r <" + RDFS.label + "> ?label } .");
-		if (constraints != null) {
+		if (constraints != null && !constraints.isEmpty()) {
+			query.append("?r ?facetID ?facetValueID. ");
+			query.append("FILTER(");
 			for (FacetConstraint constraint : constraints) {
-				query.append("{?r <"+constraint.getFacetId()+"> <"+constraint.getFacetValueId()+">.");
-				query.append("?r <"+constraint.getFacetId()+"> ?facetValueID.");
-				query.append("?r ?facetID <"+constraint.getFacetValueId()+">.");
-				query.append("} UNION");
+				query.append("(?facetID IN(");
+				query.append("<"+constraint.getFacetId()+">)");
+				query.append(" && ?facetValueID IN(");
+				query.append("<"+constraint.getFacetValueId()+">)) || ");
 			}
-			query.delete(query.length() - 5, query.length());
+			query.delete(query.length() - 3, query.length());
+			query.append(").");
 		}
 		
 		//filters
