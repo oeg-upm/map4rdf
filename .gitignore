@@ -13,3 +13,4 @@ src/main/webapp/es.upm.fi.dia.oeg.map4rdf.map4rdf/*
 src/main/webapp/META-INF/maven/*
 .gwt/*
 gwt-unitCache/
+/target/
