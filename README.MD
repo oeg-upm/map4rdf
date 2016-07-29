@@ -1,8 +1,9 @@
 Check details of Map4RDF at http://oeg-upm.github.io/map4rdf
 
-[![Code HTML](https://img.shields.io/badge/code-HTML5-blue.svg)](https://www.w3.org/TR/html/)
-[![Code CSS](https://img.shields.io/badge/code-CSS3-blue.svg)](http://www.w3schools.com/css/css_intro.asp)
+[![Code HTML](https://img.shields.io/badge/code-HTML-blue.svg)](https://www.w3.org/TR/html/)
+[![Code CSS](https://img.shields.io/badge/code-CSS-blue.svg)](http://www.w3schools.com/css/css_intro.asp)
 [![Code JS](https://img.shields.io/badge/code-JS-blue.svg)](http://www.w3schools.com/js/)
+[![Design Cross-browsers](https://img.shields.io/badge/design-Cross--Browsers-blue.svg)](https://en.wikipedia.org/wiki/Cross-browser)
 
 [![lib jQuery](https://img.shields.io/badge/lib-jQuery-green.svg)](https://jquery.com/)
 [![lib Proj4js](https://img.shields.io/badge/lib-Proj4js-green.svg)](http://proj4js.org/)
