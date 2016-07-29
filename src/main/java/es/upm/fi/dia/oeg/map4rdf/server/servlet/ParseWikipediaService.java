@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Level;
+
 import com.google.inject.Singleton;
 
 @Singleton
@@ -21,9 +24,12 @@ public class ParseWikipediaService extends HttpServlet{
 	
 	private static final long serialVersionUID = -8524195705285261839L;
 	private static final String WIKIPEDIA_PARAM="URL";
+	private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("Map4RDF");
 	
+	@SuppressWarnings("static-access")
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		log.log(Level.FATAL, "ESCRIBE ALGO!!!!");
 		try {
 			resp.setContentType("text/html; charset=UTF-8");
 			String URL = getWikipediaURL(req);
@@ -35,12 +41,21 @@ public class ParseWikipediaService extends HttpServlet{
 				return;
 			}
 			if(!URL.contains("http://")){
-				URL="http://"+URL;
+				URL="https://"+URL;
+			}
+			if(URL.contains("http://")){
+				URL=URL.replace("http://", "https://");
 			}
 			try {
 	            final URL wikipediaURL = new URL(URL);
 	            final String host=wikipediaURL.getHost();
-	            final URLConnection wikipediaCon = wikipediaURL.openConnection();
+	            final HttpURLConnection wikipediaCon = (HttpURLConnection)wikipediaURL.openConnection();
+	            wikipediaCon.setFollowRedirects(true);
+	            wikipediaCon.addRequestProperty("Content-Type", "text/plain; charset=utf-8");
+	            wikipediaCon.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+	            wikipediaCon.setRequestProperty("content-type", "text/plain; charset=utf-8");
+	            log.log(Level.FATAL, "content-type:"+wikipediaCon.getContentType());
+	            wikipediaCon.connect();
 	            BufferedReader buffReader = new BufferedReader(
 	                    new InputStreamReader(wikipediaCon.getInputStream(),"UTF-8"));
 	            String toReturn=htmlParseWikipediaInfobox(buffReader,host);
@@ -112,7 +127,7 @@ public class ParseWikipediaService extends HttpServlet{
                 inputLine = buffReader.readLine();
              }
              if(!foundFirtsP){
-            	 return "";
+            	 return "Not found infobox or description";
              }
              result+="</body></html>";
         } catch (IOException e) {
@@ -133,19 +148,29 @@ public class ParseWikipediaService extends HttpServlet{
 		boolean finish=false;
 		int countTables=-1;
 		try {
+			boolean firtsExecution = true;
              String inputLine = buffReader.readLine();
+             if(firtsExecution){
+            	 while(!buffReader.ready()){}
+            	 inputLine = buffReader.readLine();
+            	 firtsExecution = false;
+             }
+             String inputLineContains = "";
              while (inputLine != null && !finish) {
-             	//System.out.println(inputLine);
-             	if(inputLine.contains("</head")){
+            	inputLineContains = "";
+                if(inputLine !=null ){
+                	inputLineContains = inputLine.toLowerCase();
+                }
+             	if(inputLineContains.contains("</head")){
                 	finalHead = true;
                 	result+=inputLine;
                 	result+="<body>";
                 }
-             	if(finalHead && inputLine.contains("infobox_v2")){
+             	if(finalHead && (inputLineContains.contains("infobox_v2") || inputLineContains.contains("infobox"))){
              		foundInfobox=true;
              	}
              	if(!finalHead || foundInfobox){
-             		if(inputLine.contains("infobox_v2")){
+             		if((inputLineContains.contains("infobox_v2") || inputLineContains.contains("infobox"))){
              			result+="<table style=\"width:15px; text-align:left;\">";
              		}else{
              			if(finalHead){
@@ -161,7 +186,7 @@ public class ParseWikipediaService extends HttpServlet{
              		if(foundInfobox && inputLine.contains("<table")){
              			countTables++;
              		}
-             		if(inputLine.contains("</table")){
+             		if(inputLineContains.contains("</table")){
              			if(countTables==0){
              				finish=true;
              			}else{
