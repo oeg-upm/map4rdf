@@ -15,8 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Level;
-
 import com.google.inject.Singleton;
 
 @Singleton
@@ -24,12 +22,10 @@ public class ParseWikipediaService extends HttpServlet{
 	
 	private static final long serialVersionUID = -8524195705285261839L;
 	private static final String WIKIPEDIA_PARAM="URL";
-	private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("Map4RDF");
 	
 	@SuppressWarnings("static-access")
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		log.log(Level.FATAL, "ESCRIBE ALGO!!!!");
 		try {
 			resp.setContentType("text/html; charset=UTF-8");
 			String URL = getWikipediaURL(req);
@@ -54,7 +50,6 @@ public class ParseWikipediaService extends HttpServlet{
 	            wikipediaCon.addRequestProperty("Content-Type", "text/plain; charset=utf-8");
 	            wikipediaCon.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 	            wikipediaCon.setRequestProperty("content-type", "text/plain; charset=utf-8");
-	            log.log(Level.FATAL, "content-type:"+wikipediaCon.getContentType());
 	            wikipediaCon.connect();
 	            BufferedReader buffReader = new BufferedReader(
 	                    new InputStreamReader(wikipediaCon.getInputStream(),"UTF-8"));
