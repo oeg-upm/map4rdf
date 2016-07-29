@@ -18,10 +18,10 @@ Check details of Map4RDF at http://oeg-upm.github.io/map4rdf
 [![maps OpenStreetMaps](https://img.shields.io/badge/maps-OpenStreetMaps-ff9800.svg)](http://www.openstreetmap.org)
 [![maps GoogleMaps](https://img.shields.io/badge/maps-GoogleMaps-ff9800.svg)](https://maps.google.es)
 [![maps Cartociudad](https://img.shields.io/badge/maps-Cartociudad-ff9800.svg)](http://www.cartociudad.es/)
-[![maps IDE Maps](https://img.shields.io/badge/maps-GoogleMaps-ff9800.svg)](http://www.idee.es/visualizador/)
+[![maps IDE Maps](https://img.shields.io/badge/maps-IDE--Maps-ff9800.svg)](http://www.idee.es/visualizador/)
 [![maps MapBox](https://img.shields.io/badge/maps-MapBox-ff9800.svg)](https://www.mapbox.com/)
 [![maps OpenCycleMaps](https://img.shields.io/badge/maps-OpenCycleMaps-ff9800.svg)](http://www.opencyclemap.org/)
-[![maps GoogleMaps](https://img.shields.io/badge/maps-GoogleMaps-ff9800.svg)](https://maps.google.es)
+[![maps OSGeoMaps](https://img.shields.io/badge/maps-OSGeoMaps-ff9800.svg)](http://www.osgeo.org/mapguide)
 
 [![Java 1.7 or later](https://img.shields.io/badge/Java-1.7%20or%20later-40c4ff.svg)](https://www.java.com/es/download/help/index_installing.xml?j=7)
 [![Guice-servlet 3.0](https://img.shields.io/badge/Guice--servlet-3.0-40c4ff.svg)](https://github.com/google/guice/wiki/Servlets)
@@ -29,7 +29,7 @@ Check details of Map4RDF at http://oeg-upm.github.io/map4rdf
 [![Jena-arq 2.12.1](https://img.shields.io/badge/Jena--arq-2.12.1-40c4ff.svg)](https://jena.apache.org/documentation/query/)
 [![slf4j 1.7.7](https://img.shields.io/badge/slf4j-1.7.7-40c4ff.svg)](http://www.slf4j.org/)
 [![Geotools 11.0](https://img.shields.io/badge/Geotools-11.0-40c4ff.svg)](http://www.geotools.org/)
-[![JSON-java 20140107](https://img.shields.io/badge/Jena--arq-2.12.1-40c4ff.svg)](https://github.com/stleary/JSON-java)
+[![JSON-java 20140107](https://img.shields.io/badge/JSON--java-20140107-40c4ff.svg)](https://github.com/stleary/JSON-java)
 
 [![Build Maven](https://img.shields.io/badge/build-Maven-lightgrey.svg)](https://maven.apache.org/)
 [![Version 0.5.0](https://img.shields.io/badge/Version-0.5.0-lightgrey.svg)](#version)  
