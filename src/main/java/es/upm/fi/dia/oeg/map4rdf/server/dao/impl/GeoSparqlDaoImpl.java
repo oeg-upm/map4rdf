@@ -312,6 +312,8 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
+		query.append("PREFIX bif:<bif:> ");
+
 		if(constraints!=null){
 			query.append("SELECT distinct ?r ?geosparqlwkt ?crs ?wkt ?facetID ?facetValueID ");
 		}else{
@@ -347,6 +349,8 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
+		query.append("PREFIX bif:<bif:> ");
+
 		if(constraints!=null){
 			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ?facetID ?facetValueID ");
 		}else{
@@ -393,6 +397,8 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 		StringBuilder query = new StringBuilder("PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> ");
 		query.append("PREFIX geosparql: <http://www.opengis.net/ont/geosparql#> ");
 		query.append("PREFIX strdf: <http://strdf.di.uoa.gr/ontology#> ");
+		query.append("PREFIX bif:<bif:> ");
+
 		if(constraints!=null){
 			query.append("SELECT distinct ?r ?label ?geosparqlwkt ?crs ?wkt ?seeAlso ?facetID ?facetValueID ");
 		}else{
@@ -451,7 +457,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			query.append("strdf:intersects(");
 			break;
 		case VIRTUOSO:
-			query.append("bif:st_intersects(");
+			query.append("bif:st_intersects( bif:st_geomfromtext( ");
 			break;
 		default:
 			query.append("strdf:intersects(");
@@ -469,7 +475,7 @@ public class GeoSparqlDaoImpl extends CommonDaoImpl implements Map4rdfDao {
 			query.append("^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
 			break;
 		case VIRTUOSO:
-			query.append("^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
+			query.append("),?wkttocompare)).");
 			break;
 		default:
 			query.append("^^<http://strdf.di.uoa.gr/ontology#WKT>,?wkttocompare)).");
